@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Track {
     public static final AudioFormat AUDIO_FORMAT = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
     private static final Logger LOGGER = LoggerFactory.getLogger(Track.class);
-    private static final Clip CLIP = new SoftMixingClip(new SoftMixingMixer(), new DataLine.Info(Clip.class, AUDIO_FORMAT));
+    private static final Clip CLIP = new SoftMixingClip(new SoftMixingMixer());
     private final TrackInfo info;
     private final AtomicBoolean isCaching = new AtomicBoolean();
     private final AtomicBoolean isPlaying = new AtomicBoolean();

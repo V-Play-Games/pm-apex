@@ -33,40 +33,17 @@ import java.util.Arrays;
  * @author Karl Helgason
  */
 public final class SoftAudioBuffer {
-    private int size;
+    private final int size;
+    private final AudioFormat format;
+    private final AudioFloatConverter converter;
     private float[] buffer;
     private boolean empty = true;
-    private AudioFormat format;
-    private AudioFloatConverter converter;
     private byte[] converter_buffer;
 
     public SoftAudioBuffer(int size, AudioFormat format) {
         this.size = size;
         this.format = format;
         this.converter = AudioFloatConverter.getConverter(format);
-    }
-
-    public void swap(SoftAudioBuffer swap) {
-        int bak_size = size;
-        float[] bak_buffer = buffer;
-        boolean bak_empty = empty;
-        AudioFormat bak_format = format;
-        AudioFloatConverter bak_converter = converter;
-        byte[] bak_converter_buffer = converter_buffer;
-
-        size = swap.size;
-        buffer = swap.buffer;
-        empty = swap.empty;
-        format = swap.format;
-        converter = swap.converter;
-        converter_buffer = swap.converter_buffer;
-
-        swap.size = bak_size;
-        swap.buffer = bak_buffer;
-        swap.empty = bak_empty;
-        swap.format = bak_format;
-        swap.converter = bak_converter;
-        swap.converter_buffer = bak_converter_buffer;
     }
 
     public AudioFormat getFormat() {

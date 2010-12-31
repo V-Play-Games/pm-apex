@@ -27,7 +27,6 @@ package net.vpg.apex.clip;
 import net.vpg.apex.Util;
 
 import javax.sound.sampled.*;
-import javax.sound.sampled.Control.Type;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -43,20 +42,14 @@ import static javax.sound.sampled.AudioSystem.NOT_SPECIFIED;
  *
  * @author Karl Helgason
  */
-public class SoftMixingMixer implements Mixer {
+public class SoftMixingMixer {
     public static final int CHANNEL_LEFT = 0;
     public static final int CHANNEL_RIGHT = 1;
-    static final String INFO_NAME = "Gervill Sound Mixer";
-    static final String INFO_VENDOR = "OpenJDK Proposal";
-    static final String INFO_DESCRIPTION = "Software Sound Mixer";
-    static final String INFO_VERSION = "1.0";
-    static final Info info = new Info(INFO_NAME, INFO_VENDOR, INFO_DESCRIPTION, INFO_VERSION) {
-    };
     protected final float controlRate = 147f;
     protected final long latency = 100000; // 100 milliseconds
     protected final List<LineListener> listeners = new ArrayList<>();
     protected final Line.Info[] sourceLineInfo;
-    protected final List<SoftMixingDataLine> openLines = new ArrayList<>();
+    protected final List<SoftMixingClip> openLines = new ArrayList<>();
     final Object control_mutex = this;
     public boolean implicitOpen = false;
     protected boolean open = false;
@@ -88,115 +81,10 @@ public class SoftMixingMixer implements Mixer {
         sourceLineInfo[1] = new DataLine.Info(Clip.class, formats_array, NOT_SPECIFIED, NOT_SPECIFIED);
     }
 
-    @Override
-    public Line getLine(Line.Info info) {
-        if (!isLineSupported(info))
-            throw new IllegalArgumentException("Line unsupported: " + info);
-        if (info.getLineClass() == SourceDataLine.class) {
-            return new SoftMixingSourceDataLine(this, (DataLine.Info) info);
-        }
-        if (info.getLineClass() == Clip.class) {
-            return new SoftMixingClip(this, (DataLine.Info) info);
-        }
-        throw new IllegalArgumentException("Line unsupported: " + info);
-    }
-
-    @Override
-    public int getMaxLines(Line.Info info) {
-        if (info.getLineClass() == SourceDataLine.class)
-            return NOT_SPECIFIED;
-        if (info.getLineClass() == Clip.class)
-            return NOT_SPECIFIED;
-        return 0;
-    }
-
-    @Override
-    public Info getMixerInfo() {
-        return info;
-    }
-
-    @Override
-    public Line.Info[] getSourceLineInfo() {
-        return Arrays.copyOf(sourceLineInfo, sourceLineInfo.length);
-    }
-
-    @Override
-    public Line.Info[] getSourceLineInfo(Line.Info info) {
-        ArrayList<Line.Info> infoList = new ArrayList<>();
-
-        for (Line.Info value : sourceLineInfo) {
-            if (info.matches(value)) {
-                infoList.add(value);
-            }
-        }
-        return infoList.toArray(new Line.Info[0]);
-    }
-
-    @Override
-    public Line[] getSourceLines() {
-        synchronized (control_mutex) {
-            return openLines.toArray(new Line[0]);
-        }
-    }
-
-    @Override
-    public Line.Info[] getTargetLineInfo() {
-        return new Line.Info[0];
-    }
-
-    @Override
-    public Line.Info[] getTargetLineInfo(Line.Info info) {
-        return new Line.Info[0];
-    }
-
-    @Override
-    public Line[] getTargetLines() {
-        return new Line[0];
-    }
-
-    @Override
-    public boolean isLineSupported(Line.Info info) {
-        if (info != null) {
-            for (Line.Info value : sourceLineInfo) {
-                if (info.matches(value)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isSynchronizationSupported(Line[] lines, boolean maintainSync) {
-        return false;
-    }
-
-    @Override
-    public void synchronize(Line[] lines, boolean maintainSync) {
-        throw new UnsupportedOperationException("Synchronization is not supported by this mixer.");
-    }
-
-    @Override
-    public void unsynchronize(Line[] lines) {
-        throw new UnsupportedOperationException("Synchronization is not supported by this mixer.");
-    }
-
-    @Override
-    public void addLineListener(LineListener listener) {
-        synchronized (control_mutex) {
-            listeners.add(listener);
-        }
-    }
-
-    private void sendEvent(LineEvent event) {
-        listeners.forEach(listener -> listener.update(event));
-    }
-
-    @Override
     public void close() {
         if (!isOpen())
             return;
-        sendEvent(new LineEvent(this, LineEvent.Type.CLOSE, NOT_SPECIFIED));
+//        sendEvent(new LineEvent(this, LineEvent.Type.CLOSE, NOT_SPECIFIED));
 
         if (pusher != null) {
             SoftAudioPusher tempPusher;
@@ -219,7 +107,7 @@ public class SoftMixingMixer implements Mixer {
 
         synchronized (control_mutex) {
             open = false;
-            openLines.forEach(Line::close);
+//            openLines.forEach(Line::close);
             if (sourceDataLine != null) {
                 sourceDataLine.drain();
                 sourceDataLine.close();
@@ -228,34 +116,12 @@ public class SoftMixingMixer implements Mixer {
         }
     }
 
-    @Override
-    public Control getControl(Type control) {
-        throw new IllegalArgumentException("Unsupported control type : " + control);
-    }
-
-    @Override
-    public Control[] getControls() {
-        return new Control[0];
-    }
-
-    @Override
-    public Line.Info getLineInfo() {
-        return new Line.Info(Mixer.class);
-    }
-
-    @Override
-    public boolean isControlSupported(Type control) {
-        return false;
-    }
-
-    @Override
     public boolean isOpen() {
         synchronized (control_mutex) {
             return open;
         }
     }
 
-    @Override
     public void open() throws LineUnavailableException {
         open(null);
     }
@@ -306,7 +172,7 @@ public class SoftMixingMixer implements Mixer {
                     }
                     if (line == null)
                         line = AudioSystem.getSourceDataLine(format);
-                    assert line != null : new IllegalArgumentException("No line matching " + info.toString() + " is supported.");
+                    assert line != null : new IllegalArgumentException("No line matching this mixer is supported.");
                 }
                 AudioInputStream ais = openStream(getFormat());
 
@@ -333,17 +199,17 @@ public class SoftMixingMixer implements Mixer {
     public AudioInputStream openStream(AudioFormat targetFormat) throws LineUnavailableException {
         if (isOpen())
             throw new LineUnavailableException("Mixer is already open");
-        LineEvent event;
+//        LineEvent event;
         AudioInputStream inputStream;
         synchronized (control_mutex) {
             open = true;
             implicitOpen = false;
             if (targetFormat != null)
                 format = targetFormat;
-            event = new LineEvent(this, LineEvent.Type.OPEN, NOT_SPECIFIED);
+//            event = new LineEvent(this, LineEvent.Type.OPEN, NOT_SPECIFIED);
             inputStream = getInputStream();
         }
-        sendEvent(event);
+//        sendEvent(event);
         return inputStream;
     }
 
@@ -364,9 +230,6 @@ public class SoftMixingMixer implements Mixer {
             public void fillBuffer() {
                 for (SoftAudioBuffer buffer : buffers) {
                     buffer.clear();
-                }
-                synchronized (control_mutex) {
-                    openLines.forEach(SoftMixingDataLine::processControlLogic);
                 }
                 openLines.forEach(openLine -> openLine.processAudioLogic(buffers));
                 for (int i = 0; i < channels; i++)
@@ -402,28 +265,15 @@ public class SoftMixingMixer implements Mixer {
         return new AudioInputStream(in, this.getFormat(), AudioSystem.NOT_SPECIFIED);
     }
 
-    public void openLine(SoftMixingDataLine line) {
+    public void openLine(SoftMixingClip line) {
         synchronized (control_mutex) {
             openLines.add(line);
         }
     }
 
-    public void closeLine(SoftMixingDataLine line) {
+    public void closeLine(SoftMixingClip line) {
         synchronized (control_mutex) {
             openLines.remove(line);
-        }
-    }
-
-    @Override
-    public void removeLineListener(LineListener listener) {
-        synchronized (control_mutex) {
-            listeners.remove(listener);
-        }
-    }
-
-    public long getLatency() {
-        synchronized (control_mutex) {
-            return latency;
         }
     }
 
