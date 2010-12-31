@@ -5,6 +5,10 @@ import net.vpg.vjson.value.JSONArray;
 import net.vpg.vjson.value.JSONObject;
 import net.vpg.vjson.value.JSONValue;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -22,13 +26,13 @@ public class TrackInfo {
             .getArray("entries")
             .stream(JSONArray::getObject)
             .collect(Collectors.toMap(jo -> jo.getString("id"), TrackInfo::new));
-
     static final JSONValue notAvailable = JSONValue.of("N/A");
     private JSONObject jo;
     private File file;
     private String id;
     private String name;
     private String description;
+    private Track track;
     private boolean initDone = false;
     private int loopStart = -1;
     private int loopEnd = -1;
@@ -56,6 +60,10 @@ public class TrackInfo {
         obj.put("name", notAvailable);
         obj.put("description", notAvailable);
         return new TrackInfo(obj);
+    }
+
+    public Track getTrack() {
+        return track == null ? track = new Track(this) : track;
     }
 
     private void init(File file) {
@@ -93,6 +101,10 @@ public class TrackInfo {
 
     public File getFile() {
         return file;
+    }
+
+    public AudioInputStream getAudioInputStream(AudioFormat targetFormat) throws IOException, UnsupportedAudioFileException {
+        return AudioSystem.getAudioInputStream(targetFormat, AudioSystem.getAudioInputStream(file));
     }
 
     public String getId() {

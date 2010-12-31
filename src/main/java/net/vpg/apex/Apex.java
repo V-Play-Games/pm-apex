@@ -2,6 +2,7 @@ package net.vpg.apex;
 
 import net.vpg.apex.components.ApexControl;
 import net.vpg.apex.components.ApexWindow;
+import net.vpg.apex.core.ApexThreadFactory;
 import net.vpg.apex.core.Resources;
 import net.vpg.apex.core.Track;
 
@@ -16,7 +17,7 @@ public class Apex {
     ApexWindow window;
     List<Track> playlist = new ArrayList<>();
     int index = 0;
-    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(16);
+    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(16, new ApexThreadFactory());
 
     public static void main(String[] args) throws Exception {
         APEX.start();
@@ -55,7 +56,7 @@ public class Apex {
 
     public void takeAction(int action) {
         synchronized (this) {
-            Track track = getPlaylist().get(getIndex());
+            Track track = getCurrentTrack();
             switch (action) {
                 case 0:
                     changeTrack(1);
@@ -80,44 +81,65 @@ public class Apex {
                     ApexControl.stopped = true;
                     break;
                 case 4:
-                    ApexControl.playing = track.getClip().isActive();
-                    if (ApexControl.playing) {
+                    boolean active = track.getClip().isActive();
+                    ApexControl.playing = !active;
+                    if (active) {
                         track.stop();
                     } else {
                         track.play();
                         ApexControl.stopped = false;
                     }
-                    ApexControl.playing = !ApexControl.playing;
                     break;
                 case 5:
-                    String searchText = ApexControl.searchTextArea.getText().toLowerCase();
-                    for (int i = 0; i < playlist.size(); i++) {
-                        Track t = playlist.get(i);
-                        if (t.getName().toLowerCase().contains(searchText) || t.getId().contains(searchText)) {
-                            changeTrack(i - index);
-                            break;
-                        }
+                    if (!searchAndPlay(index + 1, playlist.size())) {
+                        searchAndPlay(0, index);
                     }
+                    updateCaches();
                     break;
                 case 6:
                     updatePlaylist();
                     index = playlist.indexOf(track);
+                    updateCaches();
             }
             ApexControl.update();
         }
     }
 
+    public boolean searchAndPlay(int start, int end) {
+        String searchText = ApexControl.searchTextArea.getText().toLowerCase();
+        for (int i = start; i < end; i++) {
+            Track t = playlist.get(i);
+            if (t.getName().toLowerCase().contains(searchText) || t.getId().contains(searchText)) {
+                changeTrack(t, i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Track getCurrentTrack() {
+       return playlist.get(index);
+    }
+
     public void stopCurrentTrack() {
-        getPlaylist().get(getIndex()).close();
+        getCurrentTrack().close();
     }
 
     public void changeTrack(int change) {
+        changeTrack(playlist.get(index += change), index);
+    }
+
+    public void changeTrack(Track track) {
+        changeTrack(track, playlist.indexOf(track));
+    }
+
+    public void changeTrack(Track track, int index) {
         stopCurrentTrack();
-        Track current = playlist.get(index += change);
-        current.play();
-        ApexControl.trackName.setText(current.getName());
-        ApexControl.trackDescription.setText(current.getDescription());
-        ApexControl.trackId.setText(current.getId());
+        this.index = index;
+        track.play();
+        ApexControl.trackName.setText(track.getName());
+        ApexControl.trackDescription.setText(track.getDescription());
+        ApexControl.trackId.setText(track.getId());
     }
 
     public void updateCaches() {

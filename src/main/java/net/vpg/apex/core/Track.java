@@ -1,10 +1,11 @@
 package net.vpg.apex.core;
 
 import net.vpg.apex.Apex;
-import net.vpg.apex.Util;
 import net.vpg.apex.clip.SoftMixingClip;
 import net.vpg.apex.clip.SoftMixingMixer;
 import net.vpg.apex.clip.Toolkit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -14,6 +15,7 @@ import java.util.concurrent.Future;
 
 public class Track {
     public static final AudioFormat audioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
+    private static final Logger logger = LoggerFactory.getLogger(Track.class);
     private static final Clip clip = new SoftMixingClip(new SoftMixingMixer(), new DataLine.Info(Clip.class, audioFormat));
     private final TrackInfo info;
     private byte[] cache;
@@ -25,23 +27,7 @@ public class Track {
     }
 
     public static Track get(File file) {
-        TrackInfo trackInfo = TrackInfo.get(file);
-        if (trackInfo.getLoopStart() != 0) {
-            return loop(trackInfo);
-        }
-        return simple(trackInfo);
-    }
-
-    public static Track simple(TrackInfo trackInfo) {
-        return new Track(trackInfo);
-    }
-
-    public static LoopingTrack loop(TrackInfo trackInfo) {
-        return new LoopingTrack(trackInfo);
-    }
-
-    private static AudioInputStream getAudioInputStream(File file) throws IOException, UnsupportedAudioFileException {
-        return AudioSystem.getAudioInputStream(audioFormat, AudioSystem.getAudioInputStream(file));
+        return TrackInfo.get(file).getTrack();
     }
 
     public String getName() {
@@ -60,25 +46,33 @@ public class Track {
         return info.getFile();
     }
 
+    public int getLoopStart() {
+        return info.getLoopStart();
+    }
+
+    public int getLoopEnd() {
+        return info.getLoopEnd();
+    }
+
     public Clip getClip() {
-        ensureCached();
-        return clip.isOpen() ? clip : Util.apply(clip, clip -> clip.open(audioFormat, cache, 0, cache.length));
+        return clip;
     }
 
     public void ensureCached() {
         if (cache != null) return;
         if (isCaching) {
-            System.out.println("Waiting " + getId());
+            logger.info(getId() + ": CACHING_AWAIT");
         } else {
             startCaching();
-            System.out.println("Caching " + getId());
+            logger.debug(getId() + ": CACHING_START");
             cacheTask = Apex.APEX.getExecutor().submit(() -> {
                 try {
-                    cache = Toolkit.cache(getAudioInputStream(info.getFile()));
+                    cache = Toolkit.cache(info.getAudioInputStream(audioFormat));
                 } catch (IOException | UnsupportedAudioFileException e) {
                     throw new RuntimeException(e);
                 }
                 stopCaching();
+                logger.info(getId() + ": CACHING_END");
             });
         }
         awaitCache();
@@ -88,14 +82,18 @@ public class Track {
         try {
             cacheTask.get();
         } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException)
+                throw (RuntimeException) cause;
+            else
+                throw new RuntimeException(cause);
         }
     }
 
     public void clearCache() {
         if (cache != null) {
             cache = null;
-            System.out.println("Cache Cleared! " + getId());
+            logger.info(getId() + ": CACHE_CLEAR");
         }
     }
 
@@ -120,7 +118,17 @@ public class Track {
     }
 
     public void play() {
-        getClip().start();
+        if (!clip.isOpen()) {
+            ensureCached();
+            try {
+                clip.open(audioFormat, cache, 0, cache.length);
+            } catch (LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        clip.setLoopPoints(getLoopStart(), getLoopEnd());
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        clip.start();
     }
 
     public void stop() {
