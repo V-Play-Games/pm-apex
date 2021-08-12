@@ -5,7 +5,7 @@ It is a small hobby project aiming to create an audio player dedicated to Pokemo
 
 ## Download and Installation
 So let's get to the point, how to run this thing
-1. Download pmapex.zip from [here](https://github.com/V-Play-Games/pm-apex/releases/tag/v0.0.2)
+1. Download pmapex.zip from [here](https://github.com/V-Play-Games/pm-apex/releases/)
 2. Extract the zip to an empty folder.
 3. Go to the `bin` folder and run pmapex.bat file by double clicking on it
 4. The Audio Player comes with 2 pre-loaded tracks.
