@@ -1,4 +1,6 @@
-package net.vplaygames.apex;
+package net.vplaygames.apex.core;
+
+import net.vplaygames.apex.Util;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -7,26 +9,26 @@ import java.io.IOException;
 public class Track {
     public static final AudioFormat audioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
     private static final Clip clip = Util.get(() -> (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, audioFormat)));
-    private final Info info;
+    private final TrackInfo info;
     private AudioInputStream audioInputStream;
 
-    public Track(Info trackInfo) {
+    public Track(TrackInfo trackInfo) {
         this.info = trackInfo;
     }
 
     public static Track get(File file) {
-        Info trackInfo = Info.get(file);
+        TrackInfo trackInfo = TrackInfo.get(file);
         if (trackInfo.getLoopStart() != 0 && trackInfo.getLoopEnd() != 0) {
             return loop(trackInfo);
         }
         return simple(trackInfo);
     }
 
-    public static Track simple(Info trackInfo) {
+    public static Track simple(TrackInfo trackInfo) {
         return new Track(trackInfo);
     }
 
-    public static LoopingTrack loop(Info trackInfo) {
+    public static LoopingTrack loop(TrackInfo trackInfo) {
         return new LoopingTrack(trackInfo);
     }
 
@@ -74,7 +76,7 @@ public class Track {
         clip.close();
     }
 
-    public Info getTrackInfo() {
+    public TrackInfo getTrackInfo() {
         return info;
     }
 

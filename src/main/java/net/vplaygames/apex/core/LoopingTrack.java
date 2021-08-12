@@ -1,11 +1,11 @@
-package net.vplaygames.apex;
+package net.vplaygames.apex.core;
 
 import javax.sound.sampled.Clip;
 
 public class LoopingTrack extends Track {
     boolean loopPointsSet = false;
 
-    public LoopingTrack(Info trackInfo) {
+    public LoopingTrack(TrackInfo trackInfo) {
         super(trackInfo);
     }
 
