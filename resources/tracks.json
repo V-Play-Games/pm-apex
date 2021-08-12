@@ -93,11 +93,8 @@
   { "id": "bgm_battle_trainer_g", "name": "Battle! Trainer (Galar)", "description": "Played in battles against trainers from the Galar Region." },
   { "id": "bgm_battle_trainer_i", "name": "Battle! Trainer (Unova)", "description": "Played in battles against trainers from the Unova Region." },
   { "id": "bgm_battle_wataru", "name": "Battle! Lance", "description": "Played in battles against Lance, the Champion of the Kanto Region, a former member of its Elite 4, and a cousin of Clair." },
-  { "id": "bgm_battle_wds", "name": "Battle! Cynthia, Lance and Steven", "description": "Played in the special battle against the three champions, Cynthia, Lance and Steven." },
-  { "id": "bgm_event_sayonara", "name": "Goodbye", "description": "A remake of the 'Goodbye' soundtrack from the Generation 5 Pokemon Games." },
-  { "id": "bgm_event_yurenuomoi", "name": "Emotional", "description": "A remake of the 'Emotional' soundtrack from the Generation 5 and 6 Pokemon Games." },
-  { "id": "bgm_field_champion_02", "name": "Explore: Johto Challenge", "description": "Played in the Johto Challenge." },
-  { "id": "bgm_field_champion_03", "name": "Explore: Unova Challenge", "description": "Played in the Unova Challenge." },
-  { "id": "bgm_field_route10", "name": "Route 10 (Pokemon BW/BW2)", "description": "A remake of the 'Route 10' soundtrack from the Generation 5 Pokemon Games." },
-  { "id": "bgm_quest_clear_n", "name": "Ending Credits (Pokemon Black & White)", "description": "A short version of the 'Ending Credits' soundtrack of Pokemon Black and Pokemon White." }
+  { "id": "bgm_battle_red", "name": "Battle! Red", "description": "Played in battles against Red." },
+  { "id": "bgm_battle_hop", "name": "Battle! Hop", "description": "Played in battles against Hop." },
+  { "id": "bgm_battle_chatelaine", "name": "Battle! Battle Chatelaine", "description": "Played in battles against Battle Chatelaine Trainers." },
+  { "id": "bgm_battle_wds", "name": "Battle! Cynthia, Lance and Steven", "description": "Played in the special battle against the three champions, Cynthia, Lance and Steven." }
 ]}
