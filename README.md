@@ -1,5 +1,5 @@
 # PM APEX
-An audio player for Pokemon Masters audio tracks
+Pokemon Masters Audio Player EX is an audio player for Pokemon Masters audio tracks
 
 It is a small hobby project aiming to create an audio player dedicated to Pokemon Masters EX soundtracks
 
