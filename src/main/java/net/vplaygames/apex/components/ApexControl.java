@@ -4,7 +4,7 @@ import net.vplaygames.apex.Util;
 
 import javax.swing.*;
 
-import static net.vplaygames.apex.Apex.apex;
+import static net.vplaygames.apex.Apex.APEX;
 
 public class ApexControl {
     public static WrappedTextArea trackId;
@@ -52,9 +52,9 @@ public class ApexControl {
     }
 
     public static void update() {
-        int index = apex.getIndex();
-        trackIndex.setText("Track " + (index + 1) + "/" + apex.getPlaylist().size());
-        next.setEnabled(index != apex.getPlaylist().size() - 1);
+        int index = APEX.getIndex();
+        trackIndex.setText("Track " + (index + 1) + "/" + APEX.getPlaylist().size());
+        next.setEnabled(index != APEX.getPlaylist().size() - 1);
         previous.setEnabled(index != 0);
         stop.setEnabled(!stopped);
         playPause.setText(playing ? "Pause" : "Play");

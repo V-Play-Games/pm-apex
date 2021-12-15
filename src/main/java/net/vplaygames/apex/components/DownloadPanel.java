@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-import static net.vplaygames.apex.Apex.apex;
+import static net.vplaygames.apex.Apex.APEX;
 import static net.vplaygames.apex.components.ApexControl.*;
 
 public class DownloadPanel extends JPanel {
@@ -59,13 +59,11 @@ public class DownloadPanel extends JPanel {
     public void setupButtons() {
         lookupTracks = new JButton("Refresh");
         downloadAll = new JButton("Download all found tracks");
-        lookupTracks.addActionListener(e -> {
-            tracksFound.setText(Resources.getMissingTracks().size() + " more tracks found");
-        });
+        lookupTracks.addActionListener(e -> tracksFound.setText(Resources.getMissingTracks().size() + " more tracks found"));
         downloadAll.addActionListener(e -> {
             lookupTracks.setEnabled(false);
             downloadAll.setEnabled(false);
-            new DownloadTask(Resources.getMissingTracks(), () -> apex.takeAction(6));
+            new DownloadTask(Resources.getMissingTracks(), () -> APEX.takeAction(6));
         });
     }
 

@@ -1,6 +1,9 @@
 package net.vplaygames.apex.core;
 
 import net.vplaygames.apex.Util;
+import net.vplaygames.apex.clip.SoftMixingClip;
+import net.vplaygames.apex.clip.SoftMixingMixer;
+import net.vplaygames.apex.clip.Toolkit;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -8,9 +11,9 @@ import java.io.IOException;
 
 public class Track {
     public static final AudioFormat audioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
-    private static final Clip clip = Util.get(() -> (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, audioFormat)));
+    private static final Clip clip = new SoftMixingClip(new SoftMixingMixer(), new DataLine.Info(Clip.class, audioFormat));
     private final TrackInfo info;
-    private AudioInputStream audioInputStream;
+    private byte[] cache;
 
     public Track(TrackInfo trackInfo) {
         this.info = trackInfo;
@@ -18,7 +21,7 @@ public class Track {
 
     public static Track get(File file) {
         TrackInfo trackInfo = TrackInfo.get(file);
-        if (trackInfo.getLoopStart() != 0 && trackInfo.getLoopEnd() != 0) {
+        if (trackInfo.getLoopStart() != 0) {
             return loop(trackInfo);
         }
         return simple(trackInfo);
@@ -52,27 +55,26 @@ public class Track {
         return info.getFile();
     }
 
-    public AudioInputStream getAudioInputStream() {
-        try {
-            return audioInputStream == null ? audioInputStream = getAudioInputStream(info.getFile()) : audioInputStream;
-        } catch (IOException | UnsupportedAudioFileException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public Clip getClip() {
-        return clip.isOpen() ? clip : Util.apply(clip, clip -> clip.open(getAudioInputStream()));
+        ensureCached();
+        return clip.isOpen() ? clip : Util.apply(clip, clip -> clip.open(audioFormat, cache, 0, cache.length));
     }
 
-    public void close() {
-        if (audioInputStream != null) {
+    public void ensureCached() {
+        if (cache == null) {
             try {
-                audioInputStream.close();
-            } catch (IOException e) {
+                cache = Toolkit.cache(getAudioInputStream(info.getFile()));
+            } catch (IOException | UnsupportedAudioFileException e) {
                 throw new RuntimeException(e);
             }
         }
-        audioInputStream = null;
+    }
+
+    public byte[] getCache() {
+        return cache;
+    }
+
+    public void close() {
         clip.close();
     }
 

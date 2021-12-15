@@ -4,23 +4,32 @@ import net.vplaygames.apex.components.WrappedTextArea;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
-import static net.vplaygames.apex.Apex.apex;
+import static net.vplaygames.apex.Apex.APEX;
 
 public class Util {
     @SafeVarargs
     public static <E> E apply(E input, ConsumerWithAChanceOfException<E>... functions) {
-        Arrays.stream(functions).forEach(a -> {
+        for (ConsumerWithAChanceOfException<E> consumer : functions) {
             try {
-                a.accept(input);
+                consumer.accept(input);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
+        }
         return input;
+    }
+
+    public static <E, T> T compute(E input, FunctionWithAChanceOfException<E, T> function) {
+        try {
+            return function.accept(input);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static <E> E get(SupplierWithAChanceOfException<E> supplier) {
@@ -52,7 +61,7 @@ public class Util {
     public static JButton makeButton(String name, String toolTip, int action) {
         return Util.apply(new JButton(name),
             button -> button.setToolTipText(toolTip),
-            button -> button.addActionListener(e -> apex.takeAction(action)));
+            button -> button.addActionListener(e -> APEX.takeAction(action)));
     }
 
     public static WrappedTextArea makeTextArea(String toolTip) {
@@ -83,11 +92,22 @@ public class Util {
         return bytes + " " + arr[i];
     }
 
+    public static <E> void shuffle(List<E> base) {
+        Random random = new Random();
+        for (int i = base.size(); i > 0; i--) {
+            base.add(base.remove(random.nextInt(i)));
+        }
+    }
+
     public interface ConsumerWithAChanceOfException<E> {
         void accept(E operand) throws Exception;
     }
 
+    public interface FunctionWithAChanceOfException<E, T> {
+        T accept(E operand) throws IOException;
+    }
+
     public interface SupplierWithAChanceOfException<E> {
-        E get() throws Exception;
+        E get() throws IOException;
     }
 }

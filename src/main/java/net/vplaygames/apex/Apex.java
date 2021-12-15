@@ -5,16 +5,22 @@ import net.vplaygames.apex.components.ApexWindow;
 import net.vplaygames.apex.core.Resources;
 import net.vplaygames.apex.core.Track;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static net.vplaygames.apex.components.ApexControl.*;
 
 public class Apex {
-    public static final Apex apex = new Apex();
+    public static final Apex APEX = new Apex();
     ApexWindow window;
     List<Track> playlist = new ArrayList<>();
     int index = 0;
+
+    public static void main(String[] args) throws Exception {
+        APEX.start();
+    }
 
     private void start() throws Exception {
         ApexControl.init();
@@ -22,10 +28,6 @@ public class Apex {
         updatePlaylist();
         changeTrack(0);
         ApexControl.update();
-    }
-
-    public static void main(String[] args) throws Exception {
-        apex.start();
     }
 
     private void updatePlaylist() {
@@ -61,8 +63,8 @@ public class Apex {
                     stopped = false;
                     break;
                 case 2:
-                    playlist = shuffle(playlist);
-                    index = indexOf(track);
+                    Util.shuffle(playlist);
+                    index = playlist.indexOf(track);
                     break;
                 case 3:
                     stopCurrentTrack();
@@ -90,9 +92,8 @@ public class Apex {
                     }
                     break;
                 case 6:
-                    Track current = playlist.get(index);
                     updatePlaylist();
-                    index = indexOf(current);
+                    index = playlist.indexOf(track);
             }
             ApexControl.update();
         }
@@ -109,27 +110,5 @@ public class Apex {
         trackName.setText(current.getName());
         trackDescription.setText(current.getDescription());
         trackId.setText(current.getId());
-    }
-
-    public int indexOf(Track track) {
-        List<String> trackNames = playlist.stream().map(Track::getName).collect(Collectors.toList());
-        String trackName = track.getName();
-        for (int i = 0; i < trackNames.size(); i++) {
-            if (Objects.equals(trackNames.get(i), trackName)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public static <E> List<E> shuffle(List<E> base) {
-        Random random = new Random();
-        List<E> copy = new ArrayList<>(base);
-        List<E> tor = new ArrayList<>();
-        for (int i = copy.size(); i > 0; i--) {
-            int index = random.nextInt(i);
-            tor.add(copy.remove(index));
-        }
-        return tor;
     }
 }

@@ -1,10 +1,14 @@
 package net.vplaygames.apex.core;
 
 import net.vplaygames.apex.Util;
-import net.vplaygames.vjson.JSONObject;
-import net.vplaygames.vjson.JSONValue;
+import net.vplaygames.vjson.value.JSONArray;
+import net.vplaygames.vjson.value.JSONObject;
+import net.vplaygames.vjson.value.JSONValue;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,12 +17,13 @@ import java.util.stream.Collectors;
 public class TrackInfo {
     public static final Pattern loopStartPattern = Pattern.compile("LOOPSTART=(\\d+)");
     public static final Pattern loopEndPattern = Pattern.compile("LOOPEND=(\\d+)");
-    public static final Map<String, TrackInfo> entries = Util.get(() -> JSONValue.parse(Resources.geFile("tracks.json"))
-        .asObject().get("entries").asArray()
-        .stream()
-        .map(JSONValue::asObject)
-        .collect(Collectors.toMap(jo -> jo.get("id").asString(), TrackInfo::new)));
+    public static final Map<String, TrackInfo> entries =
+        Util.compute(Resources.getFile("tracks.json"), JSONObject::parse)
+            .getArray("entries")
+            .stream(JSONArray::getObject)
+            .collect(Collectors.toMap(jo -> jo.getString("id"), TrackInfo::new));
 
+    static final JSONValue notAvailable = JSONValue.of("N/A");
     private JSONObject jo;
     private File file;
     private String id;
@@ -30,14 +35,31 @@ public class TrackInfo {
 
     private TrackInfo(JSONObject data) {
         jo = data;
-        String fileName = data.get("id").asString() + ".ogg";
+        String fileName = data.getString("id") + ".ogg";
         if (Resources.hasFile(fileName)) {
-            init(fileName);
+            init(Resources.getFile(fileName));
         }
     }
 
-    private void init(String fileName) {
-        file = Resources.geFile(fileName);
+    public static TrackInfo get(File file) {
+        String filename = file.getName();
+        TrackInfo info = entries.computeIfAbsent(Util.getId(filename), TrackInfo::getInfo);
+        if (!info.isInitDone()) {
+            info.init(file);
+        }
+        return info;
+    }
+
+    private static TrackInfo getInfo(String id) {
+        JSONObject obj = new JSONObject();
+        obj.put("id", JSONValue.of(id));
+        obj.put("name", notAvailable);
+        obj.put("description", notAvailable);
+        return new TrackInfo(obj);
+    }
+
+    private void init(File file) {
+        this.file = file;
         System.out.println("Loaded " + file.getName());
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -59,23 +81,14 @@ public class TrackInfo {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        id = jo.get("id").asString();
-        name = jo.get("name").asString();
-        description = jo.get("description").asString();
+        id = jo.getString("id");
+        name = jo.getString("name");
+        description = jo.getString("description");
         initDone = true;
     }
 
     private boolean isInitDone() {
         return initDone;
-    }
-
-    public static TrackInfo get(File file) {
-        String filename = file.getName();
-        TrackInfo info = entries.get(Util.getId(filename));
-        if (!info.isInitDone()) {
-            info.init(filename);
-        }
-        return info;
     }
 
     public File getFile() {

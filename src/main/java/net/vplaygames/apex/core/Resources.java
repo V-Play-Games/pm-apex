@@ -2,7 +2,7 @@ package net.vplaygames.apex.core;
 
 import net.vplaygames.apex.Util;
 import net.vplaygames.apex.components.Downloader;
-import net.vplaygames.vjson.JSONValue;
+import net.vplaygames.vjson.value.JSONArray;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-import static net.vplaygames.apex.Apex.apex;
+import static net.vplaygames.apex.Apex.APEX;
 
 public class Resources {
     public static final String baseDownloadUrl = "https://raw.githubusercontent.com/V-Play-Games/pm-apex/release/resources/";
@@ -24,7 +24,7 @@ public class Resources {
         return file;
     }
 
-    public static File geFile(String filename) {
+    public static File getFile(String filename) {
         return resources.get(filename);
     }
 
@@ -37,15 +37,14 @@ public class Resources {
     }
 
     private static List<OnlineTrack> getOnlineResources() throws IOException {
-        return JSONValue.parse(Downloader.download("https://api.github.com/repos/V-Play-Games/pm-apex/contents/resources", "contents.json", null))
-            .asList(JSONValue::asObject)
-            .stream()
-            .map(jo -> new OnlineTrack(jo.get("name").asString(), jo.get("size").asLong()))
+        return JSONArray.parse(Downloader.download("https://api.github.com/repos/V-Play-Games/pm-apex/contents/resources", "contents.json", null))
+            .stream(JSONArray::getObject)
+            .map(jo -> new OnlineTrack(jo.getString("name"), jo.getLong("size")))
             .collect(Collectors.toList());
     }
 
     public static List<OnlineTrack> getMissingTracks() {
-        List<String> availableIds = apex.getPlaylist().stream().map(Track::getId).collect(Collectors.toList());
+        List<String> availableIds = APEX.getPlaylist().stream().map(Track::getId).collect(Collectors.toList());
         return Util.get(Resources::getOnlineResources).stream()
             .filter(ot -> ot.getName().endsWith(".ogg"))
             .filter(ot -> !availableIds.contains(Util.getId(ot.getName())))

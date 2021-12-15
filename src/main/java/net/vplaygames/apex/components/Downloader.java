@@ -38,7 +38,7 @@ public class Downloader {
                     long timeTaken = System.currentTimeMillis() - startingTime;
                     long speed = bytesRead * 100 / timeTaken;
                     if (listener != null) {
-                        listener.progress(new Event(file, startingTime, timeTaken, len, bytesRead, speed, (bytesRead == len ? STARTED : IN_PROGRESS)));
+                        listener.progress(new Event(file, startingTime, timeTaken, len, bytesRead, speed, bytesRead == len ? STARTED : IN_PROGRESS));
                     }
                 }
             }
@@ -49,6 +49,11 @@ public class Downloader {
             listener.progress(new Event(file, startingTime, timeTaken, len, bytesRead, speed, DONE));
         }
         return file;
+    }
+
+    @FunctionalInterface
+    public interface EventListener {
+        void progress(Event event);
     }
 
     public static class Event {
@@ -69,10 +74,5 @@ public class Downloader {
             this.speed = speed;
             this.type = type;
         }
-    }
-
-    @FunctionalInterface
-    public interface EventListener {
-        void progress(Event event);
     }
 }
