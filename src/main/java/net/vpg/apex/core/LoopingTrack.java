@@ -17,8 +17,9 @@ public class LoopingTrack extends Track {
 
     @Override
     public void play() {
-        getClip().setLoopPoints(getTrackInfo().getLoopStart(), getTrackInfo().getLoopEnd());
-        getClip().loop(Clip.LOOP_CONTINUOUSLY);
+        Clip clip = getClip();
+        clip.setLoopPoints(getTrackInfo().getLoopStart(), getTrackInfo().getLoopEnd());
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
         super.play();
     }
 }

@@ -14,6 +14,7 @@ public class Track {
     private static final Clip clip = new SoftMixingClip(new SoftMixingMixer(), new DataLine.Info(Clip.class, audioFormat));
     private final TrackInfo info;
     private byte[] cache;
+    private volatile boolean isCaching;
 
     public Track(TrackInfo trackInfo) {
         this.info = trackInfo;
@@ -62,12 +63,43 @@ public class Track {
 
     public void ensureCached() {
         if (cache == null) {
-            try {
-                cache = Toolkit.cache(getAudioInputStream(info.getFile()));
-            } catch (IOException | UnsupportedAudioFileException e) {
-                throw new RuntimeException(e);
+            if (isCaching) {
+                System.out.print("Waiting " + getId());
+                while (isCaching) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+                    System.out.print(".");
+                }
+                System.out.println();
+            } else {
+                try {
+                    startCaching();
+                    System.out.println("Caching " + getId());
+                    cache = Toolkit.cache(getAudioInputStream(info.getFile()));
+                    stopCaching();
+                } catch (IOException | UnsupportedAudioFileException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
+    }
+
+    public void clearCache() {
+        if (cache != null) {
+            cache = null;
+            System.out.println("Cache Cleared! " + getId());
+        }
+    }
+
+    public void startCaching() {
+        isCaching = true;
+    }
+
+    public void stopCaching() {
+        isCaching = false;
     }
 
     public byte[] getCache() {

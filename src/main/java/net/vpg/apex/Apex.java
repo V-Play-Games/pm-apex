@@ -8,6 +8,7 @@ import net.vpg.apex.core.Track;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 public class Apex {
@@ -15,6 +16,7 @@ public class Apex {
     ApexWindow window;
     List<Track> playlist = new ArrayList<>();
     int index = 0;
+    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
 
     public static void main(String[] args) throws Exception {
         APEX.start();
@@ -25,6 +27,7 @@ public class Apex {
         window = new ApexWindow();
         updatePlaylist();
         changeTrack(0);
+        updateCaches();
         ApexControl.update();
     }
 
@@ -54,15 +57,18 @@ public class Apex {
                     changeTrack(1);
                     ApexControl.playing = true;
                     ApexControl.stopped = false;
+                    updateCaches();
                     break;
                 case 1:
                     changeTrack(-1);
                     ApexControl.playing = true;
                     ApexControl.stopped = false;
+                    updateCaches();
                     break;
                 case 2:
                     Util.shuffle(playlist);
                     index = playlist.indexOf(track);
+                    updateCaches();
                     break;
                 case 3:
                     stopCurrentTrack();
@@ -108,5 +114,19 @@ public class Apex {
         ApexControl.trackName.setText(current.getName());
         ApexControl.trackDescription.setText(current.getDescription());
         ApexControl.trackId.setText(current.getId());
+    }
+
+    public void updateCaches() {
+        executor.execute(() -> {
+            int start = Math.max(0, index - 3);
+            int end = Math.min(playlist.size(), index + 3);
+            for (int i = 0; i < playlist.size(); i++) {
+                if (start <= i && i <= end) {
+                    playlist.get(i).ensureCached();
+                } else {
+                    playlist.get(i).clearCache();
+                }
+            }
+        });
     }
 }
