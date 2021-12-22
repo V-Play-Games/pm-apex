@@ -64,16 +64,21 @@ public class Track {
     public void ensureCached() {
         if (cache == null) {
             if (isCaching) {
-                System.out.print("Waiting " + getId());
+                System.out.println("Waiting " + getId());
+                int maxWait = 5, current = 0;
                 while (isCaching) {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         // ignore
                     }
-                    System.out.print(".");
+                    current++;
+                    if (maxWait == current) {
+                        isCaching = false;
+                        ensureCached();
+                        return;
+                    }
                 }
-                System.out.println();
             } else {
                 try {
                     startCaching();

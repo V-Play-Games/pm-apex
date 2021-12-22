@@ -28,53 +28,78 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
+import java.util.*;
 
 /**
- * This class is used to convert between 8,16,24,32,32+ bit signed/unsigned
- * big/little endian fixed/floating-point byte buffers and float buffers.
+ * This class is used to convert between audio byte buffers and audio float buffers.
  *
  * @author Karl Helgason
  */
 public abstract class AudioFloatConverter {
+    private static Map<Integer, List<AudioFloatConverter>> cachedConverters = new HashMap<>();
+    protected final int bits;
+    protected final boolean signed;
+    protected final boolean bigEndian;
+
+    protected AudioFloatConverter(AudioFloatConverter converter) {
+        this(converter.bits, converter.signed, converter.bigEndian);
+    }
+
+    protected AudioFloatConverter(AudioFormat format) {
+        this(format.getSampleSizeInBits(), format.getEncoding().equals(Encoding.PCM_SIGNED), format.isBigEndian());
+    }
+
+    protected AudioFloatConverter(int bits, boolean signed, boolean bigEndian) {
+        this.bits = bits;
+        this.signed = signed;
+        this.bigEndian = bigEndian;
+    }
+
     public static AudioFloatConverter getConverter(AudioFormat format) {
         int sampleSize = format.getSampleSizeInBits();
         int mode = (sampleSize + 7) / 8;
-        if (format.getFrameSize() == mode * format.getChannels()) {
-            boolean bigEndian = format.isBigEndian();
-            boolean signed = format.getEncoding().equals(Encoding.PCM_SIGNED);
-            boolean pcm_int = signed || format.getEncoding().equals(Encoding.PCM_UNSIGNED);
-            if (pcm_int) {
-                AudioFloatConverter converter;
-                switch (mode) {
-                    case 1:
-                        converter = new PcmInt8(signed);
-                        break;
-                    case 2:
-                        converter = new PcmInt16(signed, bigEndian);
-                        break;
-                    case 3:
-                        converter = new PcmInt24(signed, bigEndian);
-                        break;
-                    case 4:
-                        converter = new PcmInt32(signed, bigEndian);
-                        break;
-                    default:
-                        converter = new PcmInt32x(signed, bigEndian, mode - 4);
-                        break;
-                }
-                if (sampleSize % 8 == 0)
-                    return converter;
-                else
-                    return new AudioFloatLSBFilter(converter, sampleSize, bigEndian);
-            } else {
-                if (sampleSize == 32)
-                    return new PcmFloat(bigEndian, 32);
-                else if (sampleSize == 64)
-                    return new PcmFloat(bigEndian, 64);
+        if (format.getFrameSize() != mode * format.getChannels()) {
+            return null;
+        }
+        List<AudioFloatConverter> converters = cachedConverters.get(sampleSize);
+        if (converters != null) {
+            AudioFloatConverter cached = converters.stream().filter(c -> c.canConvert(format)).findFirst().orElse(null);
+            if (cached != null) {
+                return cached;
             }
         }
+        if (!format.getEncoding().equals(Encoding.PCM_FLOAT)) {
+            AudioFloatConverter converter;
+            switch (mode) {
+                case 1:
+                    converter = new PcmInt8(format);
+                    break;
+                case 2:
+                    converter = new PcmInt16(format);
+                    break;
+                case 3:
+                    converter = new PcmInt24(format);
+                    break;
+                case 4:
+                    converter = new PcmInt32(format);
+                    break;
+                default:
+                    converter = new PcmInt32x(format, mode - 4);
+                    break;
+            }
+            if (sampleSize % 8 == 0)
+                return cache(converter);
+            else
+                return cache(new AudioFloatLSBFilter(converter));
+        } else if (sampleSize == 32 || sampleSize == 64) {
+            return cache(new PcmFloat(format));
+        }
         return null;
+    }
+
+    private static AudioFloatConverter cache(AudioFloatConverter converter) {
+        cachedConverters.computeIfAbsent(converter.bits, x -> new ArrayList<>()).add(converter);
+        return converter;
     }
 
     public static boolean isSupported(AudioFormat format) {
@@ -84,6 +109,22 @@ public abstract class AudioFloatConverter {
         // should either be PCM_INT, or the sampleSize should be either 32 or 64
         return format.getFrameSize() == (sampleSize + 7) / 8 * format.getChannels()
             && (!format.getEncoding().equals(Encoding.PCM_FLOAT) || (sampleSize == 32 || sampleSize == 64));
+    }
+
+    public int getBits() {
+        return bits;
+    }
+
+    public boolean isSigned() {
+        return signed;
+    }
+
+    public boolean isBigEndian() {
+        return bigEndian;
+    }
+
+    public boolean canConvert(AudioFormat format) {
+        return format.getSampleSizeInBits() == bits && signed == format.getEncoding().equals(Encoding.PCM_SIGNED) && bigEndian == format.isBigEndian();
     }
 
     public abstract float[] toFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len);
@@ -134,11 +175,12 @@ public abstract class AudioFloatConverter {
         private final int stepSize;
         private final byte mask;
 
-        private AudioFloatLSBFilter(AudioFloatConverter converter, int sampleSize, boolean bigEndian) {
+        private AudioFloatLSBFilter(AudioFloatConverter converter) {
+            super(converter);
             this.converter = converter;
-            stepSize = sampleSize / 8 + 1;
+            stepSize = bits / 8 + 1;
             offset = bigEndian ? stepSize - 1 : 0;
-            mask = getMask(sampleSize);
+            mask = getMask(bits);
         }
 
         private static byte getMask(int sampleSize) {
@@ -189,9 +231,10 @@ public abstract class AudioFloatConverter {
         private final ByteOrder order;
         private final int factor;
 
-        private PcmFloat(boolean bigEndian, int bytes) {
+        private PcmFloat(AudioFormat format) {
+            super(format);
             this.order = bigEndian ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN;
-            this.factor = bytes == 32 ? 4 : 8;
+            this.factor = bits == 32 ? 4 : 8;
         }
 
         @Override
@@ -217,7 +260,8 @@ public abstract class AudioFloatConverter {
     private static class PcmInt8 extends AudioFloatConverter {
         private final int difference;
 
-        public PcmInt8(boolean signed) {
+        public PcmInt8(AudioFormat format) {
+            super(format);
             this.difference = signed ? 0x80 : 0;
         }
 
@@ -238,6 +282,11 @@ public abstract class AudioFloatConverter {
             }
             return out;
         }
+
+        @Override
+        public boolean canConvert(AudioFormat format) {
+            return format.getSampleSizeInBits() == bits && signed == format.getEncoding().equals(Encoding.PCM_SIGNED);
+        }
     }
 
     // PCM 16-bit
@@ -246,7 +295,8 @@ public abstract class AudioFloatConverter {
         private final int shift1;
         private final int shift2;
 
-        private PcmInt16(boolean signed, boolean bigEndian) {
+        private PcmInt16(AudioFormat format) {
+            super(format);
             this.difference = signed ? 0x8000 : 0;
             this.shift1 = bigEndian ? 8 : 0;
             this.shift2 = bigEndian ? 0 : 8;
@@ -275,13 +325,12 @@ public abstract class AudioFloatConverter {
 
     // PCM 24-bit
     private static class PcmInt24 extends AudioFloatConverter {
-        private final boolean signed;
         private final int shift1;
         private final int shift2;
         private final int shift3;
 
-        private PcmInt24(boolean signed, boolean bigEndian) {
-            this.signed = signed;
+        private PcmInt24(AudioFormat format) {
+            super(format);
             this.shift1 = bigEndian ? 16 : 0;
             this.shift2 = 8;
             this.shift3 = bigEndian ? 0 : 16;
@@ -321,7 +370,8 @@ public abstract class AudioFloatConverter {
         private final int shift3;
         private final int shift4;
 
-        private PcmInt32(boolean signed, boolean bigEndian) {
+        private PcmInt32(AudioFormat format) {
+            super(format);
             this.difference = signed ? 0x80000000 : 0;
             this.shift1 = bigEndian ? 24 : 0;
             this.shift2 = bigEndian ? 16 : 8;
@@ -357,7 +407,6 @@ public abstract class AudioFloatConverter {
 
     // PCM 32+ bit
     private static class PcmInt32x extends AudioFloatConverter {
-        private final boolean bigEndian;
         private final int xBytes;
         private final int difference;
         private final int shift1;
@@ -365,8 +414,8 @@ public abstract class AudioFloatConverter {
         private final int shift3;
         private final int shift4;
 
-        private PcmInt32x(boolean signed, boolean bigEndian, int xBytes) {
-            this.bigEndian = bigEndian;
+        private PcmInt32x(AudioFormat format, int xBytes) {
+            super(format);
             this.xBytes = xBytes;
             this.difference = signed ? 0x80000000 : 0;
             this.shift1 = bigEndian ? 24 : 0;

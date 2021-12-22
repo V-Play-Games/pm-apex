@@ -16,7 +16,7 @@ public class Apex {
     ApexWindow window;
     List<Track> playlist = new ArrayList<>();
     int index = 0;
-    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
+    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(16);
 
     public static void main(String[] args) throws Exception {
         APEX.start();
@@ -121,10 +121,11 @@ public class Apex {
             int start = Math.max(0, index - 3);
             int end = Math.min(playlist.size(), index + 3);
             for (int i = 0; i < playlist.size(); i++) {
+                Track track = playlist.get(i);
                 if (start <= i && i <= end) {
-                    playlist.get(i).ensureCached();
+                    executor.execute(track::ensureCached);
                 } else {
-                    playlist.get(i).clearCache();
+                    executor.execute(track::clearCache);
                 }
             }
         });
