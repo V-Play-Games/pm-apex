@@ -49,6 +49,10 @@ public class Apex {
         return index;
     }
 
+    public ScheduledThreadPoolExecutor getExecutor() {
+        return executor;
+    }
+
     public void takeAction(int action) {
         synchronized (this) {
             Track track = getPlaylist().get(getIndex());
