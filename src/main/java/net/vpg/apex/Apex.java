@@ -55,7 +55,7 @@ public class Apex {
     }
 
     public void takeAction(int action) {
-        synchronized (this) {
+        executor.execute(() -> {
             Track track = getCurrentTrack();
             switch (action) {
                 case 0:
@@ -102,7 +102,7 @@ public class Apex {
                     updateCaches();
             }
             ApexControl.update();
-        }
+        });
     }
 
     public boolean searchAndPlay(int start, int end) {
@@ -118,7 +118,7 @@ public class Apex {
     }
 
     public Track getCurrentTrack() {
-       return playlist.get(index);
+        return playlist.get(index);
     }
 
     public void stopCurrentTrack() {

@@ -3,7 +3,8 @@ package net.vpg.apex.core;
 import net.vpg.apex.Util;
 import net.vpg.vjson.value.JSONArray;
 import net.vpg.vjson.value.JSONObject;
-import net.vpg.vjson.value.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -21,12 +22,12 @@ import java.util.stream.Collectors;
 public class TrackInfo {
     public static final Pattern loopStartPattern = Pattern.compile("LOOPSTART=(\\d+)");
     public static final Pattern loopEndPattern = Pattern.compile("LOOPEND=(\\d+)");
+    private static final Logger logger = LoggerFactory.getLogger(TrackInfo.class);
     public static final Map<String, TrackInfo> entries =
         Util.compute(Resources.getFile("tracks.json"), JSONObject::parse)
             .getArray("entries")
             .stream(JSONArray::getObject)
             .collect(Collectors.toMap(jo -> jo.getString("id"), TrackInfo::new));
-    static final JSONValue notAvailable = JSONValue.of("N/A");
     private JSONObject jo;
     private File file;
     private String id;
@@ -39,7 +40,9 @@ public class TrackInfo {
 
     private TrackInfo(JSONObject data) {
         jo = data;
-        String fileName = data.getString("id") + ".ogg";
+        String id = data.getString("id");
+        logger.info("Loaded Track Info for ID: " + id);
+        String fileName = id + ".ogg";
         if (Resources.hasFile(fileName)) {
             init(Resources.getFile(fileName));
         }
@@ -55,11 +58,10 @@ public class TrackInfo {
     }
 
     private static TrackInfo getInfo(String id) {
-        JSONObject obj = new JSONObject();
-        obj.put("id", JSONValue.of(id));
-        obj.put("name", notAvailable);
-        obj.put("description", notAvailable);
-        return new TrackInfo(obj);
+        return new TrackInfo(new JSONObject()
+            .put("id", id)
+            .put("name", "N/A")
+            .put("description", "N/A"));
     }
 
     public Track getTrack() {
@@ -68,7 +70,6 @@ public class TrackInfo {
 
     private void init(File file) {
         this.file = file;
-        System.out.println("Loaded " + file.getName());
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {

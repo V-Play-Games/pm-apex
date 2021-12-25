@@ -49,8 +49,7 @@ public class DownloadTask implements Downloader.EventListener {
         downloaded += e.bytesRead;
         int fileProgress = (int) (e.totalBytesRead * 100 / track.size);
         int totalProgress = (int) (downloaded * 100 / totalSize);
-        ApexControl.fileProgressText.setText("Downloading " + track.name + " | "
-            + Util.bytesToString(e.totalBytesRead) + "/" + Util.bytesToString(track.size));
+        ApexControl.fileProgressText.setText("Downloading " + track.name + " | " + Util.bytesToString(e.totalBytesRead) + "/" + Util.bytesToString(track.size));
         ApexControl.totalProgressText.setText("Total Progress: " + Util.bytesToString(downloaded) + "/" + Util.bytesToString(totalSize));
         ApexControl.fileProgressBar.setValue(fileProgress);
         ApexControl.fileProgressBar.setString(fileProgress + "%");
