@@ -36,7 +36,7 @@ public class DownloadTask implements Downloader.EventListener {
             }
             OnlineTrack track = tracks.get(index);
             try {
-                Downloader.download(Resources.baseDownloadUrl + track.name, this);
+                Downloader.download(Resources.getInstance().getBaseDownloadUrl() + track.name, this);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

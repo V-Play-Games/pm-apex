@@ -24,28 +24,27 @@ public class TrackInfo {
     public static final Pattern loopEndPattern = Pattern.compile("LOOPEND=(\\d+)");
     private static final Logger logger = LoggerFactory.getLogger(TrackInfo.class);
     public static final Map<String, TrackInfo> entries =
-        Util.compute(Resources.getFile("tracks.json"), JSONObject::parse)
+        Util.compute(Resources.get("tracks.json"), JSONObject::parse)
             .getArray("entries")
             .stream(JSONArray::getObject)
-            .collect(Collectors.toMap(jo -> jo.getString("id"), TrackInfo::new));
-    private JSONObject jo;
-    private File file;
-    private String id;
-    private String name;
-    private String description;
+            .map(TrackInfo::new)
+            .collect(Collectors.toMap(TrackInfo::getId, info -> info));
+    private final String id;
+    private final String name;
+    private final String description;
     private Track track;
+    private File file;
     private boolean initDone = false;
     private int loopStart = -1;
     private int loopEnd = -1;
 
     private TrackInfo(JSONObject data) {
-        jo = data;
-        String id = data.getString("id");
+        id = data.getString("id");
+        name = data.getString("name");
+        description = data.getString("description");
         logger.info("Loaded Track Info for ID: " + id);
         String fileName = id + ".ogg";
-        if (Resources.hasFile(fileName)) {
-            init(Resources.getFile(fileName));
-        }
+        Resources.getInstance().ifFileExists(fileName, this::init, null);
     }
 
     public static TrackInfo get(File file) {
@@ -90,9 +89,6 @@ public class TrackInfo {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        id = jo.getString("id");
-        name = jo.getString("name");
-        description = jo.getString("description");
         initDone = true;
     }
 

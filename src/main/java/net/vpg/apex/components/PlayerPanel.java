@@ -13,6 +13,8 @@ public class PlayerPanel extends JPanel {
         this.setLayout(new BorderLayout());
         Box box = Box.createVerticalBox();
         this.add(box, "North");
+        box.add(new JScrollPane(new JList<>(ApexControl.trackList)));
+        box.add(Box.createHorizontalStrut(5));
         box.add(ApexControl.trackName);
         box.add(Box.createVerticalStrut(5));
         box.add(ApexControl.trackDescription);

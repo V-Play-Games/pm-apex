@@ -33,13 +33,15 @@ public class Apex {
     }
 
     private void updatePlaylist() {
-        playlist = Resources.getResources()
+        playlist = Resources.getInstance()
+            .getResources()
             .values()
             .stream()
             .filter(f -> f.getName().endsWith(".ogg"))
             .map(Track::get)
             .sorted(Comparator.comparing(Track::getId))
             .collect(Collectors.toList());
+        playlist.forEach(track -> ApexControl.trackList.addElement(track.getName()));
     }
 
     public List<Track> getPlaylist() {

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "repo": "V-Play-Games/pm-apex",
+  "additionalRes": "bgm",
+  "appName": "Apex",
+  "required": [
+    "bgm_battle01.ogg",
+    "icon.png",
+    "tracks.json"
+  ]
+}

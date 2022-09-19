@@ -25,11 +25,13 @@ public class ApexControl {
     public static JButton search;
     public static JButton lookupTracks;
     public static JButton downloadAll;
+    public static DefaultListModel<String> trackList;
     public static boolean playing = true;
     public static boolean stopped = false;
 
     public static void init() throws Exception {
         Util.lookAndFeel();
+        trackList = new DefaultListModel<>();
         trackName = Util.makeTextArea("Track Name");
         trackDescription = Util.makeTextArea("Track Description");
         trackId = Util.makeTextArea("Track ID");
