@@ -205,11 +205,11 @@ public abstract class SoftMixingDataLine implements DataLine {
         private final int pad2;
         private final AtomicFloat ix = new AtomicFloat();
         private final AtomicInteger ox = new AtomicInteger();
+        private final SoftResampler resampler;
+        private final int nrofchannels;
         private float[] skipbuffer;
-        private SoftResampler resampler;
         private float ibuffer_index;
         private int ibuffer_len;
-        private int nrofchannels;
         private float[][] cbuffer;
         private float[][] mark_ibuffer = null;
         private float mark_ibuffer_index = 0;

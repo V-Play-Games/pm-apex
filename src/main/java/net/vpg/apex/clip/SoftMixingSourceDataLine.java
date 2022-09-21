@@ -25,6 +25,8 @@
 
 package net.vpg.apex.clip;
 
+import net.vpg.apex.Util;
+
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,11 +75,7 @@ public class SoftMixingSourceDataLine extends SoftMixingDataLine implements Sour
                 if (l == len)
                     return l;
             }
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                return l;
-            }
+            Util.sleep(1);
             if (!isRunning())
                 return l;
         }
@@ -180,11 +178,7 @@ public class SoftMixingSourceDataLine extends SoftMixingDataLine implements Sour
                 if (cycling_avail == 0)
                     return;
             }
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                return;
-            }
+            Util.sleep(1);
         }
     }
 

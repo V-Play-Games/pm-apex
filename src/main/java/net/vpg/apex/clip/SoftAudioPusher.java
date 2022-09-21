@@ -25,6 +25,8 @@
 
 package net.vpg.apex.clip;
 
+import net.vpg.apex.Util;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.SourceDataLine;
 import java.io.IOException;
@@ -37,8 +39,8 @@ import java.io.IOException;
 public final class SoftAudioPusher implements Runnable {
     private final AudioInputStream ais;
     private final byte[] buffer;
+    private final SourceDataLine line;
     private volatile boolean active = false;
-    private SourceDataLine line;
     private Thread thread;
 
     public SoftAudioPusher(SourceDataLine line, AudioInputStream ais, int size) {
@@ -61,11 +63,7 @@ public final class SoftAudioPusher implements Runnable {
     public synchronized void stop() {
         if (!active) return;
         active = false;
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            // ignore
-        }
+        Util.run(thread::join);
     }
 
     @Override

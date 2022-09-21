@@ -22,7 +22,7 @@ public class ApexWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
-        setMinimumSize(new Dimension(500, 260));
+        setMinimumSize(new Dimension(500, 400));
         setIconImage(ImageIO.read(Resources.get("icon.png")));
         pack();
         setVisible(true);

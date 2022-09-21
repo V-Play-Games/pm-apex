@@ -18,10 +18,10 @@ public class CreditsPanel extends JPanel {
             "It also has looping support, which means you can loop your favourite battle theme for as long as you want. " +
             "It also comes preloaded with some battle themes. You can download more tracks as well!" +
             "Have Fun!");
-        addTextArea(box, 5, Util.apply(new WrappedTextArea("Credits"), jLabel -> jLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14))));
-        addTextArea(box, 3, "V Play Games - The Author and Maintainer of this project");
+        addTextArea(box, 5, Util.apply(new WrappedTextArea("Credits"), textArea -> textArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14))));
+        addTextArea(box, 3, "V Play Games#9783 - The Author and Maintainer of this project");
         addTextArea(box, 3, "Trilarion (GitHub) - For Providing OGG File Support");
-        addTextArea(box, 3, "Made with Java 8 (Build: 261) using IntelliJ IDE\nBuilt with Maven 3");
+        addTextArea(box, 3, "Made with Java, Built with Maven 3");
     }
 
     public void addTextArea(Box box, int trailingStrutHeight, String text) {

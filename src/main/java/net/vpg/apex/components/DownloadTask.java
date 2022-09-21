@@ -29,9 +29,11 @@ public class DownloadTask implements Downloader.EventListener {
     public void downloadNext() {
         executor.execute(() -> {
             index++;
-            onEachFileDownloaded.run();
             if (index == tracks.size()) {
                 ApexWindow.downloadPanel.hideDownload();
+                ApexControl.lookupTracks.setEnabled(true);
+                ApexControl.downloadAll.setEnabled(true);
+                onEachFileDownloaded.run();
                 return;
             }
             OnlineTrack track = tracks.get(index);
@@ -40,6 +42,7 @@ public class DownloadTask implements Downloader.EventListener {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            onEachFileDownloaded.run();
         });
     }
 

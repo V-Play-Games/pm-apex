@@ -138,7 +138,7 @@ public class Resources {
     }
 
     public String getBaseDownloadUrl() {
-        return "https://raw.githubusercontent.com/" + repo + "/release/" + additionalRes;
+        return "https://raw.githubusercontent.com/" + repo + "/release/" + additionalRes + "/";
     }
 
     public File create(String filename) {

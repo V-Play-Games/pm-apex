@@ -33,14 +33,15 @@ import java.util.Arrays;
  * @author Karl Helgason
  */
 public final class SoftChorus extends SoftAudioProcessor {
+    private final LFODelay delayL;
+    private final LFODelay delayR;
+    private final float controlRate;
     double silentCounter = 1000;
     private boolean mix = true;
     private SoftAudioBuffer input;
     private SoftAudioBuffer left;
     private SoftAudioBuffer right;
     private SoftAudioBuffer reverb;
-    private LFODelay delayL;
-    private LFODelay delayR;
     private float rGain = 0;
     private boolean dirty = true;
     private double dirty_delayL_rate;
@@ -51,7 +52,6 @@ public final class SoftChorus extends SoftAudioProcessor {
     private float dirty_delayR_feedback;
     private float dirty_delayL_reverbSendGain;
     private float dirty_delayR_reverbSendGain;
-    private float controlRate;
 
     public SoftChorus(float sampleRate, float controlRate) {
         super(sampleRate, controlRate);

@@ -133,7 +133,7 @@ public abstract class AudioFloatInputStream {
             if (pos >= buffer_len) return -1;
             if (len == 0) return 0;
             if (pos + len > buffer_len) len = buffer_len - pos;
-            converter.toFloatArray(buffer, buffer_offset + pos * frameSizePerChannel, b, off, len);
+            converter.copyToFloatArray(buffer, buffer_offset + pos * frameSizePerChannel, b, off, len);
             pos += len;
             return len;
         }
@@ -215,7 +215,7 @@ public abstract class AudioFloatInputStream {
             if (buffer == null || buffer.length < b_len) buffer = new byte[b_len];
             int read = stream.read(buffer, 0, b_len);
             if (read == -1) return -1;
-            converter.toFloatArray(buffer, b, off, read / frameSizePerChannel);
+            converter.copyToFloatArray(buffer, b, off, read / frameSizePerChannel);
             return read / frameSizePerChannel;
         }
 

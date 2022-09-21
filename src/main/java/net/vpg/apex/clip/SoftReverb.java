@@ -36,12 +36,13 @@ import java.util.Arrays;
  */
 public class SoftReverb extends SoftAudioProcessor {
     private static final int[] combs = {1116, 1188, 1277, 1356, 1422, 1491, 1557, 1617};
+    private final Delay delay;
+    private final Comb[] combL;
+    private final Comb[] combR;
+    private final AllPass[] allpassL;
+    private final AllPass[] allpassR;
+    private final float samplerate;
     private float gain = 1;
-    private Delay delay;
-    private Comb[] combL;
-    private Comb[] combR;
-    private AllPass[] allpassL;
-    private AllPass[] allpassR;
     private float[] input;
     private float[] out;
     private float[] pre1;
@@ -57,7 +58,6 @@ public class SoftReverb extends SoftAudioProcessor {
     private float dirty_damp;
     private float dirty_predelay;
     private float dirty_gain;
-    private float samplerate;
     private boolean light = true;
     private boolean silent = true;
 

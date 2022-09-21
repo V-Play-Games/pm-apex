@@ -99,7 +99,7 @@ public final class SoftAudioBuffer {
     public void get(byte[] buffer, int channel) {
         int channels = format.getChannels();
         if (channels == 1) {
-            converter.toByteArray(getArray(), size, buffer);
+            converter.copyToByteArray(getArray(), size, buffer);
             return;
         }
         if (channel >= channels) {
@@ -111,7 +111,7 @@ public final class SoftAudioBuffer {
         if (converter_buffer == null || converter_buffer.length < c_len) {
             converter_buffer = new byte[c_len];
         }
-        converter.toByteArray(getArray(), size, converter_buffer);
+        converter.copyToByteArray(getArray(), size, converter_buffer);
         for (int j = 0; j < frameSizePerChannel; j++) {
             int k = j;
             int z = channel * frameSizePerChannel + j;

@@ -36,7 +36,7 @@ import java.util.*;
  * @author Karl Helgason
  */
 public abstract class AudioFloatConverter {
-    private static Map<Integer, List<AudioFloatConverter>> cachedConverters = new HashMap<>();
+    private static final Map<Integer, List<AudioFloatConverter>> cachedConverters = new HashMap<>();
     protected final int bits;
     protected final boolean signed;
     protected final boolean bigEndian;
@@ -127,40 +127,40 @@ public abstract class AudioFloatConverter {
         return format.getSampleSizeInBits() == bits && signed == format.getEncoding().equals(Encoding.PCM_SIGNED) && bigEndian == format.isBigEndian();
     }
 
-    public abstract float[] toFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len);
+    public abstract void copyToFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len);
 
-    public final float[] toFloatArray(byte[] in, float[] out, int outOffset, int len) {
-        return toFloatArray(in, 0, out, outOffset, len);
+    public final void copyToFloatArray(byte[] in, float[] out, int outOffset, int len) {
+        copyToFloatArray(in, 0, out, outOffset, len);
     }
 
-    public final float[] toFloatArray(byte[] in, int inOffset, float[] out, int len) {
-        return toFloatArray(in, inOffset, out, 0, len);
+    public final void copyToFloatArray(byte[] in, int inOffset, float[] out, int len) {
+        copyToFloatArray(in, inOffset, out, 0, len);
     }
 
-    public final float[] toFloatArray(byte[] in, float[] out, int len) {
-        return toFloatArray(in, 0, out, 0, len);
+    public final void copyToFloatArray(byte[] in, float[] out, int len) {
+        copyToFloatArray(in, 0, out, 0, len);
     }
 
-    public final float[] toFloatArray(byte[] in, float[] out) {
-        return toFloatArray(in, 0, out, 0, out.length);
+    public final void copyToFloatArray(byte[] in, float[] out) {
+        copyToFloatArray(in, 0, out, 0, out.length);
     }
 
-    public abstract byte[] toByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset);
+    public abstract void copyToByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset);
 
-    public final byte[] toByteArray(float[] in, int len, byte[] out, int outOffset) {
-        return toByteArray(in, 0, len, out, outOffset);
+    public final void copyToByteArray(float[] in, int len, byte[] out, int outOffset) {
+        copyToByteArray(in, 0, len, out, outOffset);
     }
 
-    public final byte[] toByteArray(float[] in, int inOffset, int len, byte[] out) {
-        return toByteArray(in, inOffset, len, out, 0);
+    public final void copyToByteArray(float[] in, int inOffset, int len, byte[] out) {
+        copyToByteArray(in, inOffset, len, out, 0);
     }
 
-    public final byte[] toByteArray(float[] in, int len, byte[] out) {
-        return toByteArray(in, 0, len, out, 0);
+    public final void copyToByteArray(float[] in, int len, byte[] out) {
+        copyToByteArray(in, 0, len, out, 0);
     }
 
-    public final byte[] toByteArray(float[] in, byte[] out) {
-        return toByteArray(in, 0, in.length, out, 0);
+    public final void copyToByteArray(float[] in, byte[] out) {
+        copyToByteArray(in, 0, in.length, out, 0);
     }
 
     /**
@@ -207,21 +207,20 @@ public abstract class AudioFloatConverter {
         }
 
         @Override
-        public byte[] toByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
-            byte[] buffer = converter.toByteArray(in, inOffset, len, out, outOffset);
+        public void copyToByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
+            converter.copyToByteArray(in, inOffset, len, out, outOffset);
             for (int i = outOffset + offset, outOffset_end = len * stepSize; i < outOffset_end; i += stepSize) {
                 out[i] = (byte) (out[i] & mask);
             }
-            return buffer;
         }
 
         @Override
-        public float[] toFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
+        public void copyToFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
             byte[] masked_buffer = Arrays.copyOf(in, in.length);
             for (int i = inOffset + offset, inOffset_end = len * stepSize; i < inOffset_end; i += stepSize) {
                 masked_buffer[i] = (byte) (masked_buffer[i] & mask);
             }
-            return converter.toFloatArray(masked_buffer, inOffset, out, outOffset, len);
+            converter.copyToFloatArray(masked_buffer, inOffset, out, outOffset, len);
         }
 
     }
@@ -238,21 +237,19 @@ public abstract class AudioFloatConverter {
         }
 
         @Override
-        public float[] toFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int length) {
+        public void copyToFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int length) {
             int len = length * factor;
             ByteBuffer bytebuffer = ByteBuffer.allocate(len).order(order);
             bytebuffer.put(in, inOffset, len);
             bytebuffer.asFloatBuffer().get(out, outOffset, length);
-            return out;
         }
 
         @Override
-        public byte[] toByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
+        public void copyToByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
             int length = len * factor;
             ByteBuffer bytebuffer = ByteBuffer.allocate(length).order(order);
             bytebuffer.asFloatBuffer().put(in, inOffset, len);
             bytebuffer.get(out, outOffset, length);
-            return out;
         }
     }
 
@@ -266,21 +263,19 @@ public abstract class AudioFloatConverter {
         }
 
         @Override
-        public float[] toFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
+        public void copyToFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
             for (int i = outOffset, fence = outOffset + len; i < fence; i++) {
                 int x = in[inOffset++] - difference;
                 out[i] = x > 0 ? x / 127.0f : x / 128.0f;
             }
-            return out;
         }
 
         @Override
-        public byte[] toByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
+        public void copyToByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
             for (int i = inOffset, fence = inOffset + len; i < fence; i++) {
                 float x = in[i];
                 out[outOffset++] = (byte) (difference + (x > 0 ? x * 127 : x * 128));
             }
-            return out;
         }
 
         @Override
@@ -303,23 +298,21 @@ public abstract class AudioFloatConverter {
         }
 
         @Override
-        public float[] toFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
+        public void copyToFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
             for (int i = outOffset, fence = outOffset + len; i < fence; i++) {
                 int x = ((in[inOffset++] & 0xFF) << shift1 | (in[inOffset++] & 0xFF) << shift2) - difference;
                 out[i] = x > 0 ? x / 32767.0f : x / 32768.0f;
             }
-            return out;
         }
 
         @Override
-        public byte[] toByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
+        public void copyToByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
             for (int i = inOffset, fence = inOffset + len; i < fence; i++) {
                 float f = in[i];
                 int x = (int) (f > 0 ? f * 32767 : f * 32768) + difference;
                 out[outOffset++] = (byte) (x >>> shift1);
                 out[outOffset++] = (byte) (x >>> shift2);
             }
-            return out;
         }
     }
 
@@ -337,7 +330,7 @@ public abstract class AudioFloatConverter {
         }
 
         @Override
-        public float[] toFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
+        public void copyToFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
             for (int i = outOffset, fence = outOffset + len; i < fence; i++) {
                 int x = (in[inOffset++] & 0xFF) << shift1 |
                     (in[inOffset++] & 0xFF) << shift2 |
@@ -345,11 +338,10 @@ public abstract class AudioFloatConverter {
                 x -= signed ? 0x800000 : x > 0x7FFFFF ? 0x1000000 : 0;
                 out[i] = x > 0 ? x / 8388607.0f : x / 8388608.0f;
             }
-            return out;
         }
 
         @Override
-        public byte[] toByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
+        public void copyToByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
             for (int i = inOffset, fence = inOffset + len; i < fence; i++) {
                 float f = in[i];
                 int x = (int) (f > 0 ? f * 8388607.0f : f * 8388608.0f);
@@ -358,7 +350,6 @@ public abstract class AudioFloatConverter {
                 out[outOffset++] = (byte) (x >>> shift2);
                 out[outOffset++] = (byte) (x >>> shift1);
             }
-            return out;
         }
     }
 
@@ -380,7 +371,7 @@ public abstract class AudioFloatConverter {
         }
 
         @Override
-        public float[] toFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
+        public void copyToFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
             for (int i = outOffset, fence = outOffset + len; i < fence; i++) {
                 int x = ((in[inOffset++] & 0xFF) << shift1 |
                     (in[inOffset++] & 0xFF) << shift2 |
@@ -389,11 +380,10 @@ public abstract class AudioFloatConverter {
                     - difference;
                 out[i] = x / (float) 0x7FFFFFFF;
             }
-            return out;
         }
 
         @Override
-        public byte[] toByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
+        public void copyToByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
             for (int i = inOffset, fence = inOffset + len; i < fence; i++) {
                 int x = (int) (in[i] * 0x7FFFFFFF) + difference;
                 out[outOffset++] = (byte) (x >>> shift1);
@@ -401,7 +391,6 @@ public abstract class AudioFloatConverter {
                 out[outOffset++] = (byte) (x >>> shift3);
                 out[outOffset++] = (byte) (x >>> shift4);
             }
-            return out;
         }
     }
 
@@ -425,7 +414,7 @@ public abstract class AudioFloatConverter {
         }
 
         @Override
-        public float[] toFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
+        public void copyToFloatArray(byte[] in, int inOffset, float[] out, int outOffset, int len) {
             for (int i = outOffset, fence = outOffset + len; i < fence; i++) {
                 int x = ((in[inOffset++] & 0xFF) << shift1 |
                     (in[inOffset++] & 0xFF) << shift2 |
@@ -435,11 +424,10 @@ public abstract class AudioFloatConverter {
                 inOffset += xBytes;
                 out[i] = x / 2147483647.0f;
             }
-            return out;
         }
 
         @Override
-        public byte[] toByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
+        public void copyToByteArray(float[] in, int inOffset, int len, byte[] out, int outOffset) {
             for (int i = inOffset, fence = inOffset + len; i < fence; i++) {
                 int x = (int) (in[i] * 2147483647.0f) + difference;
                 if (!bigEndian) for (int j = 0; j < xBytes; j++) out[outOffset++] = 0;
@@ -449,7 +437,6 @@ public abstract class AudioFloatConverter {
                 out[outOffset++] = (byte) (x >>> shift4);
                 if (bigEndian) for (int j = 0; j < xBytes; j++) out[outOffset++] = 0;
             }
-            return out;
         }
     }
 }

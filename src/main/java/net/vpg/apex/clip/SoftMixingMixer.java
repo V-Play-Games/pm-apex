@@ -24,6 +24,8 @@
  */
 package net.vpg.apex.clip;
 
+import net.vpg.apex.Util;
+
 import javax.sound.sampled.*;
 import javax.sound.sampled.Control.Type;
 import java.io.IOException;
@@ -221,12 +223,7 @@ public class SoftMixingMixer implements Mixer {
                 // this may result in synchronized conflict between the pusher and
                 // current thread.
                 tempPusher.stop();
-
-                try {
-                    tempPusherStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                Util.run(tempPusherStream::close);
             }
         }
 
@@ -393,9 +390,9 @@ public class SoftMixingMixer implements Mixer {
         }
         List<SoftAudioProcessor> processors = Arrays.asList(chorus, reverb, limiter);
         InputStream in = new InputStream() {
+            final byte[] buffer = new byte[bufferSize * (format.getSampleSizeInBits() / 8) * channels];
+            final byte[] single = new byte[1];
             int bufferPos = 0;
-            byte[] buffer = new byte[bufferSize * (format.getSampleSizeInBits() / 8) * channels];
-            byte[] single = new byte[1];
 
             public void fillBuffer() {
                 for (SoftAudioBuffer buffer : buffers) {

@@ -6,12 +6,25 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 import static net.vpg.apex.Apex.APEX;
 
 public class Util {
+    public static void sleep(int millis) {
+        run(() -> Thread.sleep(millis));
+    }
+
+    public static void run(RunnableWithAChanceOfException runnable) {
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @SafeVarargs
     public static <E> E apply(E input, ConsumerWithAChanceOfException<E>... functions) {
         for (ConsumerWithAChanceOfException<E> consumer : functions) {
@@ -64,12 +77,18 @@ public class Util {
             button -> button.addActionListener(e -> APEX.takeAction(action)));
     }
 
-    public static WrappedTextArea makeTextArea(String toolTip) {
-        return makeTextArea("Loading...", toolTip);
+    @SafeVarargs
+    public static WrappedTextArea makeTextArea(String toolTip, ConsumerWithAChanceOfException<WrappedTextArea>... actions) {
+        return makeTextArea("Loading...", toolTip, actions);
     }
 
-    public static WrappedTextArea makeTextArea(String name, String toolTip) {
-        return Util.apply(new WrappedTextArea(name), text -> text.setToolTipText(toolTip));
+    @SuppressWarnings("unchecked")
+    @SafeVarargs
+    public static WrappedTextArea makeTextArea(String name, String toolTip, ConsumerWithAChanceOfException<WrappedTextArea>... actions) {
+        List<ConsumerWithAChanceOfException<WrappedTextArea>> actualActions = new ArrayList<>();
+        Collections.addAll(actualActions, actions);
+        actualActions.add(text -> text.setToolTipText(toolTip));
+        return Util.apply(new WrappedTextArea(name), actualActions.toArray(new ConsumerWithAChanceOfException[0]));
     }
 
     public static void lookAndFeel() throws Exception {
@@ -97,6 +116,10 @@ public class Util {
         for (int i = base.size(); i > 0; i--) {
             base.add(base.remove(random.nextInt(i)));
         }
+    }
+
+    public interface RunnableWithAChanceOfException {
+        void run() throws Exception;
     }
 
     public interface ConsumerWithAChanceOfException<E> {

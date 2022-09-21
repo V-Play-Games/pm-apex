@@ -6,6 +6,7 @@ import net.vpg.apex.core.ApexThreadFactory;
 import net.vpg.apex.core.Resources;
 import net.vpg.apex.core.Track;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -41,7 +42,14 @@ public class Apex {
             .map(Track::get)
             .sorted(Comparator.comparing(Track::getId))
             .collect(Collectors.toList());
-        playlist.forEach(track -> ApexControl.trackList.addElement(track.getName()));
+        updateListModel();
+    }
+
+    private void updateListModel() {
+        ApexControl.trackListModel.clear();
+        ApexControl.trackListModel.addAll(playlist.stream().map(Track::getName).collect(Collectors.toList()));
+        ApexControl.trackList.setSelectedIndex(index);
+        updateScrollBar();
     }
 
     public List<Track> getPlaylist() {
@@ -62,19 +70,14 @@ public class Apex {
             switch (action) {
                 case 0:
                     changeTrack(1);
-                    ApexControl.playing = true;
-                    ApexControl.stopped = false;
-                    updateCaches();
                     break;
                 case 1:
                     changeTrack(-1);
-                    ApexControl.playing = true;
-                    ApexControl.stopped = false;
-                    updateCaches();
                     break;
                 case 2:
                     Util.shuffle(playlist);
                     index = playlist.indexOf(track);
+                    updateListModel();
                     updateCaches();
                     break;
                 case 3:
@@ -96,12 +99,15 @@ public class Apex {
                     if (!searchAndPlay(index + 1, playlist.size())) {
                         searchAndPlay(0, index);
                     }
-                    updateCaches();
                     break;
                 case 6:
                     updatePlaylist();
                     index = playlist.indexOf(track);
                     updateCaches();
+                    break;
+                case 7:
+                    changeTrack(ApexControl.trackList.getSelectedIndex() - index);
+                    break;
             }
             ApexControl.update();
         });
@@ -111,7 +117,14 @@ public class Apex {
         String searchText = ApexControl.searchTextArea.getText().toLowerCase();
         for (int i = start; i < end; i++) {
             Track t = playlist.get(i);
-            if (t.getName().toLowerCase().contains(searchText) || t.getId().contains(searchText)) {
+            if (t.getId().contains(searchText)) {
+                changeTrack(t, i);
+                return true;
+            }
+        }
+        for (int i = start; i < end; i++) {
+            Track t = playlist.get(i);
+            if (t.getName().toLowerCase().contains(searchText)) {
                 changeTrack(t, i);
                 return true;
             }
@@ -138,10 +151,27 @@ public class Apex {
     public void changeTrack(Track track, int index) {
         stopCurrentTrack();
         this.index = index;
+        updateCaches();
         track.play();
+        updateScrollBar();
         ApexControl.trackName.setText(track.getName());
         ApexControl.trackDescription.setText(track.getDescription());
         ApexControl.trackId.setText(track.getId());
+        ApexControl.playing = true;
+        ApexControl.stopped = false;
+        ApexControl.trackList.setSelectedIndex(index);
+    }
+
+    private void updateScrollBar() {
+        JScrollBar scrollBar = ApexControl.trackListPane.getVerticalScrollBar();
+        int rowHeight = scrollBar.getMaximum() / playlist.size();
+        int firstVisibleIndex = scrollBar.getValue() / rowHeight;
+        int visibleAmount = scrollBar.getVisibleAmount() / rowHeight;
+        if (index < firstVisibleIndex) {
+            scrollBar.setValue(index * rowHeight);
+        } else if (index > firstVisibleIndex + visibleAmount - 1) {
+            scrollBar.setValue(Math.min(index - visibleAmount + 1, playlist.size() - visibleAmount + 1) * rowHeight);
+        }
     }
 
     public void updateCaches() {

@@ -3,6 +3,7 @@ package net.vpg.apex.components;
 import net.vpg.apex.Util;
 
 import javax.swing.*;
+import java.awt.*;
 
 import static net.vpg.apex.Apex.APEX;
 
@@ -25,16 +26,18 @@ public class ApexControl {
     public static JButton search;
     public static JButton lookupTracks;
     public static JButton downloadAll;
-    public static DefaultListModel<String> trackList;
+    public static DefaultListModel<String> trackListModel;
+    public static JList<String> trackList;
+    public static JScrollPane trackListPane;
     public static boolean playing = true;
     public static boolean stopped = false;
 
     public static void init() throws Exception {
         Util.lookAndFeel();
-        trackList = new DefaultListModel<>();
-        trackName = Util.makeTextArea("Track Name");
+        trackListModel = new DefaultListModel<>();
+        trackName = Util.makeTextArea("Track Name", textArea -> textArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12)));
         trackDescription = Util.makeTextArea("Track Description");
-        trackId = Util.makeTextArea("Track ID");
+        trackId = Util.makeTextArea("Track ID", textArea -> textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12)));
         trackIndex = Util.makeTextArea("Index of the track in the playlist");
         searchTextArea = new SearchTextArea("Search and Play");
 
