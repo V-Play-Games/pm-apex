@@ -26,6 +26,7 @@ public class ApexControl {
     public static JButton search;
     public static JButton lookupTracks;
     public static JButton downloadAll;
+    public static JButton surpriseMe;
     public static DefaultListModel<String> trackListModel;
     public static JList<String> trackList;
     public static JScrollPane trackListPane;
@@ -48,6 +49,7 @@ public class ApexControl {
         playPause = Util.makeButton("Play", "Play the track", 4);
         search = Util.makeButton("Search and Play", "Type the name of a track above to search and play it" +
             "For example: Typing 'Wally' plays 'Battle! Wally'", 5);
+        surpriseMe = Util.makeButton("Surprise Me!", "Plays a random track", 8);
 
         tracksFound = new WrappedTextArea("0 new tracks found");
         fileProgressText = new WrappedTextArea();

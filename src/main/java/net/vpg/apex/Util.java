@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import static net.vpg.apex.Apex.APEX;
 
@@ -112,10 +111,13 @@ public class Util {
     }
 
     public static <E> void shuffle(List<E> base) {
-        Random random = new Random();
         for (int i = base.size(); i > 0; i--) {
-            base.add(base.remove(random.nextInt(i)));
+            base.add(base.remove(random(0, i)));
         }
+    }
+
+    public static int random(int from, int to) {
+        return (int) (Math.random() * (to - from) + from);
     }
 
     public interface RunnableWithAChanceOfException {

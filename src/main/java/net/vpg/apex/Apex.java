@@ -28,7 +28,7 @@ public class Apex {
         ApexControl.init();
         window = new ApexWindow();
         updatePlaylist();
-        changeTrack(0);
+        setIndex(0);
         updateCaches();
         ApexControl.update();
     }
@@ -60,6 +60,10 @@ public class Apex {
         return index;
     }
 
+    public void setIndex(int target) {
+        modifyAndUpdateApp(playlist.get(target), target);
+    }
+
     public ScheduledThreadPoolExecutor getExecutor() {
         return executor;
     }
@@ -69,10 +73,10 @@ public class Apex {
             Track track = getCurrentTrack();
             switch (action) {
                 case 0:
-                    changeTrack(1);
+                    setIndex(index + 1);
                     break;
                 case 1:
-                    changeTrack(-1);
+                    setIndex(index - 1);
                     break;
                 case 2:
                     Util.shuffle(playlist);
@@ -106,7 +110,10 @@ public class Apex {
                     updateCaches();
                     break;
                 case 7:
-                    changeTrack(ApexControl.trackList.getSelectedIndex() - index);
+                    setIndex(ApexControl.trackList.getSelectedIndex());
+                    break;
+                case 8:
+                    setIndex(Util.random(0, playlist.size()));
                     break;
             }
             ApexControl.update();
@@ -118,14 +125,14 @@ public class Apex {
         for (int i = start; i < end; i++) {
             Track t = playlist.get(i);
             if (t.getId().contains(searchText)) {
-                changeTrack(t, i);
+                modifyAndUpdateApp(t, i);
                 return true;
             }
         }
         for (int i = start; i < end; i++) {
             Track t = playlist.get(i);
             if (t.getName().toLowerCase().contains(searchText)) {
-                changeTrack(t, i);
+                modifyAndUpdateApp(t, i);
                 return true;
             }
         }
@@ -140,26 +147,22 @@ public class Apex {
         getCurrentTrack().close();
     }
 
-    public void changeTrack(int change) {
-        changeTrack(playlist.get(index += change), index);
+    public void setTrack(Track track) {
+        modifyAndUpdateApp(track, playlist.indexOf(track));
     }
 
-    public void changeTrack(Track track) {
-        changeTrack(track, playlist.indexOf(track));
-    }
-
-    public void changeTrack(Track track, int index) {
+    private void modifyAndUpdateApp(Track track, int index) {
         stopCurrentTrack();
         this.index = index;
         updateCaches();
         track.play();
+        ApexControl.trackList.setSelectedIndex(index);
         updateScrollBar();
         ApexControl.trackName.setText(track.getName());
         ApexControl.trackDescription.setText(track.getDescription());
         ApexControl.trackId.setText(track.getId());
         ApexControl.playing = true;
         ApexControl.stopped = false;
-        ApexControl.trackList.setSelectedIndex(index);
     }
 
     private void updateScrollBar() {
