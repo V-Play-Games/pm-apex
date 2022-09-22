@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Track {
     public static final AudioFormat audioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
@@ -19,7 +20,8 @@ public class Track {
     private static final Clip clip = new SoftMixingClip(new SoftMixingMixer(), new DataLine.Info(Clip.class, audioFormat));
     private final TrackInfo info;
     private byte[] cache;
-    private volatile boolean isCaching;
+    private final AtomicBoolean isCaching = new AtomicBoolean();
+    private final AtomicBoolean isPlaying = new AtomicBoolean();
     private volatile Future<?> cacheTask;
 
     public Track(TrackInfo trackInfo) {
@@ -60,14 +62,14 @@ public class Track {
 
     public void ensureCached() {
         if (cache != null) return;
-        if (isCaching) {
+        if (isCaching.get()) {
             logger.info(getId() + ": CACHING_AWAIT");
         } else {
             startCaching();
             logger.debug(getId() + ": CACHING_START");
             cacheTask = Apex.APEX.getExecutor().submit(() -> {
                 try {
-                    cache = Toolkit.cache(info.getAudioInputStream(audioFormat));
+                    cache = Toolkit.cache(info.getAudioInputStream(audioFormat), isCaching);
                 } catch (IOException | UnsupportedAudioFileException e) {
                     throw new RuntimeException(e);
                 }
@@ -91,6 +93,8 @@ public class Track {
     }
 
     public void clearCache() {
+        isCaching.set(false);
+        awaitCache();
         if (cache != null) {
             cache = null;
             logger.info(getId() + ": CACHE_CLEAR");
@@ -98,11 +102,11 @@ public class Track {
     }
 
     public void startCaching() {
-        isCaching = true;
+        isCaching.set(true);
     }
 
     public void stopCaching() {
-        isCaching = false;
+        isCaching.set(false);
     }
 
     public byte[] getCache() {
@@ -110,6 +114,7 @@ public class Track {
     }
 
     public void close() {
+        isPlaying.set(false);
         clip.close();
     }
 
@@ -118,8 +123,10 @@ public class Track {
     }
 
     public void play() {
+        isPlaying.set(true);
         if (!clip.isOpen()) {
             ensureCached();
+            if (!isPlaying.get()) return;
             try {
                 clip.open(audioFormat, cache, 0, cache.length);
             } catch (LineUnavailableException e) {
@@ -132,6 +139,7 @@ public class Track {
     }
 
     public void stop() {
+        isPlaying.set(false);
         getClip().stop();
     }
 }

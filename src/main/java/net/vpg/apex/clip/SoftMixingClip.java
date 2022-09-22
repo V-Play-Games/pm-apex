@@ -142,7 +142,7 @@ public class SoftMixingClip extends SoftMixingDataLine implements Clip {
         AudioFormat streamFormat = stream.getFormat();
         if (!AudioFloatConverter.isSupported(streamFormat))
             throw new IllegalArgumentException("Invalid format: " + streamFormat.toString());
-        byte[] cached = Toolkit.cache(stream);
+        byte[] cached = Toolkit.cache(stream, null);
         open(stream.getFormat(), cached, 0, cached.length);
     }
 

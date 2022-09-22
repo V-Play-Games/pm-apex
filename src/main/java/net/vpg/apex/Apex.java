@@ -179,14 +179,17 @@ public class Apex {
 
     public void updateCaches() {
         executor.execute(() -> {
+            executor.execute(() -> playlist.get(index).ensureCached());
             int start = Math.max(0, index - 3);
             int end = Math.min(playlist.size(), index + 3);
             for (int i = 0; i < playlist.size(); i++) {
                 Track track = playlist.get(i);
-                if (start <= i && i <= end) {
-                    executor.execute(track::ensureCached);
-                } else {
-                    executor.execute(track::clearCache);
+                if (i != index) {
+                    if (start <= i && i <= end) {
+                        executor.execute(track::ensureCached);
+                    } else {
+                        executor.execute(track::clearCache);
+                    }
                 }
             }
         });
