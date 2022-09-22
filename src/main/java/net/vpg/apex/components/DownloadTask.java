@@ -10,11 +10,11 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class DownloadTask implements Downloader.EventListener {
     public static ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
-    int downloaded;
-    int index;
-    long totalSize;
-    List<OnlineTrack> tracks;
-    Runnable onEachFileDownloaded;
+    private final long totalSize;
+    private final List<OnlineTrack> tracks;
+    private final Runnable onEachFileDownloaded;
+    private int downloaded;
+    private int index;
 
     public DownloadTask(List<OnlineTrack> tracks, Runnable onEachFileDownloaded) {
         this.tracks = tracks;
@@ -22,7 +22,7 @@ public class DownloadTask implements Downloader.EventListener {
         this.downloaded = 0;
         this.index = -1;
         this.totalSize = tracks.stream().mapToLong(OnlineTrack::getSize).sum();
-        ApexWindow.downloadPanel.showDownload();
+        DownloadPanel.getInstance().showDownload();
         downloadNext();
     }
 
@@ -30,7 +30,7 @@ public class DownloadTask implements Downloader.EventListener {
         executor.execute(() -> {
             index++;
             if (index == tracks.size()) {
-                ApexWindow.downloadPanel.hideDownload();
+                DownloadPanel.getInstance().hideDownload();
                 ApexControl.lookupTracks.setEnabled(true);
                 ApexControl.downloadAll.setEnabled(true);
                 onEachFileDownloaded.run();

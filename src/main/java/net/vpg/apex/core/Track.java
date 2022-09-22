@@ -19,9 +19,9 @@ public class Track {
     private static final Logger logger = LoggerFactory.getLogger(Track.class);
     private static final Clip clip = new SoftMixingClip(new SoftMixingMixer(), new DataLine.Info(Clip.class, audioFormat));
     private final TrackInfo info;
-    private byte[] cache;
     private final AtomicBoolean isCaching = new AtomicBoolean();
     private final AtomicBoolean isPlaying = new AtomicBoolean();
+    private byte[] cache;
     private volatile Future<?> cacheTask;
 
     public Track(TrackInfo trackInfo) {
@@ -67,7 +67,7 @@ public class Track {
         } else {
             startCaching();
             logger.debug(getId() + ": CACHING_START");
-            cacheTask = Apex.APEX.getExecutor().submit(() -> {
+            cacheTask = Apex.APEX.getCacheExecutor().submit(() -> {
                 try {
                     cache = Toolkit.cache(info.getAudioInputStream(audioFormat), isCaching);
                 } catch (IOException | UnsupportedAudioFileException e) {

@@ -1,6 +1,8 @@
 package net.vpg.apex.components;
 
+import net.vpg.apex.Apex;
 import net.vpg.apex.Util;
+import net.vpg.apex.core.Resources;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,6 +58,16 @@ public class ApexControl {
         totalProgressText = new WrappedTextArea();
         fileProgressBar = Util.apply(new JProgressBar(), bar -> bar.setStringPainted(true));
         totalProgressBar = Util.apply(new JProgressBar(), bar -> bar.setStringPainted(true));
+
+        lookupTracks = new JButton("Refresh");
+        downloadAll = new JButton("Download all found tracks");
+        lookupTracks.addActionListener(e -> tracksFound.setText(Resources.getInstance().getMissingTracks().size() + " more tracks found"));
+        downloadAll.addActionListener(e -> {
+            ApexControl.lookupTracks.setEnabled(false);
+            ApexControl.downloadAll.setEnabled(false);
+            new DownloadTask(Resources.getInstance().getMissingTracks(), () -> Apex.APEX.takeAction(6));
+        });
+
     }
 
     public static void update() {

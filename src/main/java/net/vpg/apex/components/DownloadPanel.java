@@ -1,6 +1,5 @@
 package net.vpg.apex.components;
 
-import net.vpg.apex.Apex;
 import net.vpg.apex.Util;
 import net.vpg.apex.core.Resources;
 
@@ -10,12 +9,12 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-public class DownloadPanel extends JPanel {
-    boolean initialFocusGained = false;
-    Box progressBox;
+public class DownloadPanel extends ApexPanel {
+    private static final DownloadPanel instance = new DownloadPanel();
+    private final boolean initialFocusGained = false;
+    private final Box progressBox;
 
-    public DownloadPanel() {
-        setupButtons();
+    private DownloadPanel() {
         this.setName("Download Tracks");
         this.setBorder(new EmptyBorder(new Insets(15, 15, 0, 15)));
         this.setLayout(new BorderLayout());
@@ -34,35 +33,28 @@ public class DownloadPanel extends JPanel {
             }
         });
         Box box = Box.createVerticalBox();
-        this.add(box, "North");
-        box.add(Util.apply(new JPanel(),
-            buttonPanel -> buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER)),
-            buttonPanel -> buttonPanel.setAlignmentX(0),
-            buttonPanel -> buttonPanel.add(ApexControl.lookupTracks),
-            buttonPanel -> buttonPanel.add(ApexControl.downloadAll)));
-        box.add(ApexControl.tracksFound);
-        box.add(Box.createVerticalStrut(5));
-        box.add(progressBox = Util.apply(Box.createVerticalBox(),
-            buttonPanel -> buttonPanel.setAlignmentX(0),
-            buttonPanel -> buttonPanel.add(ApexControl.fileProgressText),
-            buttonPanel -> buttonPanel.add(Box.createVerticalStrut(5)),
-            buttonPanel -> buttonPanel.add(ApexControl.fileProgressBar),
-            buttonPanel -> buttonPanel.add(Box.createVerticalStrut(5)),
-            buttonPanel -> buttonPanel.add(ApexControl.totalProgressText),
-            buttonPanel -> buttonPanel.add(Box.createVerticalStrut(5)),
-            buttonPanel -> buttonPanel.add(ApexControl.totalProgressBar)));
+        this.addBox("North",
+            Util.apply(new JPanel(),
+                buttonPanel -> buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER)),
+                buttonPanel -> buttonPanel.setAlignmentX(0),
+                buttonPanel -> buttonPanel.add(ApexControl.lookupTracks),
+                buttonPanel -> buttonPanel.add(ApexControl.downloadAll)),
+            ApexControl.tracksFound,
+            Box.createVerticalStrut(5),
+            progressBox = Util.apply(Box.createVerticalBox(),
+                panel -> panel.setAlignmentX(0),
+                panel -> panel.add(ApexControl.fileProgressText),
+                panel -> panel.add(Box.createVerticalStrut(5)),
+                panel -> panel.add(ApexControl.fileProgressBar),
+                panel -> panel.add(Box.createVerticalStrut(5)),
+                panel -> panel.add(ApexControl.totalProgressText),
+                panel -> panel.add(Box.createVerticalStrut(5)),
+                panel -> panel.add(ApexControl.totalProgressBar)));
         progressBox.setVisible(false);
     }
 
-    public void setupButtons() {
-        ApexControl.lookupTracks = new JButton("Refresh");
-        ApexControl.downloadAll = new JButton("Download all found tracks");
-        ApexControl.lookupTracks.addActionListener(e -> ApexControl.tracksFound.setText(Resources.getInstance().getMissingTracks().size() + " more tracks found"));
-        ApexControl.downloadAll.addActionListener(e -> {
-            ApexControl.lookupTracks.setEnabled(false);
-            ApexControl.downloadAll.setEnabled(false);
-            new DownloadTask(Resources.getInstance().getMissingTracks(), () -> Apex.APEX.takeAction(6));
-        });
+    public static DownloadPanel getInstance() {
+        return instance;
     }
 
     public void showDownload() {

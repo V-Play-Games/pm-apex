@@ -55,7 +55,7 @@ public class Resources {
         File directory = dataDir.toFile();
         directory.mkdirs();
         resources = Util.collectFilesOf(directory).stream().collect(Collectors.toMap(File::getName, file -> file));
-        Apex.APEX.getExecutor().execute(this::watchDataDir);
+        Apex.APEX.getMainExecutor().execute(this::watchDataDir);
         ifFileExists("info.json", file -> {
             JSONObject json = Util.compute(file, JSONObject::parse);
             if (json.getInt("version") < info.getInt("version")) {

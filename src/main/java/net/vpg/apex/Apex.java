@@ -15,10 +15,11 @@ import java.util.stream.Collectors;
 
 public class Apex {
     public static final Apex APEX = new Apex();
-    ApexWindow window;
-    List<Track> playlist = new ArrayList<>();
-    int index = 0;
-    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(16, new ApexThreadFactory());
+    private final ScheduledThreadPoolExecutor mainExecutor = new ScheduledThreadPoolExecutor(16, new ApexThreadFactory("Main"));
+    private final ScheduledThreadPoolExecutor cacheExecutor = new ScheduledThreadPoolExecutor(16, new ApexThreadFactory("Cache"));
+    private ApexWindow window;
+    private List<Track> playlist = new ArrayList<>();
+    private int index = 0;
 
     public static void main(String[] args) throws Exception {
         APEX.start();
@@ -64,12 +65,16 @@ public class Apex {
         modifyAndUpdateApp(playlist.get(target), target);
     }
 
-    public ScheduledThreadPoolExecutor getExecutor() {
-        return executor;
+    public ScheduledThreadPoolExecutor getMainExecutor() {
+        return mainExecutor;
+    }
+
+    public ScheduledThreadPoolExecutor getCacheExecutor() {
+        return cacheExecutor;
     }
 
     public void takeAction(int action) {
-        executor.execute(() -> {
+        mainExecutor.execute(() -> {
             Track track = getCurrentTrack();
             switch (action) {
                 case 0:
@@ -178,17 +183,17 @@ public class Apex {
     }
 
     public void updateCaches() {
-        executor.execute(() -> {
-            executor.execute(() -> playlist.get(index).ensureCached());
+        mainExecutor.execute(() -> {
+            mainExecutor.execute(() -> playlist.get(index).ensureCached());
             int start = Math.max(0, index - 3);
             int end = Math.min(playlist.size(), index + 3);
             for (int i = 0; i < playlist.size(); i++) {
                 Track track = playlist.get(i);
                 if (i != index) {
                     if (start <= i && i <= end) {
-                        executor.execute(track::ensureCached);
+                        mainExecutor.execute(track::ensureCached);
                     } else {
-                        executor.execute(track::clearCache);
+                        mainExecutor.execute(track::clearCache);
                     }
                 }
             }

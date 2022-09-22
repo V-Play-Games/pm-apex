@@ -11,8 +11,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class PlayerPanel extends JPanel {
-    public PlayerPanel() {
+public class PlayerPanel extends ApexPanel {
+    private static final PlayerPanel instance = new PlayerPanel();
+
+    private PlayerPanel() {
         this.setName("Player");
         this.setBorder(new EmptyBorder(new Insets(15, 15, 0, 15)));
         this.setLayout(new BorderLayout());
@@ -66,11 +68,7 @@ public class PlayerPanel extends JPanel {
                 buttonPanel -> buttonPanel.add(ApexControl.previous)));
     }
 
-    private void addBox(String constraints, Component... components) {
-        Box box = Box.createVerticalBox();
-        this.add(box, constraints);
-        for (Component component : components) {
-            box.add(component);
-        }
+    public static PlayerPanel getInstance() {
+        return instance;
     }
 }
