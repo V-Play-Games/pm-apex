@@ -54,7 +54,7 @@ public class SoftMixingSourceDataLine extends SoftMixingDataLine implements Sour
         if (!isOpen())
             return 0;
         if (len % frameSize != 0)
-            throw new IllegalArgumentException("Number of bytes does not represent an integral number of sample frames.");
+            throw new IllegalArgumentException("Number of bytes do not represent an integral number of sample frames.");
         if (off < 0)
             throw new ArrayIndexOutOfBoundsException(off);
         if ((long) off + (long) len > (long) b.length)

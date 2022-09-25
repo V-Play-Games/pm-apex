@@ -11,14 +11,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class PlayerPanel extends ApexPanel {
+public class PlayerPanel extends JPanel {
     private static final PlayerPanel instance = new PlayerPanel();
 
     private PlayerPanel() {
         this.setName("Player");
-        this.setBorder(new EmptyBorder(new Insets(15, 15, 0, 15)));
+        this.setBorder(new EmptyBorder(15, 15, 0, 15));
         this.setLayout(new BorderLayout());
-        this.addBox("North",
+        Util.addBox(this, "North",
             ApexControl.trackListPane = new JScrollPane(
                 Util.apply(ApexControl.trackList = new JList<>(ApexControl.trackListModel),
                     list -> list.setVisibleRowCount(7),
@@ -51,21 +51,6 @@ public class PlayerPanel extends ApexPanel {
             Box.createVerticalStrut(5),
             ApexControl.trackIndex,
             Box.createVerticalStrut(5));
-        this.addBox("South",
-            ApexControl.searchTextArea,
-            Util.apply(new JPanel(),
-                buttonPanel -> buttonPanel.setAlignmentX(0),
-                buttonPanel -> buttonPanel.add(ApexControl.search),
-                buttonPanel -> buttonPanel.add(ApexControl.surpriseMe)),
-            Box.createVerticalStrut(5),
-            Util.apply(new JPanel(),
-                buttonPanel -> buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER)),
-                buttonPanel -> buttonPanel.setAlignmentX(0),
-                buttonPanel -> buttonPanel.add(ApexControl.shuffle),
-                buttonPanel -> buttonPanel.add(ApexControl.next),
-                buttonPanel -> buttonPanel.add(ApexControl.stop),
-                buttonPanel -> buttonPanel.add(ApexControl.playPause),
-                buttonPanel -> buttonPanel.add(ApexControl.previous)));
     }
 
     public static PlayerPanel getInstance() {

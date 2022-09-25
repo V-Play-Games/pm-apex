@@ -29,7 +29,6 @@ import javax.sound.sampled.AudioSystem;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Toolkit {
     private Toolkit() {
@@ -45,20 +44,19 @@ public class Toolkit {
             throw new IllegalArgumentException(String.format("Buffer size (%d) does not represent an integral number of sample frames (%d)", bufferSize, frameSize));
     }
 
-    public static byte[] cache(AudioInputStream stream, AtomicBoolean check) throws IOException {
+    public static byte[] cache(AudioInputStream stream) throws IOException {
         int frameSize = stream.getFormat().getFrameSize();
-        check = check == null ? new AtomicBoolean(true) : check;
         if (stream.getFrameLength() != AudioSystem.NOT_SPECIFIED) {
             byte[] data = new byte[(int) stream.getFrameLength() * frameSize];
             int off = 0, read;
-            while ((read = stream.read(data, off, data.length)) != -1 && check.get())
+            while ((read = stream.read(data, off, data.length)) != -1)
                 off += read;
             return Arrays.copyOf(data, off);
         } else {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             byte[] buffer = new byte[512 * frameSize];
             int read;
-            while ((read = stream.read(buffer)) != -1 && check.get())
+            while ((read = stream.read(buffer)) != -1)
                 outputStream.write(buffer, 0, read);
             return outputStream.toByteArray();
         }

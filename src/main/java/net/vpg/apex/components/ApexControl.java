@@ -35,7 +35,7 @@ public class ApexControl {
     public static boolean playing = true;
     public static boolean stopped = false;
 
-    public static void init() throws Exception {
+    public static void init() {
         Util.lookAndFeel();
         trackListModel = new DefaultListModel<>();
         trackName = Util.makeTextArea("Track Name", textArea -> textArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12)));
@@ -66,6 +66,7 @@ public class ApexControl {
             ApexControl.lookupTracks.setEnabled(false);
             ApexControl.downloadAll.setEnabled(false);
             new DownloadTask(Resources.getInstance().getMissingTracks(), () -> Apex.APEX.takeAction(6));
+            Util.run(() -> Downloader.download(Resources.getInstance().getBaseDownloadUrl() + "src/main/resources/net/vpg/apex/tracks.json", null));
         });
 
     }

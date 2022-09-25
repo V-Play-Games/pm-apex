@@ -9,14 +9,14 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-public class DownloadPanel extends ApexPanel {
+public class DownloadPanel extends JPanel {
     private static final DownloadPanel instance = new DownloadPanel();
     private final boolean initialFocusGained = false;
     private final Box progressBox;
 
     private DownloadPanel() {
         this.setName("Download Tracks");
-        this.setBorder(new EmptyBorder(new Insets(15, 15, 0, 15)));
+        this.setBorder(new EmptyBorder(15, 15, 0, 15));
         this.setLayout(new BorderLayout());
         this.addFocusListener(new FocusAdapter() {
             @Override
@@ -33,7 +33,7 @@ public class DownloadPanel extends ApexPanel {
             }
         });
         Box box = Box.createVerticalBox();
-        this.addBox("North",
+        Util.addBox(this, "North",
             Util.apply(new JPanel(),
                 buttonPanel -> buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER)),
                 buttonPanel -> buttonPanel.setAlignmentX(0),

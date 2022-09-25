@@ -5,6 +5,8 @@ import net.vpg.apex.components.ApexWindow;
 import net.vpg.apex.core.ApexThreadFactory;
 import net.vpg.apex.core.Resources;
 import net.vpg.apex.core.Track;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -15,22 +17,22 @@ import java.util.stream.Collectors;
 
 public class Apex {
     public static final Apex APEX = new Apex();
+    public static final Logger LOGGER = LoggerFactory.getLogger(Apex.class);
     private final ScheduledThreadPoolExecutor mainExecutor = new ScheduledThreadPoolExecutor(16, new ApexThreadFactory("Main"));
     private final ScheduledThreadPoolExecutor cacheExecutor = new ScheduledThreadPoolExecutor(16, new ApexThreadFactory("Cache"));
-    private ApexWindow window;
     private List<Track> playlist = new ArrayList<>();
     private int index = 0;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         APEX.start();
     }
 
-    private void start() throws Exception {
+    private void start() {
         ApexControl.init();
-        window = new ApexWindow();
-        updatePlaylist();
-        setIndex(0);
-        updateCaches();
+        ApexWindow.getInstance().setVisible(true);
+        this.updatePlaylist();
+        this.setIndex(0);
+        this.updateCaches();
         ApexControl.update();
     }
 
@@ -50,6 +52,7 @@ public class Apex {
         ApexControl.trackListModel.clear();
         ApexControl.trackListModel.addAll(playlist.stream().map(Track::getName).collect(Collectors.toList()));
         ApexControl.trackList.setSelectedIndex(index);
+        Util.sleep(100);
         updateScrollBar();
     }
 
@@ -61,8 +64,8 @@ public class Apex {
         return index;
     }
 
-    public void setIndex(int target) {
-        modifyAndUpdateApp(playlist.get(target), target);
+    public void setIndex(int index) {
+        modifyAndUpdateApp(playlist.get(index), index);
     }
 
     public ScheduledThreadPoolExecutor getMainExecutor() {
@@ -114,10 +117,10 @@ public class Apex {
                     index = playlist.indexOf(track);
                     updateCaches();
                     break;
-                case 7:
+                case 7: // Mouse Double-click/Enter on the playlist
                     setIndex(ApexControl.trackList.getSelectedIndex());
                     break;
-                case 8:
+                case 8: // Surprise Me
                     setIndex(Util.random(0, playlist.size()));
                     break;
             }
@@ -184,14 +187,14 @@ public class Apex {
 
     public void updateCaches() {
         mainExecutor.execute(() -> {
-            mainExecutor.execute(() -> playlist.get(index).ensureCached());
+            cacheExecutor.execute(() -> playlist.get(index).ensureCached());
             int start = Math.max(0, index - 3);
             int end = Math.min(playlist.size(), index + 3);
             for (int i = 0; i < playlist.size(); i++) {
                 Track track = playlist.get(i);
                 if (i != index) {
                     if (start <= i && i <= end) {
-                        mainExecutor.execute(track::ensureCached);
+                        cacheExecutor.execute(track::ensureCached);
                     } else {
                         mainExecutor.execute(track::clearCache);
                     }

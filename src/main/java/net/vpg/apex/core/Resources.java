@@ -53,12 +53,13 @@ public class Resources {
         cacheDir = paths[1] == null ? configDir : paths[1].resolve(appName);
         dataDir = paths[2] == null ? configDir : paths[2].resolve(appName);
         File directory = dataDir.toFile();
+        //noinspection ResultOfMethodCallIgnored
         directory.mkdirs();
         resources = Util.collectFilesOf(directory).stream().collect(Collectors.toMap(File::getName, file -> file));
-        Apex.APEX.getMainExecutor().execute(this::watchDataDir);
+        new Thread(this::watchDataDir, "Directory Watcher").start();
         ifFileExists("info.json", file -> {
             JSONObject json = Util.compute(file, JSONObject::parse);
-            if (json.getInt("version") < info.getInt("version")) {
+            if (info.getBoolean("override") || json.getInt("version") < info.getInt("version")) {
                 shiftFiles();
             }
         }, this::shiftFiles);
@@ -70,6 +71,10 @@ public class Resources {
 
     public static File get(String filename) {
         return getInstance().resources.get(filename);
+    }
+
+    public String getAdditionalRes() {
+        return additionalRes;
     }
 
     private Path getPathFromEnv(String envVar, boolean mustBeAbsolute, String first, String... more) {
@@ -92,7 +97,7 @@ public class Resources {
                 key.pollEvents().forEach(event -> {
                     WatchEvent.Kind<?> kind = event.kind();
                     Path path = (Path) event.context();
-                    File file = new File(dataDir.toFile(), path.toFile().getName());
+                    File file = dataDir.resolve(path.getFileName()).toFile();
                     if (kind == ENTRY_CREATE || kind == ENTRY_MODIFY) {
                         resources.put(file.getName(), file);
                     } else { // kind == ENTRY_DELETE
@@ -138,7 +143,7 @@ public class Resources {
     }
 
     public String getBaseDownloadUrl() {
-        return "https://raw.githubusercontent.com/" + repo + "/release/" + additionalRes + "/";
+        return "https://raw.githubusercontent.com/" + repo + "/release/";
     }
 
     public File create(String filename) {

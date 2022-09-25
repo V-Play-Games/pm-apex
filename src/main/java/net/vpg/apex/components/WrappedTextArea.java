@@ -12,7 +12,7 @@ public class WrappedTextArea extends JTextArea {
 
     public WrappedTextArea() {
         setAlignmentX(0);
-        setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+        setBorder(new EmptyBorder(0, 0, 0, 0));
         setEditable(false);
         setLineWrap(true);
         setWrapStyleWord(true);

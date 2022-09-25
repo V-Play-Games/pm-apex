@@ -3,6 +3,7 @@ package net.vpg.apex;
 import net.vpg.apex.components.WrappedTextArea;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static net.vpg.apex.Apex.APEX;
+import static net.vpg.apex.Apex.LOGGER;
 
 public class Util {
     public static void sleep(int millis) {
@@ -20,7 +22,7 @@ public class Util {
         try {
             runnable.run();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Encountered an unexpected uncaught exception:", e);
         }
     }
 
@@ -30,7 +32,7 @@ public class Util {
             try {
                 consumer.accept(input);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error("Encountered an unexpected uncaught exception:", e);
             }
         }
         return input;
@@ -51,6 +53,16 @@ public class Util {
             throw new RuntimeException(e);
         }
     }
+
+    public static Box addBox(Container container, String constraints, Component... components) {
+        Box box = Box.createVerticalBox();
+        container.add(box, constraints);
+        for (Component component : components) {
+            box.add(component);
+        }
+        return box;
+    }
+
 
     public static String getId(String fileName) {
         return fileName.substring(0, fileName.contains(".") ? fileName.lastIndexOf('.') : fileName.length());
@@ -90,12 +102,8 @@ public class Util {
         return Util.apply(new WrappedTextArea(name), actualActions.toArray(new ConsumerWithAChanceOfException[0]));
     }
 
-    public static void lookAndFeel() throws Exception {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        }
+    public static void lookAndFeel() {
+        apply(UIManager.getSystemLookAndFeelClassName(), UIManager::setLookAndFeel);
     }
 
     public static String bytesToString(long bytes) {

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import static net.vpg.apex.Apex.LOGGER;
+
 public class DownloadTask implements Downloader.EventListener {
     public static ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
     private final long totalSize;
@@ -38,9 +40,10 @@ public class DownloadTask implements Downloader.EventListener {
             }
             OnlineTrack track = tracks.get(index);
             try {
-                Downloader.download(Resources.getInstance().getBaseDownloadUrl() + track.name, this);
+                Resources res = Resources.getInstance();
+                Downloader.download(res.getBaseDownloadUrl() + res.getAdditionalRes() + "/" + track.name, this);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                LOGGER.error("Encountered an unexpected uncaught exception:", e);
             }
             onEachFileDownloaded.run();
         });

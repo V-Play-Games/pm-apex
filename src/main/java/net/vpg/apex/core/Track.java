@@ -15,9 +15,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Track {
-    public static final AudioFormat audioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
-    private static final Logger logger = LoggerFactory.getLogger(Track.class);
-    private static final Clip clip = new SoftMixingClip(new SoftMixingMixer(), new DataLine.Info(Clip.class, audioFormat));
+    public static final AudioFormat AUDIO_FORMAT = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Track.class);
+    private static final Clip CLIP = new SoftMixingClip(new SoftMixingMixer(), new DataLine.Info(Clip.class, AUDIO_FORMAT));
     private final TrackInfo info;
     private final AtomicBoolean isCaching = new AtomicBoolean();
     private final AtomicBoolean isPlaying = new AtomicBoolean();
@@ -57,24 +57,24 @@ public class Track {
     }
 
     public Clip getClip() {
-        return clip;
+        return CLIP;
     }
 
     public void ensureCached() {
         if (cache != null) return;
         if (isCaching.get()) {
-            logger.info(getId() + ": CACHING_AWAIT");
+            LOGGER.info(getId() + ": CACHING_AWAIT");
         } else {
             startCaching();
-            logger.debug(getId() + ": CACHING_START");
+            LOGGER.debug(getId() + ": CACHING_START");
             cacheTask = Apex.APEX.getCacheExecutor().submit(() -> {
                 try {
-                    cache = Toolkit.cache(info.getAudioInputStream(audioFormat), isCaching);
+                    cache = Toolkit.cache(info.getAudioInputStream(AUDIO_FORMAT));
                 } catch (IOException | UnsupportedAudioFileException e) {
-                    throw new RuntimeException(e);
+                    LOGGER.error("Encountered an unexpected uncaught exception:", e);
                 }
+                LOGGER.debug(getId() + ": CACHING_END");
                 stopCaching();
-                logger.info(getId() + ": CACHING_END");
             });
         }
         awaitCache();
@@ -84,29 +84,23 @@ public class Track {
         try {
             cacheTask.get();
         } catch (InterruptedException | ExecutionException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof RuntimeException)
-                throw (RuntimeException) cause;
-            else
-                throw new RuntimeException(cause);
+            LOGGER.error("Encountered an unexpected uncaught exception:", e.getCause());
         }
     }
 
     public void clearCache() {
-        isCaching.set(false);
-        awaitCache();
-        if (cache != null) {
+        stopCaching();
+    }
+
+    public void stopCaching() {
+        if (!isCaching.getAndSet(false) && cache != null) {
             cache = null;
-            logger.info(getId() + ": CACHE_CLEAR");
+            LOGGER.info(getId() + ": CACHE_CLEAR");
         }
     }
 
     public void startCaching() {
         isCaching.set(true);
-    }
-
-    public void stopCaching() {
-        isCaching.set(false);
     }
 
     public byte[] getCache() {
@@ -115,7 +109,7 @@ public class Track {
 
     public void close() {
         isPlaying.set(false);
-        clip.close();
+        CLIP.close();
     }
 
     public TrackInfo getTrackInfo() {
@@ -124,18 +118,18 @@ public class Track {
 
     public void play() {
         isPlaying.set(true);
-        if (!clip.isOpen()) {
+        if (!CLIP.isOpen()) {
             ensureCached();
             if (!isPlaying.get()) return;
             try {
-                clip.open(audioFormat, cache, 0, cache.length);
+                CLIP.open(AUDIO_FORMAT, cache, 0, cache.length);
             } catch (LineUnavailableException e) {
-                throw new RuntimeException(e);
+                LOGGER.error("Encountered an unexpected uncaught exception:", e);
             }
         }
-        clip.setLoopPoints(getLoopStart(), getLoopEnd());
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-        clip.start();
+        CLIP.setLoopPoints(getLoopStart(), getLoopEnd());
+        CLIP.loop(Clip.LOOP_CONTINUOUSLY);
+        CLIP.start();
     }
 
     public void stop() {
