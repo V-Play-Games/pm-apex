@@ -106,8 +106,6 @@ public class SoftMixingClip extends SoftMixingDataLine implements Clip {
     protected void processControlLogic() {
         if (inputStream == null) {
             inputStream = AudioFloatInputStream.getInputStream(new AudioInputStream(stream, inputFormat, AudioSystem.NOT_SPECIFIED));
-            if (Math.abs(inputFormat.getSampleRate() - outputFormat.getSampleRate()) > 0.000001)
-                inputStream = new AudioFloatInputStreamResampler(inputStream, outputFormat);
         }
     }
 

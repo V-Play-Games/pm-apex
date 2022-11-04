@@ -157,9 +157,6 @@ public class SoftMixingSourceDataLine extends SoftMixingDataLine implements Sour
                 }
             };
             inputStream = AudioFloatInputStream.getInputStream(new AudioInputStream(stream, format, AudioSystem.NOT_SPECIFIED));
-
-            if (Math.abs(format.getSampleRate() - outputFormat.getSampleRate()) > 0.000001)
-                inputStream = new AudioFloatInputStreamResampler(inputStream, outputFormat);
         }
         sendEvent(event);
     }

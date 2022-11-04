@@ -46,16 +46,6 @@ import static javax.sound.sampled.AudioSystem.NOT_SPECIFIED;
 public class SoftMixingMixer implements Mixer {
     public static final int CHANNEL_LEFT = 0;
     public static final int CHANNEL_RIGHT = 1;
-    public static final int CHANNEL_EFFECT1 = 2;
-    public static final int CHANNEL_EFFECT2 = 3;
-    public static final int CHANNEL_EFFECT3 = 4;
-    public static final int CHANNEL_EFFECT4 = 5;
-    public static final int CHANNEL_LEFT_DRY = 10;
-    public static final int CHANNEL_RIGHT_DRY = 11;
-    public static final int CHANNEL_SCRATCH1 = 12;
-    public static final int CHANNEL_SCRATCH2 = 13;
-    public static final int CHANNEL_MIXER_LEFT = 14;
-    public static final int CHANNEL_MIXER_RIGHT = 15;
     static final String INFO_NAME = "Gervill Sound Mixer";
     static final String INFO_VENDOR = "OpenJDK Proposal";
     static final String INFO_DESCRIPTION = "Software Sound Mixer";
@@ -366,29 +356,6 @@ public class SoftMixingMixer implements Mixer {
         }
 
         float sampleRate = format.getSampleRate();
-
-        SoftChorus chorus = new SoftChorus(sampleRate, controlRate);
-        chorus.setMixMode(true);
-        chorus.setInput(0, buffers[CHANNEL_EFFECT2]);
-        chorus.setOutput(0, buffers[CHANNEL_LEFT]);
-        if (channels != 1) chorus.setOutput(1, buffers[CHANNEL_RIGHT]);
-        chorus.setOutput(2, buffers[CHANNEL_EFFECT1]);
-
-        SoftReverb reverb = new SoftReverb(sampleRate, controlRate);
-        reverb.setMixMode(true);
-        reverb.setInput(0, buffers[CHANNEL_EFFECT1]);
-        reverb.setOutput(0, buffers[CHANNEL_LEFT]);
-        if (channels != 1) reverb.setOutput(1, buffers[CHANNEL_RIGHT]);
-
-        SoftLimiter limiter = new SoftLimiter(sampleRate, controlRate);
-        limiter.setMixMode(false);
-        limiter.setInput(0, buffers[CHANNEL_LEFT]);
-        limiter.setOutput(0, buffers[CHANNEL_LEFT]);
-        if (channels != 1) {
-            limiter.setInput(1, buffers[CHANNEL_RIGHT]);
-            limiter.setOutput(1, buffers[CHANNEL_RIGHT]);
-        }
-        List<SoftAudioProcessor> processors = Arrays.asList(chorus, reverb, limiter);
         InputStream in = new InputStream() {
             final byte[] buffer = new byte[bufferSize * (format.getSampleSizeInBits() / 8) * channels];
             final byte[] single = new byte[1];
@@ -400,10 +367,8 @@ public class SoftMixingMixer implements Mixer {
                 }
                 synchronized (control_mutex) {
                     openLines.forEach(SoftMixingDataLine::processControlLogic);
-                    processors.forEach(SoftAudioProcessor::processControlLogic);
                 }
                 openLines.forEach(openLine -> openLine.processAudioLogic(buffers));
-                processors.forEach(SoftAudioProcessor::processAudio);
                 for (int i = 0; i < channels; i++)
                     buffers[i].get(buffer, i);
                 bufferPos = 0;
