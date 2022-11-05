@@ -36,12 +36,12 @@ public final class SoftAudioBuffer {
     private final int size;
     private final AudioFormat format;
     private final AudioFloatConverter converter;
-    private float[] buffer;
-    private boolean empty = true;
-    private byte[] converter_buffer;
+    private final float[] source;
+    private byte[] buffer;
 
     public SoftAudioBuffer(int size, AudioFormat format) {
         this.size = size;
+        this.source = new float[size];
         this.format = format;
         this.converter = AudioFloatConverter.getConverter(format);
     }
@@ -55,47 +55,33 @@ public final class SoftAudioBuffer {
     }
 
     public void clear() {
-        if (!empty) {
-            Arrays.fill(buffer, 0);
-            empty = true;
-        }
-    }
-
-    public boolean isSilent() {
-        return empty;
+        Arrays.fill(source, 0);
     }
 
     public float[] getArray() {
-        empty = false;
-        if (buffer == null) {
-            buffer = new float[size];
-        }
-        return buffer;
+        return source;
     }
 
-    public void get(byte[] buffer, int channel) {
+    public void get(byte[] dest, int channel) {
         int channels = format.getChannels();
-        if (channels == 1) {
-            converter.copyToByteArray(getArray(), size, buffer);
+        if (channel >= channels) {
             return;
         }
-        if (channel >= channels) {
+        if (channels == 1) {
+            converter.copyToByteArray(source, dest);
             return;
         }
         int frameSize = format.getFrameSize();
         int frameSizePerChannel = frameSize / channels;
-        int c_len = size * frameSizePerChannel;
-        if (converter_buffer == null || converter_buffer.length < c_len) {
-            converter_buffer = new byte[c_len];
+        if (buffer == null) {
+            buffer = new byte[size * frameSizePerChannel];
         }
-        converter.copyToByteArray(getArray(), size, converter_buffer);
-        for (int j = 0; j < frameSizePerChannel; j++) {
-            int k = j;
-            int z = channel * frameSizePerChannel + j;
-            for (int i = 0; i < size; i++) {
-                buffer[z] = converter_buffer[k];
-                z += frameSize;
-                k += frameSizePerChannel;
+        converter.copyToByteArray(source, buffer);
+        for (int i = 0; i < frameSizePerChannel; i++) {
+            for (int j = 0, k = i, z = channel * frameSizePerChannel + i;
+                 j < size;
+                 j++, z += frameSize, k += frameSizePerChannel) {
+                dest[z] = buffer[k];
             }
         }
     }

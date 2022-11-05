@@ -2,12 +2,14 @@ package net.vpg.apex.core;
 
 import net.vpg.apex.Apex;
 import net.vpg.apex.clip.SoftMixingClip;
-import net.vpg.apex.clip.SoftMixingMixer;
 import net.vpg.apex.clip.Toolkit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -17,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Track {
     public static final AudioFormat AUDIO_FORMAT = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
     private static final Logger LOGGER = LoggerFactory.getLogger(Track.class);
-    private static final Clip CLIP = new SoftMixingClip(new SoftMixingMixer());
+    private static final Clip CLIP = new SoftMixingClip();
     private final TrackInfo info;
     private final AtomicBoolean isCaching = new AtomicBoolean();
     private final AtomicBoolean isPlaying = new AtomicBoolean();

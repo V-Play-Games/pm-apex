@@ -117,8 +117,8 @@ public class SoftMixingClip implements Clip {
     private int in_channels;
     private boolean active = false;
 
-    public SoftMixingClip(SoftMixingMixer mixer) {
-        this.mixer = mixer;
+    public SoftMixingClip() {
+        this.mixer = new SoftMixingMixer(this);
         this.control_mutex = mixer.control_mutex;
         this.controls = new Control[]{gain, mute, balance};
         calcVolume();
@@ -140,9 +140,9 @@ public class SoftMixingClip implements Clip {
             } catch (IOException ignored) {
                 //ignore
             }
-            fillReadData(buffers[SoftMixingMixer.CHANNEL_LEFT].getArray(), 0, leftGain);
+            fillReadData(buffers[0].getArray(), 0, leftGain);
             if (out_channels != 1)
-                fillReadData(buffers[SoftMixingMixer.CHANNEL_RIGHT].getArray(), 1, rightGain);
+                fillReadData(buffers[1].getArray(), 1, rightGain);
         }
     }
 
@@ -253,17 +253,12 @@ public class SoftMixingClip implements Clip {
             this.frameSize = format.getFrameSize();
             loopStart = 0;
             loopEnd = -1;
-            if (!mixer.isOpen()) {
-                mixer.open();
-                mixer.implicitOpen = true;
-            }
+            mixer.open();
             outputFormat = mixer.getFormat();
             out_channels = outputFormat.getChannels();
             in_channels = format.getChannels();
-            boolean stereo = in_channels == 2;
             open = true;
             inputStream = AudioFloatInputStream.getInputStream(new AudioInputStream(stream, inputFormat, AudioSystem.NOT_SPECIFIED));
-            mixer.openLine(this);
         }
     }
 
@@ -401,15 +396,11 @@ public class SoftMixingClip implements Clip {
             framePosition = 0;
             active = false;
             loopCount = 0;
-            if (!mixer.isOpen()) {
-                mixer.close();
-                mixer.implicitOpen = false;
-            }
+            mixer.close();
             outputFormat = null;
             out_channels = 0;
             in_channels = 0;
             open = false;
-            mixer.closeLine(this);
         }
         sendEvent(event);
     }

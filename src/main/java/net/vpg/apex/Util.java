@@ -5,7 +5,6 @@ import net.vpg.apex.components.WrappedTextArea;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -137,10 +136,10 @@ public class Util {
     }
 
     public interface FunctionWithAChanceOfException<E, T> {
-        T accept(E operand) throws IOException;
+        T accept(E operand) throws Exception;
     }
 
     public interface SupplierWithAChanceOfException<E> {
-        E get() throws IOException;
+        E get() throws Exception;
     }
 }

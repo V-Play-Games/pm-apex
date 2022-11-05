@@ -29,12 +29,11 @@ import net.vpg.apex.Util;
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-import static javax.sound.sampled.AudioFormat.Encoding.*;
+import static javax.sound.sampled.AudioFormat.Encoding.PCM_SIGNED;
+import static javax.sound.sampled.AudioFormat.Encoding.PCM_UNSIGNED;
 import static javax.sound.sampled.AudioSystem.NOT_SPECIFIED;
 
 /**
@@ -43,46 +42,20 @@ import static javax.sound.sampled.AudioSystem.NOT_SPECIFIED;
  * @author Karl Helgason
  */
 public class SoftMixingMixer {
-    public static final int CHANNEL_LEFT = 0;
-    public static final int CHANNEL_RIGHT = 1;
-    protected final float controlRate = 147f;
-    protected final long latency = 100000; // 100 milliseconds
-    protected final List<LineListener> listeners = new ArrayList<>();
-    protected final Line.Info[] sourceLineInfo;
-    protected final List<SoftMixingClip> openLines = new ArrayList<>();
-    final Object control_mutex = this;
-    public boolean implicitOpen = false;
+    protected final SoftMixingClip clip;
+    protected final Object control_mutex = new Object();
     protected boolean open = false;
     protected AudioFormat format = new AudioFormat(44100, 16, 2, true, false);
     protected SourceDataLine sourceDataLine = null;
     protected SoftAudioPusher pusher = null;
     protected AudioInputStream pusherStream = null;
 
-    public SoftMixingMixer() {
-        sourceLineInfo = new Line.Info[2];
-
-        ArrayList<AudioFormat> formats = new ArrayList<>();
-        for (int channels = 1; channels <= 2; channels++) {
-            formats.add(new AudioFormat(PCM_SIGNED, NOT_SPECIFIED, 8, channels, channels, NOT_SPECIFIED, false));
-            formats.add(new AudioFormat(PCM_UNSIGNED, NOT_SPECIFIED, 8, channels, channels, NOT_SPECIFIED, false));
-            for (int bits = 16; bits < 32; bits += 8) {
-                formats.add(new AudioFormat(PCM_SIGNED, NOT_SPECIFIED, bits, channels, channels * bits / 8, NOT_SPECIFIED, false));
-                formats.add(new AudioFormat(PCM_UNSIGNED, NOT_SPECIFIED, bits, channels, channels * bits / 8, NOT_SPECIFIED, false));
-                formats.add(new AudioFormat(PCM_SIGNED, NOT_SPECIFIED, bits, channels, channels * bits / 8, NOT_SPECIFIED, true));
-                formats.add(new AudioFormat(PCM_UNSIGNED, NOT_SPECIFIED, bits, channels, channels * bits / 8, NOT_SPECIFIED, true));
-            }
-            formats.add(new AudioFormat(PCM_FLOAT, NOT_SPECIFIED, 32, channels, channels * 4, NOT_SPECIFIED, false));
-            formats.add(new AudioFormat(PCM_FLOAT, NOT_SPECIFIED, 32, channels, channels * 4, NOT_SPECIFIED, true));
-            formats.add(new AudioFormat(PCM_FLOAT, NOT_SPECIFIED, 64, channels, channels * 8, NOT_SPECIFIED, false));
-            formats.add(new AudioFormat(PCM_FLOAT, NOT_SPECIFIED, 64, channels, channels * 8, NOT_SPECIFIED, true));
-        }
-        AudioFormat[] formats_array = formats.toArray(new AudioFormat[0]);
-        sourceLineInfo[0] = new DataLine.Info(SourceDataLine.class, formats_array, NOT_SPECIFIED, NOT_SPECIFIED);
-        sourceLineInfo[1] = new DataLine.Info(Clip.class, formats_array, NOT_SPECIFIED, NOT_SPECIFIED);
+    public SoftMixingMixer(SoftMixingClip clip) {
+        this.clip = clip;
     }
 
     public void close() {
-        if (!isOpen())
+        if (!open)
             return;
 //        sendEvent(new LineEvent(this, LineEvent.Type.CLOSE, NOT_SPECIFIED));
 
@@ -107,121 +80,84 @@ public class SoftMixingMixer {
 
         synchronized (control_mutex) {
             open = false;
-//            openLines.forEach(Line::close);
             if (sourceDataLine != null) {
                 sourceDataLine.drain();
                 sourceDataLine.close();
-                sourceDataLine = null;
             }
         }
     }
 
     public boolean isOpen() {
-        synchronized (control_mutex) {
-            return open;
-        }
+        return open;
     }
 
     public void open() throws LineUnavailableException {
-        open(null);
-    }
-
-    public void open(SourceDataLine line) throws LineUnavailableException {
-        if (isOpen()) {
-            implicitOpen = false;
+        if (open) {
             return;
         }
         synchronized (control_mutex) {
             try {
-                if (line != null) {
-                    format = line.getFormat();
-                } else {
-                    Mixer defaultMixer = AudioSystem.getMixer(null);
-                    if (defaultMixer != null) {
-                        // Search for suitable line
-                        line = Arrays.stream(defaultMixer.getSourceLineInfo())
-                            .filter(lineInfo -> lineInfo.getLineClass() == SourceDataLine.class)
-                            .map(SourceDataLine.Info.class::cast)
-                            .map(info -> Arrays.stream(info.getFormats())
-                                .filter(format -> (format.getChannels() == 2 || format.getChannels() == NOT_SPECIFIED)
-                                    && (format.getEncoding().equals(PCM_SIGNED) || format.getEncoding().equals(PCM_UNSIGNED))
-                                    && (format.getSampleRate() == NOT_SPECIFIED || format.getSampleRate() == 48000.0)
-                                    && (format.getSampleSizeInBits() == NOT_SPECIFIED || format.getSampleSizeInBits() == 16))
-                                .findFirst()
-                                .map(idealFormat -> {
-                                    float idealRate = idealFormat.getSampleRate();
-                                    int idealChannels = idealFormat.getChannels();
-                                    int idealBits = idealFormat.getSampleSizeInBits();
-                                    format = new AudioFormat(
-                                        idealRate == NOT_SPECIFIED ? 48000.0F : idealRate,
-                                        idealBits == NOT_SPECIFIED ? 16 : idealBits,
-                                        idealChannels == NOT_SPECIFIED ? 2 : idealChannels,
-                                        idealFormat.getEncoding().equals(PCM_SIGNED),
-                                        idealFormat.isBigEndian()
-                                    );
-                                    try {
-                                        return (SourceDataLine) defaultMixer.getLine(info);
-                                    } catch (LineUnavailableException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }))
-                            .filter(Optional::isPresent)
+                Mixer defaultMixer = AudioSystem.getMixer(null);
+                if (defaultMixer != null && sourceDataLine == null) {
+                    // Search for suitable line
+                    sourceDataLine = Arrays.stream(defaultMixer.getSourceLineInfo())
+                        .filter(lineInfo -> lineInfo.getLineClass() == SourceDataLine.class)
+                        .map(SourceDataLine.Info.class::cast)
+                        .map(info -> Arrays.stream(info.getFormats())
+                            .filter(format -> (format.getChannels() == 2 || format.getChannels() == NOT_SPECIFIED)
+                                && (format.getEncoding().equals(PCM_SIGNED) || format.getEncoding().equals(PCM_UNSIGNED))
+                                && (format.getSampleRate() == NOT_SPECIFIED || format.getSampleRate() == 48000.0)
+                                && (format.getSampleSizeInBits() == NOT_SPECIFIED || format.getSampleSizeInBits() == 16))
                             .findFirst()
-                            .map(Optional::get)
-                            .orElse(null);
-                    }
-                    if (line == null)
-                        line = AudioSystem.getSourceDataLine(format);
-                    assert line != null : new IllegalArgumentException("No line matching this mixer is supported.");
+                            .map(idealFormat -> {
+                                float idealRate = idealFormat.getSampleRate();
+                                int idealChannels = idealFormat.getChannels();
+                                int idealBits = idealFormat.getSampleSizeInBits();
+                                format = new AudioFormat(
+                                    idealRate == NOT_SPECIFIED ? 48000.0F : idealRate,
+                                    idealBits == NOT_SPECIFIED ? 16 : idealBits,
+                                    idealChannels == NOT_SPECIFIED ? 2 : idealChannels,
+                                    idealFormat.getEncoding().equals(PCM_SIGNED),
+                                    idealFormat.isBigEndian()
+                                );
+                                return Util.get(() -> (SourceDataLine) defaultMixer.getLine(info));
+                            }))
+                        .filter(Optional::isPresent)
+                        .findFirst()
+                        .flatMap(x -> x)
+                        .orElseGet(() -> Util.get(() -> AudioSystem.getSourceDataLine(format)));
                 }
-                AudioInputStream ais = openStream(getFormat());
+                if (sourceDataLine == null)
+                    throw new IllegalArgumentException("No line matching this mixer is supported.");
+                AudioInputStream ais = getInputStream();
 
-                if (!line.isOpen()) {
-                    int bufferSize = getFormat().getFrameSize() * (int) (getFormat().getFrameRate() * (latency / 1000000f));
-                    line.open(getFormat(), bufferSize);
-                    sourceDataLine = line;
+                if (!sourceDataLine.isOpen()) {
+                    int bufferSize = (int) (format.getFrameSize() * format.getFrameRate() * 0.1);
+                    sourceDataLine.open(format, bufferSize);
                 }
-                if (!line.isActive())
-                    line.start();
-
-                pusher = new SoftAudioPusher(line, ais, ais.available());
+                if (!sourceDataLine.isActive()) {
+                    sourceDataLine.start();
+                }
+                pusher = new SoftAudioPusher(sourceDataLine, ais, ais.available());
                 pusherStream = ais;
                 pusher.start();
+
+                open = true;
             } catch (LineUnavailableException | IOException e) {
-                if (isOpen())
-                    close();
                 if (e instanceof LineUnavailableException)
                     throw (LineUnavailableException) e;
             }
         }
     }
 
-    public AudioInputStream openStream(AudioFormat targetFormat) throws LineUnavailableException {
-        if (isOpen())
-            throw new LineUnavailableException("Mixer is already open");
-//        LineEvent event;
-        AudioInputStream inputStream;
-        synchronized (control_mutex) {
-            open = true;
-            implicitOpen = false;
-            if (targetFormat != null)
-                format = targetFormat;
-//            event = new LineEvent(this, LineEvent.Type.OPEN, NOT_SPECIFIED);
-            inputStream = getInputStream();
-        }
-//        sendEvent(event);
-        return inputStream;
-    }
-
     public AudioInputStream getInputStream() {
         int channels = format.getChannels();
-        int bufferSize = (int) (format.getSampleRate() / this.getControlRate());
-        SoftAudioBuffer[] buffers = new SoftAudioBuffer[16];
+        int bufferSize = (int) (format.getSampleRate() * 0.1);
+        SoftAudioBuffer[] buffers = new SoftAudioBuffer[2];
         for (int i = 0; i < buffers.length; i++) {
             buffers[i] = new SoftAudioBuffer(bufferSize, format);
         }
 
-        float sampleRate = format.getSampleRate();
         InputStream in = new InputStream() {
             final byte[] buffer = new byte[bufferSize * (format.getSampleSizeInBits() / 8) * channels];
             final byte[] single = new byte[1];
@@ -231,7 +167,7 @@ public class SoftMixingMixer {
                 for (SoftAudioBuffer buffer : buffers) {
                     buffer.clear();
                 }
-                openLines.forEach(openLine -> openLine.processAudioLogic(buffers));
+                clip.processAudioLogic(buffers);
                 for (int i = 0; i < channels; i++)
                     buffers[i].get(buffer, i);
                 bufferPos = 0;
@@ -241,12 +177,9 @@ public class SoftMixingMixer {
             public int read(byte[] b, int off, int len) {
                 int offsetLen = off + len;
                 while (off < offsetLen) {
-                    if (buffer.length == bufferPos) {
+                    b[off++] = buffer[bufferPos++];
+                    if (bufferPos == buffer.length) {
                         fillBuffer();
-                    } else {
-                        while (off < offsetLen && bufferPos < buffer.length) {
-                            b[off++] = buffer[bufferPos++];
-                        }
                     }
                 }
                 return len;
@@ -262,28 +195,10 @@ public class SoftMixingMixer {
                 return buffer.length - bufferPos;
             }
         };
-        return new AudioInputStream(in, this.getFormat(), AudioSystem.NOT_SPECIFIED);
-    }
-
-    public void openLine(SoftMixingClip line) {
-        synchronized (control_mutex) {
-            openLines.add(line);
-        }
-    }
-
-    public void closeLine(SoftMixingClip line) {
-        synchronized (control_mutex) {
-            openLines.remove(line);
-        }
+        return new AudioInputStream(in, format, AudioSystem.NOT_SPECIFIED);
     }
 
     public AudioFormat getFormat() {
-        synchronized (control_mutex) {
-            return format;
-        }
-    }
-
-    float getControlRate() {
-        return controlRate;
+        return format;
     }
 }
