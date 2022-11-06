@@ -31,22 +31,20 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.SourceDataLine;
 import java.io.IOException;
 
-/**
- * This is a processor object that writes into SourceDataLine
- *
- * @author Karl Helgason
- */
 public final class SoftAudioPusher implements Runnable {
-    private final AudioInputStream ais;
-    private final byte[] buffer;
     private final SourceDataLine line;
+    private AudioInputStream ais;
+    private byte[] buffer;
     private volatile boolean active = false;
     private Thread thread;
 
-    public SoftAudioPusher(SourceDataLine line, AudioInputStream ais, int size) {
+    public SoftAudioPusher(SourceDataLine line) {
+        this.line = line;
+    }
+
+    public synchronized void setStream(AudioInputStream ais, int size) {
         this.ais = ais;
         this.buffer = new byte[size];
-        this.line = line;
     }
 
     public synchronized void start() {

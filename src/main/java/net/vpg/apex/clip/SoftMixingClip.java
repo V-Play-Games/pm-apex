@@ -42,7 +42,6 @@ public class SoftMixingClip implements Clip {
     private AudioFormat inputFormat;
     private byte[] data;
     private int offset;
-    private AudioFormat outputFormat;
     private int framePosition = 0;
     private int loopStart = 0;
     private int loopEnd = -1;
@@ -93,7 +92,6 @@ public class SoftMixingClip implements Clip {
     private float leftGain = 1;
     private float rightGain = 1;
     private AudioFloatInputStream inputStream;
-    private int out_channels;
     private int in_channels;
     private boolean active = false;
 
@@ -101,7 +99,6 @@ public class SoftMixingClip implements Clip {
         this.mixer = new SoftMixingMixer(this);
         this.control_mutex = mixer.control_mutex;
         this.controls = new Control[]{gain, mute, balance};
-        calcVolume();
     }
 
     protected void processAudioLogic(SoftAudioBuffer[] buffers) {
@@ -121,7 +118,7 @@ public class SoftMixingClip implements Clip {
                 //ignore
             }
             fillReadData(buffers[0].getArray(), 0, leftGain);
-            if (out_channels != 1)
+            if (mixer.getFormat().getChannels() != 1)
                 fillReadData(buffers[1].getArray(), 1, rightGain);
         }
     }
@@ -133,13 +130,15 @@ public class SoftMixingClip implements Clip {
     }
 
     private void calcVolume() {
+        if (!open)
+            return;
         synchronized (control_mutex) {
             double gainValue = Math.pow(10.0, gain.getValue() / 20.0);
             if (mute.getValue())
                 gainValue = 0;
             leftGain = (float) gainValue;
             rightGain = (float) gainValue;
-            if (outputFormat.getChannels() > 1) {
+            if (mixer.getFormat().getChannels() > 1) {
                 // -ve = Left, 0 = Center, +ve = Right
                 double balanceValue = balance.getValue();
                 if (balanceValue > 0)
@@ -205,7 +204,7 @@ public class SoftMixingClip implements Clip {
     }
 
     @Override
-    public void open(AudioInputStream stream) throws IOException, LineUnavailableException {
+    public void open(AudioInputStream stream) throws IOException {
         if (isOpen()) {
             throw new IllegalStateException("Clip is already open with format " + getFormat() + ", and frame length of " + getFrameLength());
         }
@@ -217,7 +216,7 @@ public class SoftMixingClip implements Clip {
     }
 
     @Override
-    public void open(AudioFormat format, byte[] data, int offset, int bufferSize) throws LineUnavailableException {
+    public void open(AudioFormat format, byte[] data, int offset, int bufferSize) {
         synchronized (control_mutex) {
             if (isOpen())
                 throw new IllegalStateException("Clip is already open with format " + getFormat() + ", and frame length of " + getFrameLength());
@@ -226,17 +225,16 @@ public class SoftMixingClip implements Clip {
             Toolkit.validateBuffer(format.getFrameSize(), bufferSize);
             if (data != null)
                 this.data = Arrays.copyOf(data, data.length);
+            open = true;
             this.offset = offset;
             this.bufferSize = bufferSize;
             this.inputFormat = format;
             this.frameSize = format.getFrameSize();
             loopStart = 0;
             loopEnd = -1;
-            mixer.open();
-            outputFormat = mixer.getFormat();
-            out_channels = outputFormat.getChannels();
+            mixer.open(format);
             in_channels = format.getChannels();
-            open = true;
+            calcVolume();
             inputStream = AudioFloatInputStream.getInputStream(new AudioInputStream(stream, inputFormat, AudioSystem.NOT_SPECIFIED));
         }
     }
@@ -370,8 +368,6 @@ public class SoftMixingClip implements Clip {
             active = false;
             loopCount = 0;
             mixer.close();
-            outputFormat = null;
-            out_channels = 0;
             in_channels = 0;
             open = false;
         }
@@ -389,7 +385,7 @@ public class SoftMixingClip implements Clip {
     }
 
     @Override
-    public void open() throws LineUnavailableException {
+    public void open() {
         if (data == null) {
             throw new IllegalArgumentException("Illegal call to open() in interface Clip");
         }

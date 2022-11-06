@@ -27,11 +27,6 @@ package net.vpg.apex.clip;
 import javax.sound.sampled.AudioFormat;
 import java.util.Arrays;
 
-/**
- * This class is used to store audio buffer.
- *
- * @author Karl Helgason
- */
 public final class SoftAudioBuffer {
     private final int size;
     private final AudioFormat format;
