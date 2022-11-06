@@ -36,11 +36,6 @@ import static javax.sound.sampled.AudioFormat.Encoding.PCM_SIGNED;
 import static javax.sound.sampled.AudioFormat.Encoding.PCM_UNSIGNED;
 import static javax.sound.sampled.AudioSystem.NOT_SPECIFIED;
 
-/**
- * Software audio mixer.
- *
- * @author Karl Helgason
- */
 public class SoftMixingMixer {
     protected final SoftMixingClip clip;
     protected final Object control_mutex = new Object();
@@ -87,10 +82,6 @@ public class SoftMixingMixer {
         }
     }
 
-    public boolean isOpen() {
-        return open;
-    }
-
     public void open() throws LineUnavailableException {
         if (open) {
             return;
@@ -127,10 +118,9 @@ public class SoftMixingMixer {
                         .flatMap(x -> x)
                         .orElseGet(() -> Util.get(() -> AudioSystem.getSourceDataLine(format)));
                 }
-                if (sourceDataLine == null)
+                if (sourceDataLine == null) {
                     throw new IllegalArgumentException("No line matching this mixer is supported.");
-                AudioInputStream ais = getInputStream();
-
+                }
                 if (!sourceDataLine.isOpen()) {
                     int bufferSize = (int) (format.getFrameSize() * format.getFrameRate() * 0.1);
                     sourceDataLine.open(format, bufferSize);
@@ -138,8 +128,8 @@ public class SoftMixingMixer {
                 if (!sourceDataLine.isActive()) {
                     sourceDataLine.start();
                 }
-                pusher = new SoftAudioPusher(sourceDataLine, ais, ais.available());
-                pusherStream = ais;
+                pusherStream = getInputStream();
+                pusher = new SoftAudioPusher(sourceDataLine, pusherStream, pusherStream.available());
                 pusher.start();
 
                 open = true;
@@ -153,8 +143,8 @@ public class SoftMixingMixer {
     public AudioInputStream getInputStream() {
         int channels = format.getChannels();
         int bufferSize = (int) (format.getSampleRate() * 0.1);
-        SoftAudioBuffer[] buffers = new SoftAudioBuffer[2];
-        for (int i = 0; i < buffers.length; i++) {
+        SoftAudioBuffer[] buffers = new SoftAudioBuffer[channels];
+        for (int i = 0; i < channels; i++) {
             buffers[i] = new SoftAudioBuffer(bufferSize, format);
         }
 

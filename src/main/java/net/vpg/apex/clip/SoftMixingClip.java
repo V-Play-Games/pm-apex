@@ -31,11 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Clip implementation for the SoftMixingMixer.
- *
- * @author Karl Helgason
- */
 public class SoftMixingClip implements Clip {
     private final Object control_mutex;
     private final Gain gain = new Gain();
@@ -67,45 +62,30 @@ public class SoftMixingClip implements Clip {
         @Override
         public int read(byte[] b, int off, int len) {
             int pos = framePosition * frameSize;
-            if (loopCount != 0) {
-                int loopEndFrame = loopEnd * frameSize;
-                if (pos + len >= loopEndFrame) {
-                    int offend = off + len;
-                    int o = off;
-                    while (off <= offend) {
-                        if (pos + off >= loopEndFrame) {
-                            pos = loopStart * frameSize;
-                            if (loopCount != LOOP_CONTINUOUSLY)
-                                loopCount--;
-                            break;
-                        }
-                        len = offend - off;
-                        int left = loopEndFrame - pos;
-                        if (len > left)
-                            len = left;
-                        System.arraycopy(data, pos, b, off, len);
-                        off += len;
-                    }
-                    if (loopCount == 0) {
-                        len = offend - off;
-                        int left = loopEndFrame - pos;
-                        if (len > left)
-                            len = left;
-                        System.arraycopy(data, pos, b, off, len);
-                        off += len;
-                    }
-                    framePosition = pos / frameSize;
-                    return off - o;
-                }
+            int loopEndFrame = loopEnd * frameSize;
+            if (loopCount == 0 || pos + len < loopEndFrame) { // drain all if no
+                len = Math.min(len, bufferSize - pos);
+                if (len == 0)
+                    return -1;
+                System.arraycopy(data, pos, b, off, len);
+                framePosition += len / frameSize;
+                return len;
             }
-            int left = bufferSize - pos;
-            if (left == 0)
-                return -1;
-            if (len > left)
-                len = left;
-            System.arraycopy(data, pos, b, off, len);
-            framePosition += len / frameSize;
-            return len;
+            int read = 0;
+            while (read < len) {
+                if (pos + read >= loopEndFrame) {
+                    pos = loopStart * frameSize;
+                    if (loopCount != LOOP_CONTINUOUSLY)
+                        loopCount--;
+                    if (loopCount == 0)
+                        break;
+                }
+                int left = Math.min(len - read, loopEndFrame - pos);
+                System.arraycopy(data, pos, b, off + read, left);
+                read += left;
+            }
+            framePosition = pos / frameSize;
+            return read;
         }
     };
     private float[] readBuffer;
@@ -159,14 +139,13 @@ public class SoftMixingClip implements Clip {
                 gainValue = 0;
             leftGain = (float) gainValue;
             rightGain = (float) gainValue;
-            if (mixer.getFormat().getChannels() > 1) {
+            if (outputFormat.getChannels() > 1) {
                 // -ve = Left, 0 = Center, +ve = Right
                 double balanceValue = balance.getValue();
                 if (balanceValue > 0)
                     leftGain *= 1 - balanceValue;
                 else
                     rightGain *= 1 + balanceValue;
-
             }
         }
     }
@@ -307,9 +286,7 @@ public class SoftMixingClip implements Clip {
 
     @Override
     public int getFramePosition() {
-        synchronized (control_mutex) {
-            return framePosition;
-        }
+        return framePosition;
     }
 
     @Override
@@ -341,16 +318,12 @@ public class SoftMixingClip implements Clip {
 
     @Override
     public boolean isActive() {
-        synchronized (control_mutex) {
-            return active;
-        }
+        return active;
     }
 
     @Override
     public boolean isRunning() {
-        synchronized (control_mutex) {
-            return active;
-        }
+        return active;
     }
 
     @Override
