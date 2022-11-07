@@ -24,6 +24,8 @@
  */
 package net.vpg.apex.clip;
 
+import net.vpg.apex.Util;
+
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,23 +34,19 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SoftMixingClip implements Clip {
-    private final Object control_mutex;
-    private final Gain gain = new Gain();
-    private final Mute mute = new Mute();
-    private final Balance balance = new Balance();
-    private final Control[] controls;
+    private final Object control_mutex = new Object();
     private final List<LineListener> listeners = new ArrayList<>();
-    private final SoftMixingMixer mixer;
-    private AudioFormat inputFormat;
+    protected SourceDataLine sourceDataLine;
+    protected SoftAudioPusher pusher;
+    private AudioFormat format;
     private byte[] data;
-    private int offset;
     private int framePosition = 0;
     private int loopStart = 0;
     private int loopEnd = -1;
     private int loopCount = 0;
     private int frameSize;
     private int bufferSize;
-    private final InputStream stream = new InputStream() {
+    private class LoopingArrayReaderStream extends InputStream {
         @Override
         public int read() throws IOException {
             byte[] b = new byte[1];
@@ -61,128 +59,86 @@ public class SoftMixingClip implements Clip {
         @Override
         public int read(byte[] b, int off, int len) {
             int pos = framePosition * frameSize;
-            int loopEndFrame = loopEnd * frameSize;
-            if (loopCount == 0 || pos + len < loopEndFrame) { // drain all if no
-                len = Math.min(len, bufferSize - pos);
-                if (len == 0)
-                    return -1;
-                System.arraycopy(data, pos, b, off, len);
-                framePosition += len / frameSize;
-                return len;
-            }
-            int read = 0;
-            while (read < len) {
-                if (pos + read >= loopEndFrame) {
-                    pos = loopStart * frameSize;
-                    if (loopCount != LOOP_CONTINUOUSLY)
-                        loopCount--;
-                    if (loopCount == 0)
-                        break;
+            if (loopCount != 0) {
+                int loopEndFrame = loopEnd * frameSize;
+                if (pos + len >= loopEndFrame) {
+                    int offend = off + len;
+                    int o = off;
+                    while (off <= offend) {
+                        if (pos + off >= loopEndFrame) {
+                            pos = loopStart * frameSize;
+                            if (loopCount != LOOP_CONTINUOUSLY)
+                                loopCount--;
+                            break;
+                        }
+                        len = offend - off;
+                        int left = loopEndFrame - pos;
+                        if (len > left)
+                            len = left;
+                        System.arraycopy(data, pos, b, off, len);
+                        off += len;
+                    }
+                    if (loopCount == 0) {
+                        len = offend - off;
+                        int left = loopEndFrame - pos;
+                        if (len > left)
+                            len = left;
+                        System.arraycopy(data, pos, b, off, len);
+                        off += len;
+                    }
+                    framePosition = pos / frameSize;
+                    return off - o;
                 }
-                int left = Math.min(len - read, loopEndFrame - pos);
-                System.arraycopy(data, pos, b, off + read, left);
-                read += left;
             }
-            framePosition = pos / frameSize;
-            return read;
+            int left = bufferSize - pos;
+            if (left == 0)
+                return -1;
+            if (len > left)
+                len = left;
+            System.arraycopy(data, pos, b, off, len);
+            framePosition += len / frameSize;
+            return len;
         }
-    };
-    private float[] readBuffer;
+    }
     private boolean open = false;
-    private float leftGain = 1;
-    private float rightGain = 1;
-    private AudioFloatInputStream inputStream;
-    private int in_channels;
     private boolean active = false;
-
-    public SoftMixingClip() {
-        this.mixer = new SoftMixingMixer(this);
-        this.control_mutex = mixer.control_mutex;
-        this.controls = new Control[]{gain, mute, balance};
-    }
-
-    protected void processAudioLogic(SoftAudioBuffer[] buffers) {
-        if (active) {
-            int readLen = buffers[0].getSize() * in_channels;
-            if (readBuffer == null || readBuffer.length < readLen)
-                readBuffer = new float[readLen];
-            try {
-                int read = inputStream.read(readBuffer);
-                if (read == -1) {
-                    active = false;
-                    return;
-                }
-                if (read != readLen)
-                    Arrays.fill(readBuffer, read, readLen, 0);
-            } catch (IOException ignored) {
-                //ignore
-            }
-            fillReadData(buffers[0].getArray(), 0, leftGain);
-            if (mixer.getFormat().getChannels() != 1)
-                fillReadData(buffers[1].getArray(), 1, rightGain);
-        }
-    }
-
-    private void fillReadData(float[] dest, int ix, float factor) {
-        for (int i = 0, len = dest.length; i < len; ix += in_channels) {
-            dest[i++] += readBuffer[ix] * factor;
-        }
-    }
-
-    private void calcVolume() {
-        if (!open)
-            return;
-        synchronized (control_mutex) {
-            double gainValue = Math.pow(10.0, gain.getValue() / 20.0);
-            if (mute.getValue())
-                gainValue = 0;
-            leftGain = (float) gainValue;
-            rightGain = (float) gainValue;
-            if (mixer.getFormat().getChannels() > 1) {
-                // -ve = Left, 0 = Center, +ve = Right
-                double balanceValue = balance.getValue();
-                if (balanceValue > 0)
-                    leftGain *= 1 - balanceValue;
-                else
-                    rightGain *= 1 + balanceValue;
-            }
-        }
-    }
 
     private void sendEvent(LineEvent event) {
         listeners.forEach(listener -> listener.update(event));
     }
 
+    @Override
     public void addLineListener(LineListener listener) {
         synchronized (control_mutex) {
             listeners.add(listener);
         }
     }
 
+    @Override
     public void removeLineListener(LineListener listener) {
         synchronized (control_mutex) {
             listeners.remove(listener);
         }
     }
 
+    @Override
     public Control getControl(Control.Type control) {
-        return Arrays.stream(controls)
-            .filter(c -> c.getType() == control)
-            .findFirst()
-            .orElse(null);
+        return null;
     }
 
+    @Override
     public Control[] getControls() {
-        return Arrays.copyOf(controls, controls.length);
+        return null;
     }
 
+    @Override
     public boolean isControlSupported(Control.Type control) {
-        return Arrays.stream(controls).anyMatch(c -> c.getType() == control);
+        return false;
     }
 
     @Override
     public int getFrameLength() {
-        return bufferSize / inputFormat.getFrameSize();
+        return bufferSize / format.getFrameSize();
     }
 
     @Override
@@ -205,12 +161,6 @@ public class SoftMixingClip implements Clip {
 
     @Override
     public void open(AudioInputStream stream) throws IOException {
-        if (isOpen()) {
-            throw new IllegalStateException("Clip is already open with format " + getFormat() + ", and frame length of " + getFrameLength());
-        }
-        AudioFormat streamFormat = stream.getFormat();
-        if (!AudioFloatConverter.isSupported(streamFormat))
-            throw new IllegalArgumentException("Invalid format: " + streamFormat.toString());
         byte[] cached = Toolkit.cache(stream);
         open(stream.getFormat(), cached, 0, cached.length);
     }
@@ -218,45 +168,32 @@ public class SoftMixingClip implements Clip {
     @Override
     public void open(AudioFormat format, byte[] data, int offset, int bufferSize) {
         synchronized (control_mutex) {
-            if (isOpen())
-                throw new IllegalStateException("Clip is already open with format " + getFormat() + ", and frame length of " + getFrameLength());
-            if (!AudioFloatConverter.isSupported(format))
-                throw new IllegalArgumentException("Invalid format: " + format.toString());
             Toolkit.validateBuffer(format.getFrameSize(), bufferSize);
-            if (data != null)
-                this.data = Arrays.copyOf(data, data.length);
-            open = true;
-            this.offset = offset;
+            this.data = Arrays.copyOfRange(data, offset, offset + bufferSize);
             this.bufferSize = bufferSize;
-            this.inputFormat = format;
-            this.frameSize = format.getFrameSize();
+            open = true;
             loopStart = 0;
             loopEnd = -1;
-            mixer.open(format);
-            in_channels = format.getChannels();
-            calcVolume();
-            inputStream = AudioFloatInputStream.getInputStream(new AudioInputStream(stream, inputFormat, AudioSystem.NOT_SPECIFIED));
+            framePosition = 0;
+            loopCount = 0;
+            if (this.format != format) {
+                this.format = format;
+                frameSize = format.getFrameSize();
+            }
+            openSourceDataLine();
         }
     }
 
     @Override
     public void setLoopPoints(int start, int end) {
         synchronized (control_mutex) {
-            if (end == -1)
+            if (end == AudioSystem.NOT_SPECIFIED || end * frameSize > bufferSize)
                 end = bufferSize / frameSize;
-            if (end < start)
-                invalidLoopPoints(start, end);
-            if (end * frameSize > bufferSize)
-                end = bufferSize / frameSize;
-            if (start * frameSize > bufferSize)
-                invalidLoopPoints(start, end);
+            if (end < start || start * frameSize > bufferSize)
+                throw new IllegalArgumentException("Invalid loop points: " + start + " - " + end);
             loopStart = start;
             loopEnd = end;
         }
-    }
-
-    private void invalidLoopPoints(int start, int end) {
-        throw new IllegalArgumentException("Invalid loop points: " + start + " - " + end);
     }
 
     @Override
@@ -279,7 +216,7 @@ public class SoftMixingClip implements Clip {
 
     @Override
     public AudioFormat getFormat() {
-        return inputFormat;
+        return format;
     }
 
     @Override
@@ -358,17 +295,17 @@ public class SoftMixingClip implements Clip {
             stop();
             event = new LineEvent(this, LineEvent.Type.CLOSE, getLongFramePosition());
             data = null;
-            offset = 0;
+            format = null;
+            active = false;
             bufferSize = 0;
-            inputFormat = null;
             frameSize = 0;
             loopStart = 0;
             loopEnd = -1;
             framePosition = 0;
-            active = false;
             loopCount = 0;
-            mixer.close();
-            in_channels = 0;
+            pusher.stop();
+            sourceDataLine.drain();
+            sourceDataLine.close();
             open = false;
         }
         sendEvent(event);
@@ -381,7 +318,7 @@ public class SoftMixingClip implements Clip {
 
     @Override
     public Line.Info getLineInfo() {
-        return null;
+        return new DataLine.Info(SoftMixingClip.class, format);
     }
 
     @Override
@@ -389,44 +326,28 @@ public class SoftMixingClip implements Clip {
         if (data == null) {
             throw new IllegalArgumentException("Illegal call to open() in interface Clip");
         }
-        open(inputFormat, data, offset, bufferSize);
+        open(format, data, 0, bufferSize);
     }
 
-    private class Gain extends FloatControl {
-        private Gain() {
-            super(FloatControl.Type.MASTER_GAIN, -80f, 6.0206f, 80f / 128.0f,
-                -1, 0.0f, "dB", "Minimum", "", "Maximum");
+    private void openSourceDataLine() {
+        if (sourceDataLine == null) {
+            // Search for suitable line
+            Mixer defaultMixer = AudioSystem.getMixer(null);
+            sourceDataLine = Arrays.stream(defaultMixer.getSourceLineInfo())
+                .filter(lineInfo -> lineInfo.getLineClass() == SourceDataLine.class)
+                .map(SourceDataLine.Info.class::cast)
+                .map(info -> Util.get(() -> (SourceDataLine) defaultMixer.getLine(info)))
+                .findFirst()
+                .orElseGet(() -> Util.get(() -> AudioSystem.getSourceDataLine(format)));
+            pusher = new SoftAudioPusher(sourceDataLine, new LoopingArrayReaderStream());
         }
-
-        @Override
-        public void setValue(float newValue) {
-            super.setValue(newValue);
-            calcVolume();
+        if (!sourceDataLine.isOpen()) {
+            int bufferSize = (int) (format.getFrameSize() * format.getFrameRate() * 0.1);
+            Util.run(() -> sourceDataLine.open(format, bufferSize));
         }
-    }
-
-    private class Mute extends BooleanControl {
-        private Mute() {
-            super(BooleanControl.Type.MUTE, false, "True", "False");
+        if (!sourceDataLine.isActive()) {
+            sourceDataLine.start();
         }
-
-        @Override
-        public void setValue(boolean newValue) {
-            super.setValue(newValue);
-            calcVolume();
-        }
-    }
-
-    private class Balance extends FloatControl {
-        private Balance() {
-            super(FloatControl.Type.BALANCE, -1.0f, 1.0f, 1.0f / 128.0f, -1,
-                0.0f, "", "Left", "Center", "Right");
-        }
-
-        @Override
-        public void setValue(float newValue) {
-            super.setValue(newValue);
-            calcVolume();
-        }
+        pusher.start();
     }
 }

@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Track {
     public static final AudioFormat AUDIO_FORMAT = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
     private static final Logger LOGGER = LoggerFactory.getLogger(Track.class);
-    private static final Clip CLIP = new SoftMixingClip();
+    private static final SoftMixingClip CLIP = new SoftMixingClip();
     private final TrackInfo info;
     private final AtomicBoolean isCaching = new AtomicBoolean();
     private final AtomicBoolean isPlaying = new AtomicBoolean();
@@ -120,15 +119,9 @@ public class Track {
 
     public void play() {
         isPlaying.set(true);
-        if (!CLIP.isOpen()) {
-            ensureCached();
-            if (!isPlaying.get()) return;
-            try {
-                CLIP.open(AUDIO_FORMAT, cache, 0, cache.length);
-            } catch (LineUnavailableException e) {
-                LOGGER.error("Encountered an unexpected uncaught exception:", e);
-            }
-        }
+        ensureCached();
+        if (!isPlaying.get()) return;
+        CLIP.open(AUDIO_FORMAT, cache, 0, cache.length);
         CLIP.setLoopPoints(getLoopStart(), getLoopEnd());
         CLIP.loop(Clip.LOOP_CONTINUOUSLY);
         CLIP.start();

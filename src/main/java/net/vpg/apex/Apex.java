@@ -152,7 +152,7 @@ public class Apex {
     }
 
     public void stopCurrentTrack() {
-        getCurrentTrack().close();
+        getCurrentTrack().stop();
     }
 
     public void setTrack(Track track) {

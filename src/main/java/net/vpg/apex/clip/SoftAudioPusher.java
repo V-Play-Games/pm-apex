@@ -1,74 +1,44 @@
-/*
- * Copyright (c) 2007, 2015, Oracle and/or its affiliates. All rights reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * This code is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Oracle designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Oracle in the LICENSE file that accompanied this code.
- *
- * This code is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * version 2 for more details (a copy is included in the LICENSE file that
- * accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version
- * 2 along with this work; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
- * or visit www.oracle.com if you need additional information or have any
- * questions.
- */
-
 package net.vpg.apex.clip;
 
 import net.vpg.apex.Util;
 
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.SourceDataLine;
 import java.io.IOException;
+import java.io.InputStream;
 
-public final class SoftAudioPusher implements Runnable {
+public class SoftAudioPusher {
     private final SourceDataLine line;
-    private AudioInputStream ais;
-    private byte[] buffer;
+    private final InputStream stream;
+    private final byte[] buffer;
     private volatile boolean active = false;
     private Thread thread;
 
-    public SoftAudioPusher(SourceDataLine line) {
+    public SoftAudioPusher(SourceDataLine line, InputStream stream) {
         this.line = line;
+        this.stream = stream;
+        this.buffer = new byte[4096];
     }
 
-    public synchronized void setStream(AudioInputStream ais, int size) {
-        this.ais = ais;
-        this.buffer = new byte[size];
-    }
-
-    public synchronized void start() {
-        if (active) {
-            return;
-        }
+    public void start() {
+        if (active) return;
         active = true;
-        thread = new Thread(this, "AudioPusher");
+        thread = new Thread(this::push, "AudioPusher");
         thread.setDaemon(true);
         thread.setPriority(Thread.MAX_PRIORITY);
         thread.start();
     }
 
-    public synchronized void stop() {
+    public void stop() {
         if (!active) return;
         active = false;
         Util.run(thread::join);
+        thread = null;
     }
 
-    @Override
-    public void run() {
+    private void push() {
         try {
             while (active) {
-                int read = ais.read(buffer);
+                int read = stream.read(buffer);
                 if (read < 0) break;
                 line.write(buffer, 0, read);
             }
