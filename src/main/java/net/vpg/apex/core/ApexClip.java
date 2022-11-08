@@ -1,4 +1,4 @@
-package net.vpg.apex.clip;
+package net.vpg.apex.core;
 
 import net.vpg.apex.Util;
 
@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-public class SoftMixingClip implements Clip {
+public class ApexClip implements Clip {
     private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
     private final Object control_mutex = new Object();
     private final List<LineListener> listeners = new ArrayList<>();
@@ -81,6 +81,14 @@ public class SoftMixingClip implements Clip {
         open0(stream.getFormat());
     }
 
+    public void open(TrackInfo track, AudioFormat format) {
+        Util.run(() -> {
+            open(AudioSystem.getAudioInputStream(format, AudioSystem.getAudioInputStream(track.getFile())));
+            setLoopPoints(track.getLoopStart(), track.getLoopEnd());
+            loop(Clip.LOOP_CONTINUOUSLY);
+        });
+    }
+
     @Override
     public void open(AudioFormat format, byte[] data, int offset, int bufferSize) {
         synchronized (control_mutex) {
@@ -111,7 +119,7 @@ public class SoftMixingClip implements Clip {
     @Override
     public void setLoopPoints(int start, int end) {
         synchronized (control_mutex) {
-            if (end < start)
+            if (end != AudioSystem.NOT_SPECIFIED && end < start)
                 throw new IllegalArgumentException("Invalid loop points: " + start + " - " + end);
             loopStart = start;
             loopEnd = end;
@@ -230,7 +238,7 @@ public class SoftMixingClip implements Clip {
 
     @Override
     public Line.Info getLineInfo() {
-        return new DataLine.Info(SoftMixingClip.class, format);
+        return new DataLine.Info(ApexClip.class, format);
     }
 
     @Override

@@ -28,7 +28,6 @@ public class TrackInfo {
     private final String id;
     private final String name;
     private final String description;
-    private Track track;
     private File file;
     private boolean initDone = false;
     private int loopStart = -1;
@@ -57,10 +56,6 @@ public class TrackInfo {
             .put("id", id)
             .put("name", "N/A")
             .put("description", "N/A"));
-    }
-
-    public Track getTrack() {
-        return track == null ? track = new Track(this) : track;
     }
 
     private void init(File file) {

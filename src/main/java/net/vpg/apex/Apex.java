@@ -2,12 +2,14 @@ package net.vpg.apex;
 
 import net.vpg.apex.components.ApexControl;
 import net.vpg.apex.components.ApexWindow;
+import net.vpg.apex.core.ApexClip;
 import net.vpg.apex.core.ApexThreadFactory;
 import net.vpg.apex.core.Resources;
-import net.vpg.apex.core.Track;
+import net.vpg.apex.core.TrackInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sound.sampled.AudioFormat;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,8 +20,10 @@ import java.util.stream.Collectors;
 public class Apex {
     public static final Apex APEX = new Apex();
     public static final Logger LOGGER = LoggerFactory.getLogger(Apex.class);
+    public static final AudioFormat AUDIO_FORMAT = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
+    private final ApexClip clip = new ApexClip();
     private final ScheduledThreadPoolExecutor mainExecutor = new ScheduledThreadPoolExecutor(16, new ApexThreadFactory("Main"));
-    private List<Track> playlist = new ArrayList<>();
+    private List<TrackInfo> playlist = new ArrayList<>();
     private int index = 0;
 
     public static void main(String[] args) {
@@ -40,21 +44,21 @@ public class Apex {
             .values()
             .stream()
             .filter(f -> f.getName().endsWith(".ogg"))
-            .map(Track::get)
-            .sorted(Comparator.comparing(Track::getId))
+            .map(TrackInfo::get)
+            .sorted(Comparator.comparing(TrackInfo::getId))
             .collect(Collectors.toList());
         updateListModel();
     }
 
     private void updateListModel() {
         ApexControl.trackListModel.clear();
-        ApexControl.trackListModel.addAll(playlist.stream().map(Track::getName).collect(Collectors.toList()));
+        ApexControl.trackListModel.addAll(playlist.stream().map(TrackInfo::getName).collect(Collectors.toList()));
         ApexControl.trackList.setSelectedIndex(index);
         Util.sleep(100);
         updateScrollBar();
     }
 
-    public List<Track> getPlaylist() {
+    public List<TrackInfo> getPlaylist() {
         return playlist;
     }
 
@@ -72,7 +76,7 @@ public class Apex {
 
     public void takeAction(int action) {
         mainExecutor.execute(() -> {
-            Track track = getCurrentTrack();
+            TrackInfo track = getCurrentTrack();
             switch (action) {
                 case 0:
                     setIndex(index + 1);
@@ -86,21 +90,22 @@ public class Apex {
                     updateListModel();
                     break;
                 case 3:
-                    Track.CLIP.stop();
+                    clip.stop();
                     ApexControl.playing = false;
                     ApexControl.stopped = true;
                     break;
                 case 4:
-                    boolean active = Track.CLIP.isActive();
+                    boolean active = clip.isActive();
                     ApexControl.playing = !active;
                     if (active) {
-                        Track.CLIP.stop();
+                        clip.stop();
                     } else {
                         if (ApexControl.stopped) {
                             ApexControl.stopped = false;
-                            track.play();
+                            clip.open(track, AUDIO_FORMAT);
+                            clip.start();
                         }
-                        Track.CLIP.start();
+                        clip.start();
                     }
                     break;
                 case 5:
@@ -126,14 +131,14 @@ public class Apex {
     public boolean searchAndPlay(int start, int end) {
         String searchText = ApexControl.searchTextArea.getText().toLowerCase();
         for (int i = start; i < end; i++) {
-            Track t = playlist.get(i);
+            TrackInfo t = playlist.get(i);
             if (t.getId().contains(searchText)) {
                 modifyAndUpdateApp(t, i);
                 return true;
             }
         }
         for (int i = start; i < end; i++) {
-            Track t = playlist.get(i);
+            TrackInfo t = playlist.get(i);
             if (t.getName().toLowerCase().contains(searchText)) {
                 modifyAndUpdateApp(t, i);
                 return true;
@@ -142,18 +147,15 @@ public class Apex {
         return false;
     }
 
-    public Track getCurrentTrack() {
+    public TrackInfo getCurrentTrack() {
         return playlist.get(index);
     }
 
-    public void setTrack(Track track) {
-        modifyAndUpdateApp(track, playlist.indexOf(track));
-    }
-
-    private void modifyAndUpdateApp(Track track, int index) {
-        Track.CLIP.stop();
+    private void modifyAndUpdateApp(TrackInfo track, int index) {
+        clip.stop();
         this.index = index;
-        track.play();
+        clip.open(track, AUDIO_FORMAT);
+        clip.start();
         ApexControl.trackList.setSelectedIndex(index);
         updateScrollBar();
         ApexControl.trackName.setText(track.getName());
