@@ -22,7 +22,7 @@ public class Apex {
     public static final Logger LOGGER = LoggerFactory.getLogger(Apex.class);
     public static final AudioFormat AUDIO_FORMAT = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
     private final ApexClip clip = new ApexClip();
-    private final ScheduledThreadPoolExecutor mainExecutor = new ScheduledThreadPoolExecutor(16, new ApexThreadFactory("Main"));
+    private final ScheduledThreadPoolExecutor mainExecutor = new ScheduledThreadPoolExecutor(2, new ApexThreadFactory("Main"));
     private List<Track> playlist = new ArrayList<>();
     private int index = 0;
 

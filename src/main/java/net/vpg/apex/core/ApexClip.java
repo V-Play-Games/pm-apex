@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class ApexClip implements Clip {
-    private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
+    private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2, new ApexThreadFactory("Player"));
     private final List<LineListener> listeners = new ArrayList<>();
     protected SourceDataLine sourceDataLine;
     private AudioFormat format;
@@ -245,11 +245,9 @@ public class ApexClip implements Clip {
     private void playAudio() {
         int frameRate = (int) format.getFrameRate();
         int frameSize = format.getFrameSize();
-        int frameLength = getFrameLength();
         while (active) {
-            if (readAudio(frameRate * frameSize)) {
-                frameLength = getFrameLength();
-            }
+            readAudio(frameRate * frameSize);
+            int frameLength = getFrameLength();
             int limit = loopEnd > frameLength || loopEnd == -1 || loopCount == 0 ? frameLength : loopEnd;
             int len = Math.min(limit - framePosition, frameRate / 20); // push at most 50 ms of audio
             sourceDataLine.write(data, framePosition * frameSize, len * frameSize);
@@ -271,8 +269,8 @@ public class ApexClip implements Clip {
         }
     }
 
-    private boolean readAudio(int bytes) {
-        if (stream == null) return false;
+    private void readAudio(int bytes) {
+        if (stream == null) return;
         Util.run(() -> {
             byte[] buffer = new byte[bytes];
             int totalRead = 0;
@@ -293,6 +291,5 @@ public class ApexClip implements Clip {
             System.arraycopy(buffer, 0, merged, data.length, totalRead);
             data = merged;
         });
-        return true;
     }
 }
