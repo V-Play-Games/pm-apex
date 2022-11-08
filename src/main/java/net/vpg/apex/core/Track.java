@@ -42,14 +42,14 @@ public class Track {
 
     public static Track get(File file) {
         String filename = file.getName();
-        Track info = entries.computeIfAbsent(Util.getId(filename), Track::getInfo);
+        Track info = entries.computeIfAbsent(Util.getId(filename), Track::makeDefaultInfo);
         if (!info.isInitDone()) {
             info.init(file);
         }
         return info;
     }
 
-    private static Track getInfo(String id) {
+    private static Track makeDefaultInfo(String id) {
         return new Track(new JSONObject()
             .put("id", id)
             .put("name", "N/A")

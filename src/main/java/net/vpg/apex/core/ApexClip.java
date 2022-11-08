@@ -24,54 +24,12 @@ public class ApexClip implements Clip {
     private boolean open = false;
     private boolean active = false;
 
-    private void sendEvent(LineEvent event) {
-        listeners.forEach(listener -> listener.update(event));
-    }
-
     @Override
-    public void addLineListener(LineListener listener) {
-        synchronized (control_mutex) {
-            listeners.add(listener);
+    public void open() {
+        if (data == null) {
+            throw new IllegalArgumentException("Illegal call to open() in interface Clip");
         }
-    }
-
-    @Override
-    public void removeLineListener(LineListener listener) {
-        synchronized (control_mutex) {
-            listeners.remove(listener);
-        }
-    }
-
-    @Override
-    public Control getControl(Control.Type control) {
-        return null;
-    }
-
-    @Override
-    public Control[] getControls() {
-        return null;
-    }
-
-    @Override
-    public boolean isControlSupported(Control.Type control) {
-        return false;
-    }
-
-    @Override
-    public int getFrameLength() {
-        return data.length / frameSize;
-    }
-
-    @Override
-    public long getMicrosecondLength() {
-        return (long) (getFrameLength() * 1000000.0 / getFormat().getSampleRate());
-    }
-
-    @Override
-    public void loop(int count) {
-        synchronized (control_mutex) {
-            loopCount = count;
-        }
+        open(format, data, 0, data.length);
     }
 
     @Override
@@ -106,7 +64,62 @@ public class ApexClip implements Clip {
             this.format = format;
             frameSize = format.getFrameSize();
         }
-        openSourceDataLine();
+        if (sourceDataLine == null) {
+            Mixer defaultMixer = AudioSystem.getMixer(null);
+            sourceDataLine = Arrays.stream(defaultMixer.getSourceLineInfo())
+                .filter(lineInfo -> lineInfo.getLineClass() == SourceDataLine.class)
+                .map(SourceDataLine.Info.class::cast)
+                .map(info -> Util.get(() -> (SourceDataLine) defaultMixer.getLine(info)))
+                .findFirst()
+                .orElseGet(() -> Util.get(() -> AudioSystem.getSourceDataLine(format)));
+        }
+        if (!sourceDataLine.isOpen()) {
+            int bufferSize = (int) (format.getFrameSize() * format.getFrameRate() * 0.1);
+            Util.run(() -> sourceDataLine.open(format, bufferSize));
+        }
+        if (!sourceDataLine.isActive()) {
+            sourceDataLine.start();
+        }
+    }
+
+    @Override
+    public void start() {
+        if (!open || active)
+            return;
+        synchronized (control_mutex) {
+            active = true;
+            executor.execute(this::push);
+        }
+        sendEvent(new LineEvent(this, LineEvent.Type.START, framePosition));
+    }
+
+    @Override
+    public void stop() {
+        if (!active)
+            return;
+        synchronized (control_mutex) {
+            active = false;
+            sourceDataLine.drain();
+        }
+        sendEvent(new LineEvent(this, LineEvent.Type.STOP, framePosition));
+    }
+
+    @Override
+    public void close() {
+        if (!open)
+            return;
+        long pos = framePosition;
+        synchronized (control_mutex) {
+            data = null;
+            format = null;
+            open = false;
+            active = false;
+            frameSize = 0;
+            reset();
+            sourceDataLine.drain();
+            sourceDataLine.close();
+        }
+        sendEvent(new LineEvent(this, LineEvent.Type.CLOSE, pos));
     }
 
     private void reset() {
@@ -117,6 +130,24 @@ public class ApexClip implements Clip {
     }
 
     @Override
+    public void addLineListener(LineListener listener) {
+        synchronized (control_mutex) {
+            listeners.add(listener);
+        }
+    }
+
+    @Override
+    public void removeLineListener(LineListener listener) {
+        synchronized (control_mutex) {
+            listeners.remove(listener);
+        }
+    }
+
+    private void sendEvent(LineEvent event) {
+        listeners.forEach(listener -> listener.update(event));
+    }
+
+    @Override
     public void setLoopPoints(int start, int end) {
         synchronized (control_mutex) {
             if (end != AudioSystem.NOT_SPECIFIED && end < start)
@@ -124,6 +155,38 @@ public class ApexClip implements Clip {
             loopStart = start;
             loopEnd = end;
         }
+    }
+
+    @Override
+    public void loop(int count) {
+        synchronized (control_mutex) {
+            loopCount = count;
+        }
+    }
+
+    @Override
+    public Control getControl(Control.Type control) {
+        return null;
+    }
+
+    @Override
+    public Control[] getControls() {
+        return null;
+    }
+
+    @Override
+    public boolean isControlSupported(Control.Type control) {
+        return false;
+    }
+
+    @Override
+    public int getFrameLength() {
+        return data.length / frameSize;
+    }
+
+    @Override
+    public long getMicrosecondLength() {
+        return (long) (getFrameLength() * 1000000.0 / getFormat().getSampleRate());
     }
 
     @Override
@@ -173,17 +236,12 @@ public class ApexClip implements Clip {
 
     @Override
     public long getMicrosecondPosition() {
-        return (long) (getFramePosition() * 1000000.0 / getFormat().getSampleRate());
+        return (long) (getFramePosition() / getFormat().getSampleRate() * 1000000);
     }
 
     @Override
     public void setMicrosecondPosition(long microseconds) {
-        setFramePosition((int) (microseconds * getFormat().getSampleRate() / 1000000.0));
-    }
-
-    @Override
-    public boolean isActive() {
-        return active;
+        setFramePosition((int) (microseconds * getFormat().getSampleRate() / 1000000));
     }
 
     @Override
@@ -192,43 +250,8 @@ public class ApexClip implements Clip {
     }
 
     @Override
-    public void start() {
-        if (!open || active)
-            return;
-        synchronized (control_mutex) {
-            active = true;
-            executor.execute(this::push);
-        }
-        sendEvent(new LineEvent(this, LineEvent.Type.START, framePosition));
-    }
-
-    @Override
-    public void stop() {
-        if (!active)
-            return;
-        synchronized (control_mutex) {
-            active = false;
-            sourceDataLine.drain();
-        }
-        sendEvent(new LineEvent(this, LineEvent.Type.STOP, framePosition));
-    }
-
-    @Override
-    public void close() {
-        if (!open)
-            return;
-        long pos = framePosition;
-        synchronized (control_mutex) {
-            data = null;
-            format = null;
-            open = false;
-            active = false;
-            frameSize = 0;
-            reset();
-            sourceDataLine.drain();
-            sourceDataLine.close();
-        }
-        sendEvent(new LineEvent(this, LineEvent.Type.CLOSE, pos));
+    public boolean isActive() {
+        return active;
     }
 
     @Override
@@ -239,34 +262,6 @@ public class ApexClip implements Clip {
     @Override
     public Line.Info getLineInfo() {
         return new DataLine.Info(ApexClip.class, format);
-    }
-
-    @Override
-    public void open() {
-        if (data == null) {
-            throw new IllegalArgumentException("Illegal call to open() in interface Clip");
-        }
-        open(format, data, 0, data.length);
-    }
-
-    private void openSourceDataLine() {
-        if (sourceDataLine == null) {
-            // Search for suitable line
-            Mixer defaultMixer = AudioSystem.getMixer(null);
-            sourceDataLine = Arrays.stream(defaultMixer.getSourceLineInfo())
-                .filter(lineInfo -> lineInfo.getLineClass() == SourceDataLine.class)
-                .map(SourceDataLine.Info.class::cast)
-                .map(info -> Util.get(() -> (SourceDataLine) defaultMixer.getLine(info)))
-                .findFirst()
-                .orElseGet(() -> Util.get(() -> AudioSystem.getSourceDataLine(format)));
-        }
-        if (!sourceDataLine.isOpen()) {
-            int bufferSize = (int) (format.getFrameSize() * format.getFrameRate() * 0.1);
-            Util.run(() -> sourceDataLine.open(format, bufferSize));
-        }
-        if (!sourceDataLine.isActive()) {
-            sourceDataLine.start();
-        }
     }
 
     private void push() {
