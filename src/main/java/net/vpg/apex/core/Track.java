@@ -15,16 +15,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class TrackInfo {
+public class Track {
     public static final Pattern loopStartPattern = Pattern.compile("LOOPSTART=(\\d+)");
     public static final Pattern loopEndPattern = Pattern.compile("LOOPEND=(\\d+)");
-    private static final Logger logger = LoggerFactory.getLogger(TrackInfo.class);
-    public static final Map<String, TrackInfo> entries =
+    private static final Logger logger = LoggerFactory.getLogger(Track.class);
+    public static final Map<String, Track> entries =
         Util.compute(Resources.get("tracks.json"), JSONObject::parse)
             .getArray("entries")
             .stream(JSONArray::getObject)
-            .map(TrackInfo::new)
-            .collect(Collectors.toMap(TrackInfo::getId, info -> info));
+            .map(Track::new)
+            .collect(Collectors.toMap(Track::getId, info -> info));
     private final String id;
     private final String name;
     private final String description;
@@ -33,7 +33,7 @@ public class TrackInfo {
     private int loopStart = -1;
     private int loopEnd = -1;
 
-    private TrackInfo(JSONObject data) {
+    private Track(JSONObject data) {
         id = data.getString("id");
         name = data.getString("name");
         description = data.getString("description");
@@ -42,17 +42,17 @@ public class TrackInfo {
         Resources.getInstance().ifFileExists(fileName, this::init, null);
     }
 
-    public static TrackInfo get(File file) {
+    public static Track get(File file) {
         String filename = file.getName();
-        TrackInfo info = entries.computeIfAbsent(Util.getId(filename), TrackInfo::getInfo);
+        Track info = entries.computeIfAbsent(Util.getId(filename), Track::getInfo);
         if (!info.isInitDone()) {
             info.init(file);
         }
         return info;
     }
 
-    private static TrackInfo getInfo(String id) {
-        return new TrackInfo(new JSONObject()
+    private static Track getInfo(String id) {
+        return new Track(new JSONObject()
             .put("id", id)
             .put("name", "N/A")
             .put("description", "N/A"));

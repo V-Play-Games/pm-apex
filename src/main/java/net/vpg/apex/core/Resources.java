@@ -177,7 +177,7 @@ public class Resources {
     }
 
     public List<OnlineTrack> getMissingTracks() {
-        List<String> availableIds = Apex.APEX.getPlaylist().stream().map(TrackInfo::getId).collect(Collectors.toList());
+        List<String> availableIds = Apex.APEX.getPlaylist().stream().map(Track::getId).collect(Collectors.toList());
         return Util.get(this::getOnlineResources).stream()
             .filter(ot -> ot.getName().endsWith(".ogg"))
             .filter(ot -> !availableIds.contains(Util.getId(ot.getName())))

@@ -81,7 +81,7 @@ public class ApexClip implements Clip {
         open0(stream.getFormat());
     }
 
-    public void open(TrackInfo track, AudioFormat format) {
+    public void open(Track track, AudioFormat format) {
         Util.run(() -> {
             open(AudioSystem.getAudioInputStream(format, AudioSystem.getAudioInputStream(track.getFile())));
             setLoopPoints(track.getLoopStart(), track.getLoopEnd());
