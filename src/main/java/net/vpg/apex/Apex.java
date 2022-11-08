@@ -19,7 +19,6 @@ public class Apex {
     public static final Apex APEX = new Apex();
     public static final Logger LOGGER = LoggerFactory.getLogger(Apex.class);
     private final ScheduledThreadPoolExecutor mainExecutor = new ScheduledThreadPoolExecutor(16, new ApexThreadFactory("Main"));
-    private final ScheduledThreadPoolExecutor cacheExecutor = new ScheduledThreadPoolExecutor(16, new ApexThreadFactory("Cache"));
     private List<Track> playlist = new ArrayList<>();
     private int index = 0;
 
@@ -32,7 +31,6 @@ public class Apex {
         ApexWindow.getInstance().setVisible(true);
         this.updatePlaylist();
         this.setIndex(0);
-        this.updateCaches();
         ApexControl.update();
     }
 
@@ -72,10 +70,6 @@ public class Apex {
         return mainExecutor;
     }
 
-    public ScheduledThreadPoolExecutor getCacheExecutor() {
-        return cacheExecutor;
-    }
-
     public void takeAction(int action) {
         mainExecutor.execute(() -> {
             Track track = getCurrentTrack();
@@ -90,15 +84,14 @@ public class Apex {
                     Util.shuffle(playlist);
                     index = playlist.indexOf(track);
                     updateListModel();
-                    updateCaches();
                     break;
                 case 3:
-                    stopCurrentTrack();
+                    Track.CLIP.stop();
                     ApexControl.playing = false;
                     ApexControl.stopped = true;
                     break;
                 case 4:
-                    boolean active = track.getClip().isActive();
+                    boolean active = Track.CLIP.isActive();
                     ApexControl.playing = !active;
                     if (active) {
                         Track.CLIP.stop();
@@ -118,7 +111,6 @@ public class Apex {
                 case 6:
                     updatePlaylist();
                     index = playlist.indexOf(track);
-                    updateCaches();
                     break;
                 case 7: // Mouse Double-click/Enter on the playlist
                     setIndex(ApexControl.trackList.getSelectedIndex());
@@ -154,18 +146,13 @@ public class Apex {
         return playlist.get(index);
     }
 
-    public void stopCurrentTrack() {
-        getCurrentTrack().stop();
-    }
-
     public void setTrack(Track track) {
         modifyAndUpdateApp(track, playlist.indexOf(track));
     }
 
     private void modifyAndUpdateApp(Track track, int index) {
-        stopCurrentTrack();
+        Track.CLIP.stop();
         this.index = index;
-        updateCaches();
         track.play();
         ApexControl.trackList.setSelectedIndex(index);
         updateScrollBar();
@@ -186,23 +173,5 @@ public class Apex {
         } else if (index > firstVisibleIndex + visibleAmount - 1) {
             scrollBar.setValue(Math.min(index - visibleAmount + 1, playlist.size() - visibleAmount + 1) * rowHeight);
         }
-    }
-
-    public void updateCaches() {
-        mainExecutor.execute(() -> {
-            cacheExecutor.execute(() -> playlist.get(index).ensureCached());
-            int start = Math.max(0, index - 3);
-            int end = Math.min(playlist.size(), index + 3);
-            for (int i = 0; i < playlist.size(); i++) {
-                Track track = playlist.get(i);
-                if (i != index) {
-                    if (start <= i && i <= end) {
-                        cacheExecutor.execute(track::ensureCached);
-                    } else {
-                        mainExecutor.execute(track::clearCache);
-                    }
-                }
-            }
-        });
     }
 }

@@ -6,10 +6,6 @@ import net.vpg.vjson.value.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -98,10 +94,6 @@ public class TrackInfo {
 
     public File getFile() {
         return file;
-    }
-
-    public AudioInputStream getAudioInputStream(AudioFormat targetFormat) throws IOException, UnsupportedAudioFileException {
-        return AudioSystem.getAudioInputStream(targetFormat, AudioSystem.getAudioInputStream(file));
     }
 
     public String getId() {

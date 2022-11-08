@@ -3,16 +3,18 @@ package net.vpg.apex.clip;
 import net.vpg.apex.Util;
 
 import javax.sound.sampled.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class SoftMixingClip implements Clip {
+    private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
     private final Object control_mutex = new Object();
     private final List<LineListener> listeners = new ArrayList<>();
     protected SourceDataLine sourceDataLine;
     private AudioFormat format;
+    private AudioInputStream stream;
     private byte[] data;
     private int framePosition = 0;
     private int loopStart = 0;
@@ -21,7 +23,6 @@ public class SoftMixingClip implements Clip {
     private int frameSize;
     private boolean open = false;
     private boolean active = false;
-    private Thread thread;
 
     private void sendEvent(LineEvent event) {
         listeners.forEach(listener -> listener.update(event));
@@ -74,9 +75,10 @@ public class SoftMixingClip implements Clip {
     }
 
     @Override
-    public void open(AudioInputStream stream) throws IOException {
-        byte[] cached = Util.cache(stream);
-        open(stream.getFormat(), cached, 0, cached.length);
+    public void open(AudioInputStream stream) {
+        this.stream = stream;
+        data = null;
+        open0(stream.getFormat());
     }
 
     @Override
@@ -85,14 +87,18 @@ public class SoftMixingClip implements Clip {
             if (bufferSize % format.getFrameSize() != 0)
                 throw new IllegalArgumentException(String.format("Buffer size (%d) does not represent an integral number of sample frames (%d)", bufferSize, frameSize));
             this.data = Arrays.copyOfRange(data, offset, offset + bufferSize);
-            open = true;
-            reset();
-            if (this.format != format) {
-                this.format = format;
-                frameSize = format.getFrameSize();
-            }
-            openSourceDataLine();
+            open0(format);
         }
+    }
+
+    private void open0(AudioFormat format) {
+        open = true;
+        reset();
+        if (this.format != format) {
+            this.format = format;
+            frameSize = format.getFrameSize();
+        }
+        openSourceDataLine();
     }
 
     private void reset() {
@@ -105,9 +111,6 @@ public class SoftMixingClip implements Clip {
     @Override
     public void setLoopPoints(int start, int end) {
         synchronized (control_mutex) {
-            int frameLength = getFrameLength();
-            if (end == AudioSystem.NOT_SPECIFIED || end > frameLength)
-                end = frameLength;
             if (end < start)
                 throw new IllegalArgumentException("Invalid loop points: " + start + " - " + end);
             loopStart = start;
@@ -186,10 +189,7 @@ public class SoftMixingClip implements Clip {
             return;
         synchronized (control_mutex) {
             active = true;
-            thread = new Thread(this::push, "AudioPusher");
-            thread.setDaemon(true);
-            thread.setPriority(Thread.MAX_PRIORITY);
-            thread.start();
+            executor.execute(this::push);
         }
         sendEvent(new LineEvent(this, LineEvent.Type.START, framePosition));
     }
@@ -201,8 +201,6 @@ public class SoftMixingClip implements Clip {
         synchronized (control_mutex) {
             active = false;
             sourceDataLine.drain();
-            Util.run(thread::join);
-            thread = null;
         }
         sendEvent(new LineEvent(this, LineEvent.Type.STOP, framePosition));
     }
@@ -219,8 +217,6 @@ public class SoftMixingClip implements Clip {
             active = false;
             frameSize = 0;
             reset();
-            Util.run(thread::join);
-            thread = null;
             sourceDataLine.drain();
             sourceDataLine.close();
         }
@@ -267,26 +263,51 @@ public class SoftMixingClip implements Clip {
 
     private void push() {
         int frameRate = (int) format.getFrameRate();
-        int frameLength = getFrameLength();
-        int limit = loopEnd != -1 ? loopEnd : frameLength;
         while (active) {
-            int len = Math.min(limit - framePosition, frameRate);
+            ensureRead(frameRate * frameSize);
+            int frameLength = getFrameLength();
+            int limit = loopEnd > frameLength || loopEnd == -1 || loopCount == 0 ? frameLength : loopEnd;
+            int len = Math.min(limit - framePosition, frameRate / 2);
             sourceDataLine.write(data, framePosition * frameSize, len * frameSize);
             framePosition += len;
-            if (framePosition == loopEnd) {
-                framePosition = loopStart;
-                switch (loopCount) {
-                    case 1:
-                        limit = frameLength; // fall through
-                    default:
-                        loopCount--; // fall through
-                    case LOOP_CONTINUOUSLY:
+            if (framePosition == limit) {
+                if (loopCount != 0) {
+                    if (framePosition != loopEnd && stream != null) {
                         continue;
+                    }
+                    framePosition = loopStart;
+                    if (loopCount != LOOP_CONTINUOUSLY)
+                        loopCount--;
+                    continue;
+                }
+                if (stream == null) {
+                    break;
                 }
             }
-            if (framePosition == frameLength) {
-                break;
-            }
         }
+    }
+
+    private void ensureRead(int bytes) {
+        if (stream == null) return;
+        Util.run(() -> {
+            byte[] buffer = new byte[bytes];
+            int totalRead = 0;
+            while (totalRead < bytes) {
+                int read = stream.read(buffer, totalRead, bytes - totalRead);
+                if (read == -1) {
+                    stream = null;
+                    break;
+                }
+                totalRead += read;
+            }
+            if (data == null) {
+                data = buffer;
+                return;
+            }
+            byte[] merged = new byte[data.length + totalRead];
+            System.arraycopy(data, 0, merged, 0, data.length);
+            System.arraycopy(buffer, 0, merged, data.length, totalRead);
+            data = merged;
+        });
     }
 }
