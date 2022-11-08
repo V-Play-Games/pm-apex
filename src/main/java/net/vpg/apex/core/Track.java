@@ -38,8 +38,6 @@ public class Track {
         name = data.getString("name");
         description = data.getString("description");
         logger.info("Loaded Track Info for ID: " + id);
-        String fileName = id + ".ogg";
-        Resources.getInstance().ifFileExists(fileName, this::init, null);
     }
 
     public static Track get(File file) {
