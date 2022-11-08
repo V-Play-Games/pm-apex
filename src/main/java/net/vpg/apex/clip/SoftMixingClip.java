@@ -1,34 +1,9 @@
-/*
- * Copyright (c) 2008, 2016, Oracle and/or its affiliates. All rights reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * This code is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Oracle designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Oracle in the LICENSE file that accompanied this code.
- *
- * This code is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * version 2 for more details (a copy is included in the LICENSE file that
- * accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version
- * 2 along with this work; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
- * or visit www.oracle.com if you need additional information or have any
- * questions.
- */
 package net.vpg.apex.clip;
 
 import net.vpg.apex.Util;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +12,6 @@ public class SoftMixingClip implements Clip {
     private final Object control_mutex = new Object();
     private final List<LineListener> listeners = new ArrayList<>();
     protected SourceDataLine sourceDataLine;
-    protected SoftAudioPusher pusher;
     private AudioFormat format;
     private byte[] data;
     private int framePosition = 0;
@@ -46,62 +20,9 @@ public class SoftMixingClip implements Clip {
     private int loopCount = 0;
     private int frameSize;
     private int bufferSize;
-    private class LoopingArrayReaderStream extends InputStream {
-        @Override
-        public int read() throws IOException {
-            byte[] b = new byte[1];
-            int ret = read(b);
-            if (ret < 0)
-                return ret;
-            return b[0] & 0xFF;
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) {
-            int pos = framePosition * frameSize;
-            if (loopCount != 0) {
-                int loopEndFrame = loopEnd * frameSize;
-                if (pos + len >= loopEndFrame) {
-                    int offend = off + len;
-                    int o = off;
-                    while (off <= offend) {
-                        if (pos + off >= loopEndFrame) {
-                            pos = loopStart * frameSize;
-                            if (loopCount != LOOP_CONTINUOUSLY)
-                                loopCount--;
-                            break;
-                        }
-                        len = offend - off;
-                        int left = loopEndFrame - pos;
-                        if (len > left)
-                            len = left;
-                        System.arraycopy(data, pos, b, off, len);
-                        off += len;
-                    }
-                    if (loopCount == 0) {
-                        len = offend - off;
-                        int left = loopEndFrame - pos;
-                        if (len > left)
-                            len = left;
-                        System.arraycopy(data, pos, b, off, len);
-                        off += len;
-                    }
-                    framePosition = pos / frameSize;
-                    return off - o;
-                }
-            }
-            int left = bufferSize - pos;
-            if (left == 0)
-                return -1;
-            if (len > left)
-                len = left;
-            System.arraycopy(data, pos, b, off, len);
-            framePosition += len / frameSize;
-            return len;
-        }
-    }
     private boolean open = false;
     private boolean active = false;
+    private Thread thread;
 
     private void sendEvent(LineEvent event) {
         listeners.forEach(listener -> listener.update(event));
@@ -138,7 +59,7 @@ public class SoftMixingClip implements Clip {
 
     @Override
     public int getFrameLength() {
-        return bufferSize / format.getFrameSize();
+        return bufferSize / frameSize;
     }
 
     @Override
@@ -148,40 +69,39 @@ public class SoftMixingClip implements Clip {
 
     @Override
     public void loop(int count) {
-        LineEvent event;
         synchronized (control_mutex) {
-            if (!isOpen() || active)
-                return;
-            active = true;
             loopCount = count;
-            event = new LineEvent(this, LineEvent.Type.START, getLongFramePosition());
         }
-        sendEvent(event);
     }
 
     @Override
     public void open(AudioInputStream stream) throws IOException {
-        byte[] cached = Toolkit.cache(stream);
+        byte[] cached = Util.cache(stream);
         open(stream.getFormat(), cached, 0, cached.length);
     }
 
     @Override
     public void open(AudioFormat format, byte[] data, int offset, int bufferSize) {
         synchronized (control_mutex) {
-            Toolkit.validateBuffer(format.getFrameSize(), bufferSize);
+            if (bufferSize % format.getFrameSize() != 0)
+                throw new IllegalArgumentException(String.format("Buffer size (%d) does not represent an integral number of sample frames (%d)", bufferSize, frameSize));
             this.data = Arrays.copyOfRange(data, offset, offset + bufferSize);
             this.bufferSize = bufferSize;
             open = true;
-            loopStart = 0;
-            loopEnd = -1;
-            framePosition = 0;
-            loopCount = 0;
+            reset();
             if (this.format != format) {
                 this.format = format;
                 frameSize = format.getFrameSize();
             }
             openSourceDataLine();
         }
+    }
+
+    private void reset() {
+        loopStart = 0;
+        loopEnd = -1;
+        framePosition = 0;
+        loopCount = 0;
     }
 
     @Override
@@ -263,52 +183,50 @@ public class SoftMixingClip implements Clip {
 
     @Override
     public void start() {
-        LineEvent event;
+        if (!open || active)
+            return;
         synchronized (control_mutex) {
-            if (!isOpen() || active)
-                return;
             active = true;
-            loopCount = 0;
-            event = new LineEvent(this, LineEvent.Type.START, getLongFramePosition());
+            thread = new Thread(this::push, "AudioPusher");
+            thread.setDaemon(true);
+            thread.setPriority(Thread.MAX_PRIORITY);
+            thread.start();
         }
-        sendEvent(event);
+        sendEvent(new LineEvent(this, LineEvent.Type.START, framePosition));
     }
 
     @Override
     public void stop() {
-        LineEvent event;
+        if (!active)
+            return;
         synchronized (control_mutex) {
-            if (!isOpen() || !active)
-                return;
             active = false;
-            event = new LineEvent(this, LineEvent.Type.STOP, getLongFramePosition());
+            sourceDataLine.drain();
+            Util.run(thread::join);
+            thread = null;
         }
-        sendEvent(event);
+        sendEvent(new LineEvent(this, LineEvent.Type.STOP, framePosition));
     }
 
     @Override
     public void close() {
-        LineEvent event;
+        if (!open)
+            return;
+        long pos = this.framePosition;
         synchronized (control_mutex) {
-            if (!isOpen())
-                return;
-            stop();
-            event = new LineEvent(this, LineEvent.Type.CLOSE, getLongFramePosition());
             data = null;
             format = null;
+            open = false;
             active = false;
             bufferSize = 0;
             frameSize = 0;
-            loopStart = 0;
-            loopEnd = -1;
-            framePosition = 0;
-            loopCount = 0;
-            pusher.stop();
+            reset();
+            Util.run(thread::join);
+            thread = null;
             sourceDataLine.drain();
             sourceDataLine.close();
-            open = false;
         }
-        sendEvent(event);
+        sendEvent(new LineEvent(this, LineEvent.Type.CLOSE, pos));
     }
 
     @Override
@@ -339,7 +257,6 @@ public class SoftMixingClip implements Clip {
                 .map(info -> Util.get(() -> (SourceDataLine) defaultMixer.getLine(info)))
                 .findFirst()
                 .orElseGet(() -> Util.get(() -> AudioSystem.getSourceDataLine(format)));
-            pusher = new SoftAudioPusher(sourceDataLine, new LoopingArrayReaderStream());
         }
         if (!sourceDataLine.isOpen()) {
             int bufferSize = (int) (format.getFrameSize() * format.getFrameRate() * 0.1);
@@ -348,6 +265,30 @@ public class SoftMixingClip implements Clip {
         if (!sourceDataLine.isActive()) {
             sourceDataLine.start();
         }
-        pusher.start();
+    }
+
+    private void push() {
+        int frameRate = (int) format.getFrameRate();
+        int frameLength = getFrameLength();
+        int limit = loopEnd != -1 ? loopEnd : frameLength;
+        while (active) {
+            int len = Math.min(limit - framePosition, frameRate);
+            sourceDataLine.write(data, framePosition * frameSize, len * frameSize);
+            framePosition += len;
+            if (framePosition == loopEnd) {
+                framePosition = loopStart;
+                switch (loopCount) {
+                    case 1:
+                        limit = frameLength; // fall through
+                    default:
+                        loopCount--; // fall through
+                    case LOOP_CONTINUOUSLY:
+                        continue;
+                }
+            }
+            if (framePosition == frameLength) {
+                break;
+            }
+        }
     }
 }

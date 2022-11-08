@@ -101,10 +101,13 @@ public class Apex {
                     boolean active = track.getClip().isActive();
                     ApexControl.playing = !active;
                     if (active) {
-                        track.stop();
+                        Track.CLIP.stop();
                     } else {
-                        track.play();
-                        ApexControl.stopped = false;
+                        if (ApexControl.stopped) {
+                            ApexControl.stopped = false;
+                            track.play();
+                        }
+                        Track.CLIP.start();
                     }
                     break;
                 case 5:
