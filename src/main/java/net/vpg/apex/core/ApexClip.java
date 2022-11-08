@@ -10,7 +10,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class ApexClip implements Clip {
     private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
-    private final Object control_mutex = new Object();
     private final List<LineListener> listeners = new ArrayList<>();
     protected SourceDataLine sourceDataLine;
     private AudioFormat format;
@@ -49,12 +48,10 @@ public class ApexClip implements Clip {
 
     @Override
     public void open(AudioFormat format, byte[] data, int offset, int bufferSize) {
-        synchronized (control_mutex) {
-            if (bufferSize % format.getFrameSize() != 0)
-                throw new IllegalArgumentException(String.format("Buffer size (%d) does not represent an integral number of sample frames (%d)", bufferSize, frameSize));
-            this.data = Arrays.copyOfRange(data, offset, offset + bufferSize);
-            open0(format);
-        }
+        if (bufferSize % format.getFrameSize() != 0)
+            throw new IllegalArgumentException(String.format("Buffer size (%d) does not represent an integral number of sample frames (%d)", bufferSize, frameSize));
+        this.data = Arrays.copyOfRange(data, offset, offset + bufferSize);
+        open0(format);
     }
 
     private void open0(AudioFormat format) {
@@ -86,10 +83,8 @@ public class ApexClip implements Clip {
     public void start() {
         if (!open || active)
             return;
-        synchronized (control_mutex) {
-            active = true;
-            executor.execute(this::push);
-        }
+        active = true;
+        executor.execute(this::playAudio);
         sendEvent(new LineEvent(this, LineEvent.Type.START, framePosition));
     }
 
@@ -97,10 +92,8 @@ public class ApexClip implements Clip {
     public void stop() {
         if (!active)
             return;
-        synchronized (control_mutex) {
-            active = false;
-            sourceDataLine.drain();
-        }
+        active = false;
+        sourceDataLine.drain();
         sendEvent(new LineEvent(this, LineEvent.Type.STOP, framePosition));
     }
 
@@ -109,16 +102,14 @@ public class ApexClip implements Clip {
         if (!open)
             return;
         long pos = framePosition;
-        synchronized (control_mutex) {
-            data = null;
-            format = null;
-            open = false;
-            active = false;
-            frameSize = 0;
-            reset();
-            sourceDataLine.drain();
-            sourceDataLine.close();
-        }
+        data = null;
+        format = null;
+        open = false;
+        active = false;
+        frameSize = 0;
+        reset();
+        sourceDataLine.drain();
+        sourceDataLine.close();
         sendEvent(new LineEvent(this, LineEvent.Type.CLOSE, pos));
     }
 
@@ -131,16 +122,12 @@ public class ApexClip implements Clip {
 
     @Override
     public void addLineListener(LineListener listener) {
-        synchronized (control_mutex) {
-            listeners.add(listener);
-        }
+        listeners.add(listener);
     }
 
     @Override
     public void removeLineListener(LineListener listener) {
-        synchronized (control_mutex) {
-            listeners.remove(listener);
-        }
+        listeners.remove(listener);
     }
 
     private void sendEvent(LineEvent event) {
@@ -149,19 +136,15 @@ public class ApexClip implements Clip {
 
     @Override
     public void setLoopPoints(int start, int end) {
-        synchronized (control_mutex) {
-            if (end != AudioSystem.NOT_SPECIFIED && end < start)
-                throw new IllegalArgumentException("Invalid loop points: " + start + " - " + end);
-            loopStart = start;
-            loopEnd = end;
-        }
+        if (end != AudioSystem.NOT_SPECIFIED && end < start)
+            throw new IllegalArgumentException("Invalid loop points: " + start + " - " + end);
+        loopStart = start;
+        loopEnd = end;
     }
 
     @Override
     public void loop(int count) {
-        synchronized (control_mutex) {
-            loopCount = count;
-        }
+        loopCount = count;
     }
 
     @Override
@@ -219,9 +202,7 @@ public class ApexClip implements Clip {
 
     @Override
     public void setFramePosition(int frames) {
-        synchronized (control_mutex) {
-            framePosition = frames;
-        }
+        framePosition = frames;
     }
 
     @Override
@@ -264,13 +245,13 @@ public class ApexClip implements Clip {
         return new DataLine.Info(ApexClip.class, format);
     }
 
-    private void push() {
+    private void playAudio() {
         int frameRate = (int) format.getFrameRate();
         while (active) {
-            ensureRead(frameRate * frameSize);
+            readAudio(frameRate * frameSize);
             int frameLength = getFrameLength();
             int limit = loopEnd > frameLength || loopEnd == -1 || loopCount == 0 ? frameLength : loopEnd;
-            int len = Math.min(limit - framePosition, frameRate / 2);
+            int len = Math.min(limit - framePosition, frameRate / 20); // push at most 50 ms of audio
             sourceDataLine.write(data, framePosition * frameSize, len * frameSize);
             framePosition += len;
             if (framePosition == limit) {
@@ -290,7 +271,7 @@ public class ApexClip implements Clip {
         }
     }
 
-    private void ensureRead(int bytes) {
+    private void readAudio(int bytes) {
         if (stream == null) return;
         Util.run(() -> {
             byte[] buffer = new byte[bytes];
