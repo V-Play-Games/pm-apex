@@ -19,16 +19,17 @@ public class ApexClip implements Clip {
     private int loopStart = 0;
     private int loopEnd = -1;
     private int loopCount = 0;
-    private int frameSize;
     private boolean open = false;
     private boolean active = false;
 
     @Override
     public void open() {
-        if (data == null) {
+        if (data != null)
+            open(format, data, 0, data.length);
+        else if (stream != null)
+            open(stream);
+        else
             throw new IllegalArgumentException("Illegal call to open() in interface Clip");
-        }
-        open(format, data, 0, data.length);
     }
 
     @Override
@@ -49,18 +50,15 @@ public class ApexClip implements Clip {
     @Override
     public void open(AudioFormat format, byte[] data, int offset, int bufferSize) {
         if (bufferSize % format.getFrameSize() != 0)
-            throw new IllegalArgumentException(String.format("Buffer size (%d) does not represent an integral number of sample frames (%d)", bufferSize, frameSize));
+            throw new IllegalArgumentException(String.format("Buffer size (%d) does not represent an integral number of sample frames (%d)", bufferSize, format.getFrameSize()));
         this.data = Arrays.copyOfRange(data, offset, offset + bufferSize);
         open0(format);
     }
 
     private void open0(AudioFormat format) {
-        open = true;
         reset();
-        if (this.format != format) {
-            this.format = format;
-            frameSize = format.getFrameSize();
-        }
+        open = true;
+        this.format = format;
         if (sourceDataLine == null) {
             Mixer defaultMixer = AudioSystem.getMixer(null);
             sourceDataLine = Arrays.stream(defaultMixer.getSourceLineInfo())
@@ -106,7 +104,6 @@ public class ApexClip implements Clip {
         format = null;
         open = false;
         active = false;
-        frameSize = 0;
         reset();
         sourceDataLine.drain();
         sourceDataLine.close();
@@ -164,12 +161,12 @@ public class ApexClip implements Clip {
 
     @Override
     public int getFrameLength() {
-        return data.length / frameSize;
+        return data.length / format.getFrameSize();
     }
 
     @Override
     public long getMicrosecondLength() {
-        return (long) (getFrameLength() * 1000000.0 / getFormat().getSampleRate());
+        return (long) (getFrameLength() * 1000000.0 / format.getSampleRate());
     }
 
     @Override
@@ -212,17 +209,17 @@ public class ApexClip implements Clip {
 
     @Override
     public long getLongFramePosition() {
-        return getFramePosition();
+        return framePosition;
     }
 
     @Override
     public long getMicrosecondPosition() {
-        return (long) (getFramePosition() / getFormat().getSampleRate() * 1000000);
+        return (long) (framePosition / format.getSampleRate() * 1000000);
     }
 
     @Override
     public void setMicrosecondPosition(long microseconds) {
-        setFramePosition((int) (microseconds * getFormat().getSampleRate() / 1000000));
+        setFramePosition((int) (microseconds * format.getSampleRate() / 1000000));
     }
 
     @Override
@@ -247,9 +244,12 @@ public class ApexClip implements Clip {
 
     private void playAudio() {
         int frameRate = (int) format.getFrameRate();
+        int frameSize = format.getFrameSize();
+        int frameLength = getFrameLength();
         while (active) {
-            readAudio(frameRate * frameSize);
-            int frameLength = getFrameLength();
+            if (readAudio(frameRate * frameSize)) {
+                frameLength = getFrameLength();
+            }
             int limit = loopEnd > frameLength || loopEnd == -1 || loopCount == 0 ? frameLength : loopEnd;
             int len = Math.min(limit - framePosition, frameRate / 20); // push at most 50 ms of audio
             sourceDataLine.write(data, framePosition * frameSize, len * frameSize);
@@ -271,8 +271,8 @@ public class ApexClip implements Clip {
         }
     }
 
-    private void readAudio(int bytes) {
-        if (stream == null) return;
+    private boolean readAudio(int bytes) {
+        if (stream == null) return false;
         Util.run(() -> {
             byte[] buffer = new byte[bytes];
             int totalRead = 0;
@@ -293,5 +293,6 @@ public class ApexClip implements Clip {
             System.arraycopy(buffer, 0, merged, data.length, totalRead);
             data = merged;
         });
+        return true;
     }
 }
