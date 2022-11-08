@@ -19,7 +19,6 @@ public class SoftMixingClip implements Clip {
     private int loopEnd = -1;
     private int loopCount = 0;
     private int frameSize;
-    private int bufferSize;
     private boolean open = false;
     private boolean active = false;
     private Thread thread;
@@ -59,7 +58,7 @@ public class SoftMixingClip implements Clip {
 
     @Override
     public int getFrameLength() {
-        return bufferSize / frameSize;
+        return data.length / frameSize;
     }
 
     @Override
@@ -86,7 +85,6 @@ public class SoftMixingClip implements Clip {
             if (bufferSize % format.getFrameSize() != 0)
                 throw new IllegalArgumentException(String.format("Buffer size (%d) does not represent an integral number of sample frames (%d)", bufferSize, frameSize));
             this.data = Arrays.copyOfRange(data, offset, offset + bufferSize);
-            this.bufferSize = bufferSize;
             open = true;
             reset();
             if (this.format != format) {
@@ -107,9 +105,10 @@ public class SoftMixingClip implements Clip {
     @Override
     public void setLoopPoints(int start, int end) {
         synchronized (control_mutex) {
-            if (end == AudioSystem.NOT_SPECIFIED || end * frameSize > bufferSize)
-                end = bufferSize / frameSize;
-            if (end < start || start * frameSize > bufferSize)
+            int frameLength = getFrameLength();
+            if (end == AudioSystem.NOT_SPECIFIED || end > frameLength)
+                end = frameLength;
+            if (end < start)
                 throw new IllegalArgumentException("Invalid loop points: " + start + " - " + end);
             loopStart = start;
             loopEnd = end;
@@ -131,7 +130,7 @@ public class SoftMixingClip implements Clip {
 
     @Override
     public int getBufferSize() {
-        return bufferSize;
+        return data.length;
     }
 
     @Override
@@ -212,13 +211,12 @@ public class SoftMixingClip implements Clip {
     public void close() {
         if (!open)
             return;
-        long pos = this.framePosition;
+        long pos = framePosition;
         synchronized (control_mutex) {
             data = null;
             format = null;
             open = false;
             active = false;
-            bufferSize = 0;
             frameSize = 0;
             reset();
             Util.run(thread::join);
@@ -244,7 +242,7 @@ public class SoftMixingClip implements Clip {
         if (data == null) {
             throw new IllegalArgumentException("Illegal call to open() in interface Clip");
         }
-        open(format, data, 0, bufferSize);
+        open(format, data, 0, data.length);
     }
 
     private void openSourceDataLine() {
