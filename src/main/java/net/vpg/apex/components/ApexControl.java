@@ -6,13 +6,14 @@ import net.vpg.apex.core.Resources;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import static net.vpg.apex.Apex.APEX;
 
 public class ApexControl {
     public static WrappedTextArea trackId;
     public static WrappedTextArea trackName;
-    public static WrappedTextArea trackDescription;
     public static WrappedTextArea trackIndex;
     public static WrappedTextArea fileProgressText;
     public static WrappedTextArea totalProgressText;
@@ -39,10 +40,17 @@ public class ApexControl {
         Util.lookAndFeel();
         trackListModel = new DefaultListModel<>();
         trackName = Util.makeTextArea("Track Name", textArea -> textArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12)));
-        trackDescription = Util.makeTextArea("Track Description");
         trackId = Util.makeTextArea("Track ID", textArea -> textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12)));
         trackIndex = Util.makeTextArea("Index of the track in the playlist");
         searchTextArea = new SearchTextArea("Search and Play");
+        searchTextArea.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == '\n') {
+                    Apex.APEX.takeAction(5);
+                }
+            }
+        });
 
         next = Util.makeButton("Next Track", "Go to the next track", 0);
         previous = Util.makeButton("Previous Track", "Go to the previous track", 1);

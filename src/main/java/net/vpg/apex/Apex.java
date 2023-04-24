@@ -78,23 +78,23 @@ public class Apex {
         mainExecutor.execute(() -> {
             Track track = getCurrentTrack();
             switch (action) {
-                case 0:
+                case 0: // Next
                     setIndex(index + 1);
                     break;
-                case 1:
+                case 1: // Previous
                     setIndex(index - 1);
                     break;
-                case 2:
+                case 2: // Shuffle
                     Util.shuffle(playlist);
                     index = playlist.indexOf(track);
                     updateListModel();
                     break;
-                case 3:
+                case 3: // Stop
                     clip.stop();
                     ApexControl.playing = false;
                     ApexControl.stopped = true;
                     break;
-                case 4:
+                case 4: // Pause/Play
                     boolean active = clip.isActive();
                     ApexControl.playing = !active;
                     if (active) {
@@ -108,12 +108,12 @@ public class Apex {
                         clip.start();
                     }
                     break;
-                case 5:
+                case 5: // Search
                     if (!searchAndPlay(index + 1, playlist.size())) {
                         searchAndPlay(0, index);
                     }
                     break;
-                case 6:
+                case 6: // Update
                     updatePlaylist();
                     index = playlist.indexOf(track);
                     break;
@@ -129,7 +129,7 @@ public class Apex {
     }
 
     public boolean searchAndPlay(int start, int end) {
-        String searchText = ApexControl.searchTextArea.getText().toLowerCase();
+        String searchText = ApexControl.searchTextArea.getText().toLowerCase().replaceAll("\n", "");
         for (int i = start; i < end; i++) {
             Track t = playlist.get(i);
             if (t.getId().contains(searchText)) {
@@ -159,7 +159,6 @@ public class Apex {
         ApexControl.trackList.setSelectedIndex(index);
         updateScrollBar();
         ApexControl.trackName.setText(track.getName());
-        ApexControl.trackDescription.setText(track.getDescription());
         ApexControl.trackId.setText(track.getId());
         ApexControl.playing = true;
         ApexControl.stopped = false;

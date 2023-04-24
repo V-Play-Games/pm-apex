@@ -27,7 +27,6 @@ public class Track {
             .collect(Collectors.toMap(Track::getId, info -> info));
     private final String id;
     private final String name;
-    private final String description;
     private File file;
     private boolean initDone = false;
     private int loopStart = -1;
@@ -36,7 +35,6 @@ public class Track {
     private Track(JSONObject data) {
         id = data.getString("id");
         name = data.getString("name");
-        description = data.getString("description");
         logger.info("Loaded Track Info for ID: " + id);
     }
 
@@ -95,10 +93,6 @@ public class Track {
 
     public String getName() {
         return name;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public int getLoopStart() {

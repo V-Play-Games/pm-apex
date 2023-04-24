@@ -40,12 +40,8 @@ public class PlayerPanel extends JPanel {
                     })
                 )
             ),
-            Box.createHorizontalStrut(5),
+            Box.createHorizontalStrut(10),
             ApexControl.trackName,
-            Box.createVerticalStrut(5),
-            ApexControl.trackDescription,
-            Box.createVerticalStrut(5),
-            ApexControl.trackDescription,
             Box.createVerticalStrut(5),
             ApexControl.trackId,
             Box.createVerticalStrut(5),

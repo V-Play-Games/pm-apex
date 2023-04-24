@@ -11,7 +11,6 @@ import java.awt.event.FocusEvent;
 
 public class DownloadPanel extends JPanel {
     private static final DownloadPanel instance = new DownloadPanel();
-    private final boolean initialFocusGained = false;
     private final Box progressBox;
 
     private DownloadPanel() {
@@ -21,18 +20,15 @@ public class DownloadPanel extends JPanel {
         this.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (!initialFocusGained) {
-                    ApexControl.lookupTracks.setEnabled(false);
-                    ApexControl.downloadAll.setEnabled(false);
-                    ApexControl.tracksFound.setVisible(false);
-                    ApexControl.tracksFound.setText(Resources.getInstance().getMissingTracks().size() + " more tracks found");
-                    ApexControl.lookupTracks.setEnabled(true);
-                    ApexControl.downloadAll.setEnabled(true);
-                    ApexControl.tracksFound.setVisible(true);
-                }
+                ApexControl.lookupTracks.setEnabled(false);
+                ApexControl.downloadAll.setEnabled(false);
+                ApexControl.tracksFound.setVisible(false);
+                ApexControl.tracksFound.setText(Resources.getInstance().getMissingTracks().size() + " more tracks found");
+                ApexControl.lookupTracks.setEnabled(true);
+                ApexControl.downloadAll.setEnabled(true);
+                ApexControl.tracksFound.setVisible(true);
             }
         });
-        Box box = Box.createVerticalBox();
         Util.addBox(this, "North",
             Util.apply(new JPanel(),
                 buttonPanel -> buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER)),

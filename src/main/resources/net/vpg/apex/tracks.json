@@ -2,693 +2,555 @@
   "entries": [
     {
       "id": "bgm_battle01",
-      "name": "Battle! Sync Pair",
-      "description": "Played in battles against sync pairs like Swimmers, Street Thugs, etc."
+      "name": "Battle! Sync Pair"
     },
     {
       "id": "bgm_battle02",
-      "name": "Battle! Powerful Sync Pair",
-      "description": "Played in battles against powerful sync pairs (bosses)."
+      "name": "Battle! Powerful Sync Pair"
     },
     {
       "id": "bgm_battle_adeku",
-      "name": "Battle! Alder",
-      "description": "Played in battles against Alder, the former champion of Unova."
+      "name": "Battle! Alder"
     },
     {
       "id": "bgm_battle_akagi",
-      "name": "Battle! Cyrus",
-      "description": "Played in battles against Cyrus, the boss of Team Galactic. He aims to form a new world without spirit or emotions."
+      "name": "Battle! Cyrus"
     },
     {
       "id": "bgm_battle_aogiri",
-      "name": "Battle! Archie",
-      "description": "Played in battles against Archie, the boss of Team Aqua. He aims to increase the water bodies of the planet with the help of Kyogre."
+      "name": "Battle! Archie"
     },
     {
       "id": "bgm_battle_aqua_magma",
-      "name": "Battle! Team Aqua and Team Magma",
-      "description": "Played in battles against grunts of Team Aqua/Team Magma"
+      "name": "Battle! Team Aqua and Team Magma"
     },
     {
       "id": "bgm_battle_aqua_magma_02",
-      "name": "Battle! Team Aqua and Team Magma Admin",
-      "description": "Played in battles against the admins of Team Aqua, namely Matt and Shelly, and Team Magma, namely Tabitha and Courtney."
+      "name": "Battle! Team Aqua and Team Magma Admin"
     },
     {
       "id": "bgm_battle_beet",
-      "name": "Battle! Bede",
-      "description": "Played in battles against Bede, a rival to the protagonists of Pokemon Sword amd Pokemon Shield, Victor and Gloria."
+      "name": "Battle! Bede"
     },
     {
       "id": "bgm_battle_bell",
-      "name": "Battle! Cheren and Bianca",
-      "description": "Played in battles against Cheren and Bianca, rivals of the protagonists of Pokemon Black and Pokemon White, Hilbert and Hilda."
+      "name": "Battle! Cheren and Bianca"
     },
     {
       "id": "bgm_battle_big4_a",
-      "name": "Battle! Alola Elite Four",
-      "description": "Played in battles against the Elite 4 of Alola, namely Olivia, Nanu, Acerola, Kahili and Molayne."
+      "name": "Battle! Alola Elite Four"
     },
     {
       "id": "bgm_battle_big4_a_acerola",
-      "name": "Battle! Alola Elite Four: Acerola",
-      "description": "Played in battles against Acerola in the Alola Challenge of the Champion Stadium."
+      "name": "Battle! Alola Elite Four: Acerola"
     },
     {
       "id": "bgm_battle_big4_a_hara",
-      "name": "Battle! Alola Elite Four: Hala",
-      "description": "Played in battles against Hala in the Alola Challenge of the Champion Stadium."
+      "name": "Battle! Alola Elite Four: Hala"
     },
     {
       "id": "bgm_battle_big4_a_kahiri",
-      "name": "Battle! Alola Elite Four: Kahili",
-      "description": "Played in battles against Kahili in the Alola Challenge of the Champion Stadium."
+      "name": "Battle! Alola Elite Four: Kahili"
     },
     {
       "id": "bgm_battle_big4_a_litchi",
-      "name": "Battle! Alola Elite Four: Olivia",
-      "description": "Played in battles against Olivia in the Alola Challenge of the Champion Stadium."
+      "name": "Battle! Alola Elite Four: Olivia"
     },
     {
       "id": "bgm_battle_big4_a_molayne",
-      "name": "Battle! Alola Elite Four: Molayne",
-      "description": "Played in battles against Molayne in the Alola Challenge of the Champion Stadium."
+      "name": "Battle! Alola Elite Four: Molayne"
     },
     {
       "id": "bgm_battle_big4_c",
-      "name": "Battle! Kalos Elite Four",
-      "description": "Played in battles against the Elite 4 of Kalos, namely Siebold, Wikstrom, Drasna and Malva."
+      "name": "Battle! Kalos Elite Four"
     },
     {
       "id": "bgm_battle_big4_h",
-      "name": "Battle! Hoenn Elite Four",
-      "description": "Played in battles against the Elite 4 of Hoenn, namely Sidney, Glacia, Phoebe and Drake."
+      "name": "Battle! Hoenn Elite Four"
     },
     {
       "id": "bgm_battle_big4_h_fuyo",
-      "name": "Battle! Hoenn Elite Four: Phoebe",
-      "description": "Played in battles against Phoebe in the Hoenn Challenge of the Champion Stadium."
+      "name": "Battle! Hoenn Elite Four: Phoebe"
     },
     {
       "id": "bgm_battle_big4_h_genji",
-      "name": "Battle! Hoenn Elite Four: Drake",
-      "description": "Played in battles against Drake in the Hoenn Challenge of the Champion Stadium."
+      "name": "Battle! Hoenn Elite Four: Drake"
     },
     {
       "id": "bgm_battle_big4_h_kagetsu",
-      "name": "Battle! Hoenn Elite Four: Sydney",
-      "description": "Played in battles against Sydney in the Hoenn Challenge of the Champion Stadium."
+      "name": "Battle! Hoenn Elite Four: Sydney"
     },
     {
       "id": "bgm_battle_big4_h_prim",
-      "name": "Battle! Hoenn Elite Four: Glacia",
-      "description": "Played in battles against Glacia in the Hoenn Challenge of the Champion Stadium."
+      "name": "Battle! Hoenn Elite Four: Glacia"
     },
     {
       "id": "bgm_battle_big4_i",
-      "name": "Battle! Unova Elite Four",
-      "description": "Played in battles against the Elite 4 of Unova, namely Marshal, Shauntal, Grimsley and Caitlin."
+      "name": "Battle! Unova Elite Four"
     },
     {
       "id": "bgm_battle_big4_i_cattleya",
-      "name": "Battle! Unova Elite Four: Caitlin",
-      "description": "Played in battles against Caitlin in the Unova Challenge of the Champion Stadium."
+      "name": "Battle! Unova Elite Four: Caitlin"
     },
     {
       "id": "bgm_battle_big4_i_gima",
-      "name": "Battle! Unova Elite Four: Grimsley",
-      "description": "Played in battles against Grimsley in the Unova Challenge of the Champion Stadium."
+      "name": "Battle! Unova Elite Four: Grimsley"
     },
     {
       "id": "bgm_battle_big4_i_renbu",
-      "name": "Battle! Unova Elite Four: Marshal",
-      "description": "Played in battles against Marshal in the Unova Challenge of the Champion Stadium."
+      "name": "Battle! Unova Elite Four: Marshal"
     },
     {
       "id": "bgm_battle_big4_i_shikimi",
-      "name": "Battle! Unova Elite Four: Shauntal",
-      "description": "Played in battles against Shauntal in the Unova Challenge of the Champion Stadium."
+      "name": "Battle! Unova Elite Four: Shauntal"
     },
     {
       "id": "bgm_battle_big4_j_itsuki",
-      "name": "Battle! Johto Elite Four: Will",
-      "description": "Played in battles against Will in the Johto Challenge of the Champion Stadium."
+      "name": "Battle! Johto Elite Four: Will"
     },
     {
       "id": "bgm_battle_big4_j_karin",
-      "name": "Battle! Johto Elite Four: Karen",
-      "description": "Played in battles against Karen in the Johto Challenge of the Champion Stadium."
+      "name": "Battle! Johto Elite Four: Karen"
     },
     {
       "id": "bgm_battle_big4_j_kyo",
-      "name": "Battle! Johto Elite Four: Koga",
-      "description": "Played in battles against Koga in the Johto Challenge of the Champion Stadium."
+      "name": "Battle! Johto Elite Four: Koga"
     },
     {
       "id": "bgm_battle_big4_j_shiba",
-      "name": "Battle! Johto Elite Four: Bruno",
-      "description": "Played in battles against Bruno int the Johto Challenge of the Champion Stadium."
+      "name": "Battle! Johto Elite Four: Bruno"
     },
     {
       "id": "bgm_battle_big4_k_kanna",
-      "name": "Battle! Kanto Elite Four: Lorelei",
-      "description": "Played in battles against Lorelei in the Kanto Challenge of the Champion Stadium."
+      "name": "Battle! Kanto Elite Four: Lorelei"
     },
     {
       "id": "bgm_battle_big4_k_kikuko",
-      "name": "Battle! Kanto Elite Four: Agatha",
-      "description": "Played in battles against Agatha in the Kanto Challenge of the Champion Stadium."
+      "name": "Battle! Kanto Elite Four: Agatha"
     },
     {
       "id": "bgm_battle_big4_k_shiba",
-      "name": "Battle! Kanto Elite Four: Bruno",
-      "description": "Played in battles against Bruno in the Kanto Challenge of the Champion Stadium."
+      "name": "Battle! Kanto Elite Four: Bruno"
     },
     {
       "id": "bgm_battle_big4_k_wataru",
-      "name": "Battle! Kanto Elite Four: Lance",
-      "description": "Played in battles against Lance in the Kanto Challenge of the Champion Stadium."
+      "name": "Battle! Kanto Elite Four: Lance"
     },
     {
       "id": "bgm_battle_big4_s",
-      "name": "Battle! Sinnoh Elite Four",
-      "description": "Played in battles against the Elite 4 of Sinnoh, namely Flint, Aron, Bertha and idk who."
+      "name": "Battle! Sinnoh Elite Four"
     },
     {
       "id": "bgm_battle_big4_s_goyo",
-      "name": "Battle! Sinnoh Elite Four: Lucian",
-      "description": "Played in battles against Lucian in the Sinnoh Challenge of the Champion Stadium."
+      "name": "Battle! Sinnoh Elite Four: Lucian"
     },
     {
       "id": "bgm_battle_big4_s_kikuno",
-      "name": "Battle! Sinnoh Elite Four: Bertha",
-      "description": "Played in battles against Bertha in the Sinnoh Challenge of the Champion Stadium."
+      "name": "Battle! Sinnoh Elite Four: Bertha"
     },
     {
       "id": "bgm_battle_big4_s_oba",
-      "name": "Battle! Sinnoh Elite Four: Flint",
-      "description": "Played in battles against Flint in the Sinnoh Challenge of the Champion Stadium."
+      "name": "Battle! Sinnoh Elite Four: Flint"
     },
     {
       "id": "bgm_battle_big4_s_ryo",
-      "name": "Battle! Sinnoh Elite Four: Aaron",
-      "description": "Played in battles against Aaron in the Sinnoh Challenge of the Champion Stadium."
+      "name": "Battle! Sinnoh Elite Four: Aaron"
     },
     {
       "id": "bgm_battle_break01",
-      "name": "Battle! Team Break",
-      "description": "Played in battles against normal trainers of Team Break."
+      "name": "Battle! Team Break"
     },
     {
       "id": "bgm_battle_break02",
-      "name": "Battle! Team Break (Bosses)",
-      "description": "Played in battles against boss trainers of Team Break."
+      "name": "Battle! Team Break (Bosses)"
     },
     {
       "id": "bgm_battle_carnet",
-      "name": "Battle! Diantha",
-      "description": "Played in battles against Diantha, the champion of Kalos."
+      "name": "Battle! Diantha"
     },
     {
       "id": "bgm_battle_christmas",
-      "name": "Battle! Trainer (Holiday)",
-      "description": "Played in battles against trainers in the christmas holiday event."
+      "name": "Battle! Trainer (Holiday)"
     },
     {
       "id": "bgm_battle_champion_hau",
-      "name": "Battle! Champion Hau",
-      "description": "Played in battles against Hau in the Alola Challenge of the Champion Stadium."
+      "name": "Battle! Champion Hau"
     },
     {
       "id": "bgm_battle_chatelaine",
-      "name": "Battle! Battle Chatelaine",
-      "description": "Played in battles against Battle Chatelaine Trainers."
+      "name": "Battle! Battle Chatelaine"
     },
     {
       "id": "bgm_battle_daigo",
-      "name": "Battle! Steven",
-      "description": "Played in battles against Steven, the champion of Hoenn."
+      "name": "Battle! Steven"
     },
     {
       "id": "bgm_battle_daigo_02",
-      "name": "Decisive Battle! Steven",
-      "description": "Played in certain battles against Steven, the champion of Hoenn."
+      "name": "Decisive Battle! Steven"
     },
     {
       "id": "bgm_battle_dande",
-      "name": "Battle! Leon",
-      "description": "Played in battles against Leon, the champion of Galar."
+      "name": "Battle! Leon"
     },
     {
       "id": "bgm_battle_enemy01",
-      "name": "Battle! Rachel and Sawyer",
-      "description": "Played in battles against Rachel and Sawyer, faithful retainers of Lear."
+      "name": "Battle! Rachel and Sawyer"
     },
     {
       "id": "bgm_battle_enemy02",
-      "name": "Battle! Lear",
-      "description": "Played in battles against Lear, the heir of an unknown kingdom, founder of Pasio, and the host of the Pokemon Masters League, PML for short."
+      "name": "Battle! Lear"
     },
     {
       "id": "bgm_battle_fb_h",
-      "name": "Battle! Hoenn Frontier Brain",
-      "description": "Played in battles against the frontier brains of Hoenn Battle Frontier facility."
+      "name": "Battle! Hoenn Frontier Brain"
     },
     {
       "id": "bgm_battle_fb_js",
-      "name": "Battle! Sinnoh Frontier Brain",
-      "description": "Played in battles against the frontier brains of Sinnoh Battle Frontier facility."
+      "name": "Battle! Sinnoh Frontier Brain"
     },
     {
       "id": "bgm_battle_fleurdelis",
-      "name": "Battle! Lysandre",
-      "description": "Played in battles against Lysandre, the boss of Team Flare. He aims to wipe out a significant amount of lives from the planet with the help of Yveltal."
+      "name": "Battle! Lysandre"
     },
     {
       "id": "bgm_battle_ghetsis",
-      "name": "Battle! Ghetsis",
-      "description": "Played in battles against Ghetsis, the boss of Team Plasma and Team Neo Plasma. He aims to liberate Pokemon for the well-being of both Pokemon and Humans. He is also the adopted father of N."
+      "name": "Battle! Ghetsis"
     },
     {
       "id": "bgm_battle_ginga",
-      "name": "Battle! Team Galactic",
-      "description": "Played in battles against the grunts of Team Galactic."
+      "name": "Battle! Team Galactic"
     },
     {
       "id": "bgm_battle_ginga_02",
-      "name": "Battle! Team Galactic Commander",
-      "description": "Played in battles against the admins of Team Galactic, namely Mars, Jupiter and Saturn."
+      "name": "Battle! Team Galactic Commander"
     },
     {
       "id": "bgm_battle_gladion",
-      "name": "Battle! Gladion",
-      "description": "Played in battles against Gladion, the brother of Lillie and son of Lusamine."
+      "name": "Battle! Gladion"
     },
     {
       "id": "bgm_battle_gladion_short",
-      "name": "Battle! Gladion (Short)",
-      "description": "A short version of \"Battle! Gladion\"."
+      "name": "Battle! Gladion (Short)"
     },
     {
       "id": "bgm_battle_gl_a",
-      "name": "Battle! Island Kahuna",
-      "description": "Played in battles against the Island Kahunas of Alola."
+      "name": "Battle! Island Kahuna"
     },
     {
       "id": "bgm_battle_gl_c",
-      "name": "Battle! Kalos Gym Leader",
-      "description": "Played in battles against the Gym Leaders of Kalos."
+      "name": "Battle! Kalos Gym Leader"
     },
     {
       "id": "bgm_battle_gl_g",
-      "name": "Battle! Galar Gym Leader",
-      "description": "Played in battles against the Gym Leaders of Galar."
+      "name": "Battle! Galar Gym Leader"
     },
     {
       "id": "bgm_battle_gl_h",
-      "name": "Battle! Hoenn Gym Leader",
-      "description": "Played in battles against the Gym Leaders of Hoenn."
+      "name": "Battle! Hoenn Gym Leader"
     },
     {
       "id": "bgm_battle_gl_i",
-      "name": "Battle! Unova Gym Leader",
-      "description": "Played in battles against the Gym Leaders of Unova."
+      "name": "Battle! Unova Gym Leader"
     },
     {
       "id": "bgm_battle_gl_j",
-      "name": "Battle! Johto Gym Leader",
-      "description": "Played in battles against the Gym Leaders (and Elite Four) of Johto."
+      "name": "Battle! Johto Gym Leader"
     },
     {
       "id": "bgm_battle_gl_k",
-      "name": "Battle! Kanto Gym Leader",
-      "description": "Played in battles against the Gym Leaders (and Elite Four) of Kanto."
+      "name": "Battle! Kanto Gym Leader"
     },
     {
       "id": "bgm_battle_gl_s",
-      "name": "Battle! Sinnoh Gym Leader",
-      "description": "Played in battles against the Gym Leaders of Sinnoh."
+      "name": "Battle! Sinnoh Gym Leader"
     },
     {
       "id": "bgm_battle_green",
-      "name": "Battle! Blue",
-      "description": "Played in battles against Blue, the former champion of Kanto and the rival of Red."
+      "name": "Battle! Blue"
     },
     {
       "id": "bgm_battle_guzuma",
-      "name": "Battle! Guzma",
-      "description": "Played in battles against Guzma, the boss of Team Skull."
+      "name": "Battle! Guzma"
     },
     {
       "id": "bgm_battle_halloween",
-      "name": "Battle! Trainer (Halloween)",
-      "description": "Played in battles against trainers in the halloween season event."
+      "name": "Battle! Trainer (Halloween)"
     },
     {
       "id": "bgm_battle_handsome",
-      "name": "Battle! Looker",
-      "description": "Played in battles against Looker, a detective of International Police from the Sinnoh."
+      "name": "Battle! Looker"
     },
     {
       "id": "bgm_battle_hau",
-      "name": "Battle! Hau",
-      "description": "Played in battles against Hau, a rival of the protagonists of Pokemon Sun and Pokemon Moon, Elio and Selene."
+      "name": "Battle! Hau"
     },
     {
       "id": "bgm_battle_higana",
-      "name": "Battle! Zinnia",
-      "description": "Played in battles against Zinnia, the heir of the Draconic tribe. She was bestowed upon a job with Rayquaza. Her battle theme uses violins, and I love it."
+      "name": "Battle! Zinnia"
     },
     {
       "id": "bgm_battle_hop",
-      "name": "Battle! Hop",
-      "description": "Played in battles against Hop, the younger brother of Leon & the rival of the protagonists of Pokemon Sword and Pokemon Shield, Victor and Gloria."
+      "name": "Battle! Hop"
     },
     {
       "id": "bgm_battle_iris",
-      "name": "Battle! Champion Iris",
-      "description": "Played in battles against Iris, the champion of Unova, the daughter of Drayden and a former Gym Leader of Unova."
+      "name": "Battle! Champion Iris"
     },
     {
       "id": "bgm_battle_jun",
-      "name": "Battle! Barry",
-      "description": "Played in battles against Barry, the rival of the protagonists of Pokemon Diamond, Pokemon Pearl and Pokemon Platinum, Lucas and Dawn."
+      "name": "Battle! Barry"
     },
     {
       "id": "bgm_battle_kukui",
-      "name": "Battle! Kukui",
-      "description": "Played in battles against Professor Kukui, a professor from Alola and the husband of Professor Burnet and he is definitely not The Masked Royal."
+      "name": "Battle! Kukui"
     },
     {
       "id": "bgm_battle_legend_agnom",
-      "name": "Battle! Lake Guardian",
-      "description": "Played in battles against the lake guardian trio of Sinnoh. It consists of Mesprit, Uzie and Azelf."
+      "name": "Battle! Lake Guardian"
     },
     {
       "id": "bgm_battle_legend_cresselia",
-      "name": "Battle! Cresselia",
-      "description": "Played in battles against Cresselia, a legendary Pokemon of Sinnoh."
+      "name": "Battle! Cresselia"
     },
     {
       "id": "bgm_battle_legend_entei",
-      "name": "Battle! Entei",
-      "description": "Played in battles against Entei, a legendary Pokemon of Johto and a member of the Legendary Beat Trio."
+      "name": "Battle! Entei"
     },
     {
       "id": "bgm_battle_legend_hooh",
-      "name": "Battle! Ho-oh",
-      "description": "Played in battles against Ho-oh, a legendary Pokemon of Johto."
+      "name": "Battle! Ho-oh"
     },
     {
       "id": "bgm_battle_legend_kanto",
-      "name": "Battle! Kanto Legendary Pokemon",
-      "description": "Played in battles against the legendary Pokemon of Kanto."
+      "name": "Battle! Kanto Legendary Pokemon"
     },
     {
       "id": "bgm_battle_legend_kapu",
-      "name": "Battle! Island Guardian",
-      "description": "Played in battles against the 4 Island Guardians of Alola, namely Tapu Koko, Tapu Fini, Tapu Bulu and Tapu Lele, also known as the \"Tapus\"."
+      "name": "Battle! Island Guardian"
     },
     {
       "id": "bgm_battle_legend_lati",
-      "name": "Battle! Latias and Latios",
-      "description": "Played in battles against Latias and Latios, legendary Pokemon of Hoenn."
+      "name": "Battle! Latias and Latios"
     },
     {
       "id": "bgm_battle_legend_pm01",
-      "name": "Battle! Legendary Pokemon [Legendary Face-Off]",
-      "description": "Played as a general battle theme in battles against Legendary Pokemon.\n[Officially named \"Legendary Face-Off\"]"
+      "name": "Battle! Legendary Pokemon [Legendary Face-Off]"
     },
     {
       "id": "bgm_battle_legend_regi",
-      "name": "Battle! Legendary Titans",
-      "description": "Played in battles against the Legendary Titans."
+      "name": "Battle! Legendary Titans"
     },
     {
       "id": "bgm_battle_legend_sm",
-      "name": "Battle! Alola Legendary Pokemon",
-      "description": "Played in battles against Legendary Pokemon of Alola."
+      "name": "Battle! Alola Legendary Pokemon"
     },
     {
       "id": "bgm_battle_legend_superancient",
-      "name": "Battle! Super-Ancient Pokemon",
-      "description": "Played in battles against Super Ancient Pokemon of Hoenn, namely Groudon, Kyogre and Rayquaza, also called the Weather Trio."
+      "name": "Battle! Super-Ancient Pokemon"
     },
     {
       "id": "bgm_battle_legend_unova",
-      "name": "Battle! Unova  Legendary Pokemon",
-      "description": "Played in battles against Legendary Pokemon of Unova."
+      "name": "Battle! Unova  Legendary Pokemon"
     },
     {
       "id": "bgm_battle_lillie",
-      "name": "Battle! Lillie",
-      "description": "Played in battles against Lillie, the sister of Gladion and the daughter of Lusamine."
+      "name": "Battle! Lillie"
     },
     {
       "id": "bgm_battle_lillie_short",
-      "name": "Battle! Lillie (Short)",
-      "description": "A short version of \"Battle! Lillie\"."
+      "name": "Battle! Lillie (Short)"
     },
     {
       "id": "bgm_battle_lucia",
-      "name": "Battle! Lisia",
-      "description": "Played in battles against Lisia, niece of Wallace, a contest idol and a performer."
+      "name": "Battle! Lisia"
     },
     {
       "id": "bgm_battle_lusamine",
-      "name": "Battle! Lusamine",
-      "description": "Played in battles against Lusamine, boss of the Aether Paradise and the mother of young ambitious trainers, Gladion and Lillie."
+      "name": "Battle! Lusamine"
     },
     {
       "id": "bgm_battle_lusamine_short",
-      "name": "Battle! Lusamine (Short)",
-      "description": "A short version of \"Battle! Lusamine\"."
+      "name": "Battle! Lusamine (Short)"
     },
     {
       "id": "bgm_battle_mary",
-      "name": "Battle! Marnie",
-      "description": "Played in battles against Marnie, the sister of the 7th Gym Leader of Galar, Piers. Her brother formed Team Yell to cheer and support her in battles."
+      "name": "Battle! Marnie"
     },
     {
       "id": "bgm_battle_matsubusa",
-      "name": "Battle! Maxie",
-      "description": "Played in battles against Maxie, the leader of Team Magma.  He aims to increase the landmass of the Earth for greater heights of achievements and progress of Humankind ."
+      "name": "Battle! Maxie"
     },
     {
       "id": "bgm_battle_matsubusa_short",
-      "name": "Battle! Maxie (Short)",
-      "description": "A short version of \"Battle! Maxie\"."
+      "name": "Battle! Maxie (Short)"
     },
     {
       "id": "bgm_battle_mikuri",
-      "name": "Battle! Wallace",
-      "description": "Played in battles against Wallace, the 8th Gym Leader of Hoenn, uncle of Lisia, and in some timelines, the champion of Hoenn."
+      "name": "Battle! Wallace"
     },
     {
       "id": "bgm_battle_mitsuru",
-      "name": "Battle! Wally",
-      "description": "Played in battles against Wally, the rival of the protagonists of the 3rd Generation Pokemon Games as well as their remakes, Brendan and May."
+      "name": "Battle! Wally"
     },
     {
       "id": "bgm_battle_n",
-      "name": "Battle! N",
-      "description": "Played in battles against N, the son of Ghetsis and king of Team Plasma. His full name is Natural Harmonia Gropius."
+      "name": "Battle! N"
     },
     {
       "id": "bgm_battle_newyear",
-      "name": "Battle! Trainer (New Year)",
-      "description": "Played in battles against trainers in the New Year event."
+      "name": "Battle! Trainer (New Year)"
     },
     {
       "id": "bgm_battle_nezz",
-      "name": "Battle! Piers",
-      "description": "Played in battles against Piers, the 8th Gym Leader of Galar, the brother of Marnie and the founder of Team Yell."
+      "name": "Battle! Piers"
     },
     {
       "id": "bgm_battle_platane",
-      "name": "Battle! Sycamore",
-      "description": "Played in battles against Professor Sycamore, a professor from Kalos."
+      "name": "Battle! Sycamore"
     },
     {
       "id": "bgm_battle_player",
-      "name": "Battle! Region's Best",
-      "description": "Played in battles against the region's best (game/anime protagonists)."
+      "name": "Battle! Region's Best"
     },
     {
       "id": "bgm_battle_plumeria",
-      "name": "Battle! Plumeria",
-      "description": "Played in battles against Plumeria, the admin of Team Skull. She likes pink and cute stuff."
+      "name": "Battle! Plumeria"
     },
     {
       "id": "bgm_battle_pokevision",
-      "name": "Battle! Special Costume Trainer",
-      "description": "Played in battles against sync pairs with special costumes."
+      "name": "Battle! Special Costume Trainer"
     },
     {
       "id": "bgm_battle_ranking",
-      "name": "Battle! Trainer (Prestige)",
-      "description": "Played in battles against trainers in the prestige event."
+      "name": "Battle! Trainer (Prestige)"
     },
     {
       "id": "bgm_battle_red",
-      "name": "Battle! Red",
-      "description": "Played in battles against Red."
+      "name": "Battle! Red"
     },
     {
       "id": "bgm_battle_rgl",
-      "name": "Battle! Red, Blue and Leaf",
-      "description": "Played in the special battle against Red, Blue and Leaf at the end of Victory Road, a sort of tutorial on efficient usage of sync pairs in the Champion Stadium."
+      "name": "Battle! Red, Blue and Leaf"
     },
     {
       "id": "bgm_battle_rival",
-      "name": "Battle! Paulo",
-      "description": "Played in battles against Paulo, the rival of the main character of Pokemon Masters EX."
+      "name": "Battle! Paulo"
     },
     {
       "id": "bgm_battle_rocket",
-      "name": "Battle! Team Rocket",
-      "description": "Played in battles against grunts of Team Rocket."
+      "name": "Battle! Team Rocket"
     },
     {
       "id": "bgm_battle_rocket_02",
-      "name": "Battle! Team Rocket Executive",
-      "description": "Played in battles against executives of Team Rocket, namely Proton, Petrel, Ariana, and Archer."
+      "name": "Battle! Team Rocket Executive"
     },
     {
       "id": "bgm_battle_royalmask",
-      "name": "Battle! The Masked Royal",
-      "description": "Played in battles against the Masked Royal of Alola. He is definitely not Professor Kukui and that's the only thing I know about him sorry."
+      "name": "Battle! The Masked Royal"
     },
     {
       "id": "bgm_battle_sakaki",
-      "name": "Battle! Giovanni",
-      "description": "Played in battles against Giovanni, the boss of Team Rocket. He aims to use Pokemon as tools to earn money and dominate over the world."
+      "name": "Battle! Giovanni"
     },
     {
       "id": "bgm_battle_sakaki_02",
-      "name": "Decisive Battle! Giovanni",
-      "description": "Played in certain battles against Giovanni, the boss of Team Rocket. He aims to use Pokemon as tools to earn money and dominate over the world."
+      "name": "Decisive Battle! Giovanni"
     },
     {
       "id": "bgm_battle_satoshi",
-      "name": "Battle! Ash",
-      "description": "Played in battles against Ash, the main and permanent protagonist of the Pokemon Anime. This theme is inspired by the anime opening \"One, Two, Three\" used in the seasons 23, 24 and 25."
+      "name": "Battle! Ash"
     },
     {
       "id": "bgm_battle_shimakq",
-      "name": "Battle! Trial Captain",
-      "description": "Played in battles Trial Captains of Alola"
+      "name": "Battle! Trial Captain"
     },
     {
       "id": "bgm_battle_shirona",
-      "name": "Battle! Cynthia",
-      "description": "Played in battles against Cynthia, the Champion of Sinnoh."
+      "name": "Battle! Cynthia"
     },
     {
       "id": "bgm_battle_shirona_02",
-      "name": "Decisive Battle! Cynthia",
-      "description": "Played in certain battles against Cynthia, the Champion of Sinnoh."
+      "name": "Decisive Battle! Cynthia"
     },
     {
       "id": "bgm_battle_silver",
-      "name": "Battle! Silver",
-      "description": "Played in battles against Silver, the rival of the protagonists of the Generation 2 Pokemon games, namely Ethan, Lyra and Kris."
+      "name": "Battle! Silver"
     },
     {
       "id": "bgm_battle_sonia",
-      "name": "Battle! Sonia",
-      "description": "Played in battles against Sonia."
+      "name": "Battle! Sonia"
     },
     {
       "id": "bgm_battle_subwaymaster",
-      "name": "Battle! Subway Master",
-      "description": "Played in battles against Subway Masters of Unova Subway Battle facility, namely Ingo and Emmet."
+      "name": "Battle! Subway Master"
     },
     {
       "id": "bgm_battle_summer",
-      "name": "Battle! Trainer (Summer) [Sync Pair Showtime]",
-      "description": "Played in battles against trainers in the Summer events.\n[Officially named \"Sync Pair Showtime\"]"
+      "name": "Battle! Trainer (Summer) [Sync Pair Showtime]"
     },
     {
       "id": "bgm_battle_trainer_c",
-      "name": "Battle! Kalos Trainer",
-      "description": "Played in battles against trainers from Kalos."
+      "name": "Battle! Kalos Trainer"
     },
     {
       "id": "bgm_battle_trainer_g",
-      "name": "Battle! Galar Trainer",
-      "description": "Played in battles against trainers from Galar."
+      "name": "Battle! Galar Trainer"
     },
     {
       "id": "bgm_battle_trainer_i",
-      "name": "Battle! Unova Trainer",
-      "description": "Played in battles against trainers from Unova."
+      "name": "Battle! Unova Trainer"
     },
     {
       "id": "bgm_battle_trainer_j",
-      "name": "Battle! Johto Trainer",
-      "description": "Played in battles against trainers from Johto."
+      "name": "Battle! Johto Trainer"
     },
     {
       "id": "bgm_battle_trainer_s",
-      "name": "Battle! Trainer (Sinnoh)",
-      "description": "Played in battles against trainers from Sinnoh."
+      "name": "Battle! Trainer (Sinnoh)"
     },
     {
       "id": "bgm_battle_wataru",
-      "name": "Battle! Lance",
-      "description": "Played in battles against Lance, the Champion of Kanto, a former member of its Elite 4, and a cousin of Clair."
+      "name": "Battle! Lance"
     },
     {
       "id": "bgm_battle_wds",
-      "name": "Battle! Cynthia, Lance and Steven",
-      "description": "Played in the special battle against the three champions, Cynthia, Lance and Steven."
+      "name": "Battle! Cynthia, Lance and Steven"
     },
     {
       "id": "bgm_battle_yasei_a",
-      "name": "Battle! Wild Pokemon: Alola",
-      "description": "Played in the battles of Pokemon Masters Day (celebrated 25th of each month). It is a remix of the Alola Wild Battle Theme."
+      "name": "Battle! Wild Pokemon: Alola"
     },
     {
       "id": "bgm_battle_yasei_c",
-      "name": "Battle! Wild Pokemon: Kalos",
-      "description": "Played in the battles of Pokemon Masters Day (celebrated 25th of each month). It is a remix of the Kalos Wild Battle Theme."
+      "name": "Battle! Wild Pokemon: Kalos"
     },
     {
       "id": "bgm_battle_yasei_g",
-      "name": "Battle! Wild Pokemon: Galar",
-      "description": "Played in the battles of Pokemon Masters Day (celebrated 25th of each month). It is a remix of the Galar Wild Battle Theme."
+      "name": "Battle! Wild Pokemon: Galar"
     },
     {
       "id": "bgm_battle_yasei_h",
-      "name": "Battle! Wild Pokemon: Hoenn",
-      "description": "Played in the battles of Pokemon Masters Day (celebrated 25th of each month). It is a remix of the Hoenn Wild Battle Theme."
+      "name": "Battle! Wild Pokemon: Hoenn"
     },
     {
       "id": "bgm_battle_yasei_i",
-      "name": "Battle! Wild Pokemon: Unova",
-      "description": "Played in the battles of Pokemon Masters Day (celebrated 25th of each month). It is a remix of the Unova Wild Battle Theme."
+      "name": "Battle! Wild Pokemon: Unova"
     },
     {
       "id": "bgm_battle_yasei_j",
-      "name": "Battle! Wild Pokemon: Johto",
-      "description": "Played in the battles of Pokemon Masters Day (celebrated 25th of each month). It is a remix of the Johto Wild Battle Theme."
+      "name": "Battle! Wild Pokemon: Johto"
     },
     {
       "id": "bgm_battle_yasei_k",
-      "name": "Battle! Wild Pokemon: Kanto",
-      "description": "Played in the battles of Pokemon Masters Day (celebrated 25th of each month). It is a remix of the Kanto Wild Battle Theme."
+      "name": "Battle! Wild Pokemon: Kanto"
     },
     {
       "id": "bgm_battle_yasei_s",
-      "name": "Battle! Wild Pokemon: Sinnoh",
-      "description": "Played in the battles of Pokemon Masters Day (celebrated 25th of each month). It is a remix of the Sinnoh Wild Battle Theme."
+      "name": "Battle! Wild Pokemon: Sinnoh"
     },
     {
       "id": "bgm_battle_yuki_haruka",
-      "name": "Battle! Brendan and May",
-      "description": "Played in battles against Brendan and May, the protagonists of Pokemon Black and Pokemon White."
+      "name": "Battle! Brendan and May"
     }
   ]
 }
