@@ -9,8 +9,6 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import static net.vpg.apex.Apex.APEX;
-
 public class ApexControl {
     public static WrappedTextArea trackId;
     public static WrappedTextArea trackName;
@@ -33,8 +31,6 @@ public class ApexControl {
     public static DefaultListModel<String> trackListModel;
     public static JList<String> trackList;
     public static JScrollPane trackListPane;
-    public static boolean playing = true;
-    public static boolean stopped = false;
 
     public static void init() {
         Util.lookAndFeel();
@@ -76,16 +72,5 @@ public class ApexControl {
             new DownloadTask(Resources.getInstance().getMissingTracks(), () -> Apex.APEX.takeAction(6));
             Util.run(() -> Downloader.download(Resources.getInstance().getBaseDownloadUrl() + "src/main/resources/net/vpg/apex/tracks.json", null));
         });
-
-    }
-
-    public static void update() {
-        int index = APEX.getIndex();
-        trackIndex.setText("Track " + (index + 1) + "/" + APEX.getPlaylist().size());
-        next.setEnabled(index != APEX.getPlaylist().size() - 1);
-        previous.setEnabled(index != 0);
-        stop.setEnabled(!stopped);
-        playPause.setText(playing ? "Pause" : "Play");
-        playPause.setToolTipText(playing ? "Pause the track" : "Play the track");
     }
 }

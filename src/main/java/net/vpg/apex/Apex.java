@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.stream.Collectors;
 
+import static net.vpg.apex.components.ApexControl.*;
+
 public class Apex {
     public static final Apex APEX = new Apex();
     public static final Logger LOGGER = LoggerFactory.getLogger(Apex.class);
@@ -35,7 +37,8 @@ public class Apex {
         ApexWindow.getInstance().setVisible(true);
         this.updatePlaylist();
         this.setIndex(0);
-        ApexControl.update();
+        clip.stop();
+        this.update();
     }
 
     private void updatePlaylist() {
@@ -51,9 +54,9 @@ public class Apex {
     }
 
     private void updateListModel() {
-        ApexControl.trackListModel.clear();
-        ApexControl.trackListModel.addAll(playlist.stream().map(Track::getName).collect(Collectors.toList()));
-        ApexControl.trackList.setSelectedIndex(index);
+        trackListModel.clear();
+        trackListModel.addAll(playlist.stream().map(Track::getName).collect(Collectors.toList()));
+        trackList.setSelectedIndex(index);
         Util.sleep(100);
         updateScrollBar();
     }
@@ -75,71 +78,52 @@ public class Apex {
     }
 
     public void takeAction(int action) {
-        mainExecutor.execute(() -> {
-            Track track = getCurrentTrack();
-            switch (action) {
-                case 0: // Next
-                    setIndex(index + 1);
-                    break;
-                case 1: // Previous
-                    setIndex(index - 1);
-                    break;
-                case 2: // Shuffle
-                    Util.shuffle(playlist);
-                    index = playlist.indexOf(track);
-                    updateListModel();
-                    break;
-                case 3: // Stop
-                    clip.stop();
-                    ApexControl.playing = false;
-                    ApexControl.stopped = true;
-                    break;
-                case 4: // Pause/Play
-                    boolean active = clip.isActive();
-                    ApexControl.playing = !active;
-                    if (active) {
-                        clip.stop();
-                    } else {
-                        if (ApexControl.stopped) {
-                            ApexControl.stopped = false;
-                            clip.open(track, AUDIO_FORMAT);
-                            clip.start();
-                        }
-                        clip.start();
-                    }
-                    break;
-                case 5: // Search
-                    if (!searchAndPlay(index + 1, playlist.size())) {
-                        searchAndPlay(0, index);
-                    }
-                    break;
-                case 6: // Update
-                    updatePlaylist();
-                    index = playlist.indexOf(track);
-                    break;
-                case 7: // Mouse Double-click/Enter on the playlist
-                    setIndex(ApexControl.trackList.getSelectedIndex());
-                    break;
-                case 8: // Surprise Me
-                    setIndex(Util.random(0, playlist.size()));
-                    break;
-            }
-            ApexControl.update();
-        });
+        mainExecutor.execute(() -> takeAction0(action));
+    }
+
+    private void takeAction0(int action) {
+        Track track = getCurrentTrack();
+        switch (action) {
+            case 0: // Next
+                setIndex(index + 1);
+                break;
+            case 1: // Previous
+                setIndex(index - 1);
+                break;
+            case 2: // Shuffle
+                Util.shuffle(playlist);
+                index = playlist.indexOf(track);
+                updateListModel();
+                break;
+            case 3: // Stop
+                clip.stop();
+                break;
+            case 4: // Pause/Play
+                clip.togglePlayPause();
+                break;
+            case 5: // Search
+                if (!searchAndPlay(index + 1, playlist.size()))
+                    searchAndPlay(0, index);
+                break;
+            case 6: // Update
+                updatePlaylist();
+                index = playlist.indexOf(track);
+                break;
+            case 7: // Mouse Double-click/Enter on the playlist
+                setIndex(trackList.getSelectedIndex());
+                break;
+            case 8: // Surprise Me
+                setIndex(Util.random(0, playlist.size()));
+                break;
+        }
+        this.update();
     }
 
     public boolean searchAndPlay(int start, int end) {
-        String searchText = ApexControl.searchTextArea.getText().toLowerCase().replaceAll("\n", "");
+        String searchText = searchTextArea.getText().toLowerCase().replaceAll("\n", "");
         for (int i = start; i < end; i++) {
             Track t = playlist.get(i);
-            if (t.getId().contains(searchText)) {
-                modifyAndUpdateApp(t, i);
-                return true;
-            }
-        }
-        for (int i = start; i < end; i++) {
-            Track t = playlist.get(i);
-            if (t.getName().toLowerCase().contains(searchText)) {
+            if ((t.getId() + t.getName().toLowerCase()).contains(searchText)) {
                 modifyAndUpdateApp(t, i);
                 return true;
             }
@@ -154,18 +138,24 @@ public class Apex {
     private void modifyAndUpdateApp(Track track, int index) {
         clip.stop();
         this.index = index;
-        clip.open(track, AUDIO_FORMAT);
-        clip.start();
-        ApexControl.trackList.setSelectedIndex(index);
+        Util.run(() -> clip.open(track, AUDIO_FORMAT));
+        trackList.setSelectedIndex(index);
         updateScrollBar();
-        ApexControl.trackName.setText(track.getName());
-        ApexControl.trackId.setText(track.getId());
-        ApexControl.playing = true;
-        ApexControl.stopped = false;
+        trackName.setText(track.getName());
+        trackId.setText(track.getId());
+    }
+
+    public void update() {
+        trackIndex.setText("Track " + (index + 1) + "/" + APEX.getPlaylist().size());
+        next.setEnabled(index != playlist.size() - 1);
+        previous.setEnabled(index != 0);
+        stop.setEnabled(!clip.isStopped());
+        playPause.setText(clip.isPlaying() ? "Pause" : "Play");
+        playPause.setToolTipText(clip.isPlaying() ? "Pause the track" : "Play the track");
     }
 
     private void updateScrollBar() {
-        JScrollBar scrollBar = ApexControl.trackListPane.getVerticalScrollBar();
+        JScrollBar scrollBar = trackListPane.getVerticalScrollBar();
         int rowHeight = scrollBar.getMaximum() / playlist.size();
         int firstVisibleIndex = scrollBar.getValue() / rowHeight;
         int visibleAmount = scrollBar.getVisibleAmount() / rowHeight;

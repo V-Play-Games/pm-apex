@@ -3,249 +3,115 @@ package net.vpg.apex.core;
 import net.vpg.apex.Util;
 
 import javax.sound.sampled.*;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-public class ApexClip implements Clip {
+public class ApexClip {
     private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2, new ApexThreadFactory("Player"));
-    private final List<LineListener> listeners = new ArrayList<>();
-    protected SourceDataLine sourceDataLine;
+    private SourceDataLine sourceDataLine;
     private AudioFormat format;
     private AudioInputStream stream;
     private byte[] data;
-    private int framePosition = 0;
-    private int loopStart = 0;
-    private int loopEnd = -1;
-    private int loopCount = 0;
-    private boolean open = false;
-    private boolean active = false;
+    private int framePosition;
+    private int loopStart;
+    private int loopEnd;
+    private int loopCount;
+    private boolean playing;
+    private boolean stopped = true;
 
-    @Override
-    public void open() {
-        if (data != null)
-            open(format, data, 0, data.length);
-        else if (stream != null)
-            open(stream);
-        else
-            throw new IllegalArgumentException("Illegal call to open() in interface Clip");
-    }
-
-    @Override
-    public void open(AudioInputStream stream) {
-        this.stream = stream;
+    public void open(Track track, AudioFormat format) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        this.stream = AudioSystem.getAudioInputStream(format, AudioSystem.getAudioInputStream(track.getFile()));
         data = null;
-        open0(stream.getFormat());
-    }
-
-    public void open(Track track, AudioFormat format) {
-        Util.run(() -> {
-            open(AudioSystem.getAudioInputStream(format, AudioSystem.getAudioInputStream(track.getFile())));
-            setLoopPoints(track.getLoopStart(), track.getLoopEnd());
-            loop(Clip.LOOP_CONTINUOUSLY);
-        });
-    }
-
-    @Override
-    public void open(AudioFormat format, byte[] data, int offset, int bufferSize) {
-        if (bufferSize % format.getFrameSize() != 0)
-            throw new IllegalArgumentException(String.format("Buffer size (%d) does not represent an integral number of sample frames (%d)", bufferSize, format.getFrameSize()));
-        this.data = Arrays.copyOfRange(data, offset, offset + bufferSize);
-        open0(format);
-    }
-
-    private void open0(AudioFormat format) {
-        reset();
-        open = true;
-        this.format = format;
-        if (sourceDataLine == null) {
-            Mixer defaultMixer = AudioSystem.getMixer(null);
-            sourceDataLine = Arrays.stream(defaultMixer.getSourceLineInfo())
-                .filter(lineInfo -> lineInfo.getLineClass() == SourceDataLine.class)
-                .map(SourceDataLine.Info.class::cast)
-                .map(info -> Util.get(() -> (SourceDataLine) defaultMixer.getLine(info)))
-                .findFirst()
-                .orElseGet(() -> Util.get(() -> AudioSystem.getSourceDataLine(format)));
+        playing = true;
+        stopped = false;
+        if (this.format != format) {
+            this.format = format;
+            if (sourceDataLine != null)
+                sourceDataLine.close();
+            sourceDataLine = AudioSystem.getSourceDataLine(format);
+            sourceDataLine.open();
         }
-        if (!sourceDataLine.isOpen()) {
-            int bufferSize = (int) (format.getFrameSize() * format.getFrameRate() * 0.1);
-            Util.run(() -> sourceDataLine.open(format, bufferSize));
-        }
-        if (!sourceDataLine.isActive()) {
+        loopStart = track.getLoopStart();
+        loopEnd = track.getLoopEnd();
+        loopCount = Clip.LOOP_CONTINUOUSLY;
+    }
+
+    public void togglePlayPause() {
+        playing = !playing;
+        if (playing) {
+            stopped = false;
             sourceDataLine.start();
+            executor.execute(this::playAudio);
+        } else {
+            sourceDataLine.stop();
         }
     }
 
-    @Override
-    public void start() {
-        if (!open || active)
-            return;
-        active = true;
-        executor.execute(this::playAudio);
-        sendEvent(new LineEvent(this, LineEvent.Type.START, framePosition));
-    }
-
-    @Override
     public void stop() {
-        if (!active)
+        if (stopped)
             return;
-        active = false;
-        sourceDataLine.drain();
-        sendEvent(new LineEvent(this, LineEvent.Type.STOP, framePosition));
+        playing = false;
+        stopped = true;
+        sourceDataLine.stop();
     }
 
-    @Override
-    public void close() {
-        if (!open)
-            return;
-        long pos = framePosition;
-        data = null;
-        format = null;
-        open = false;
-        active = false;
-        reset();
-        sourceDataLine.drain();
-        sourceDataLine.close();
-        sendEvent(new LineEvent(this, LineEvent.Type.CLOSE, pos));
+    public boolean isPlaying() {
+        return playing;
     }
 
-    private void reset() {
-        loopStart = 0;
-        loopEnd = -1;
-        framePosition = 0;
-        loopCount = 0;
+    public boolean isStopped() {
+        return stopped;
     }
 
-    @Override
-    public void addLineListener(LineListener listener) {
-        listeners.add(listener);
+    public int getLoopCount() {
+        return loopCount;
     }
 
-    @Override
-    public void removeLineListener(LineListener listener) {
-        listeners.remove(listener);
-    }
-
-    private void sendEvent(LineEvent event) {
-        listeners.forEach(listener -> listener.update(event));
-    }
-
-    @Override
-    public void setLoopPoints(int start, int end) {
-        if (end != AudioSystem.NOT_SPECIFIED && end < start)
-            throw new IllegalArgumentException("Invalid loop points: " + start + " - " + end);
-        loopStart = start;
-        loopEnd = end;
-    }
-
-    @Override
-    public void loop(int count) {
+    public void setLoopCount(int count) {
         loopCount = count;
     }
 
-    @Override
-    public Control getControl(Control.Type control) {
-        return null;
-    }
-
-    @Override
-    public Control[] getControls() {
-        return null;
-    }
-
-    @Override
-    public boolean isControlSupported(Control.Type control) {
-        return false;
-    }
-
-    @Override
     public int getFrameLength() {
         return data.length / format.getFrameSize();
     }
 
-    @Override
     public long getMicrosecondLength() {
         return (long) (getFrameLength() * 1000000.0 / format.getSampleRate());
     }
 
-    @Override
-    public int available() {
-        return 0;
-    }
-
-    @Override
-    public void drain() {
-    }
-
-    @Override
-    public void flush() {
-    }
-
-    @Override
     public int getBufferSize() {
         return data.length;
     }
 
-    @Override
     public AudioFormat getFormat() {
         return format;
     }
 
-    @Override
     public int getFramePosition() {
         return framePosition;
     }
 
-    @Override
     public void setFramePosition(int frames) {
         framePosition = frames;
     }
 
-    @Override
-    public float getLevel() {
-        return AudioSystem.NOT_SPECIFIED;
-    }
-
-    @Override
     public long getLongFramePosition() {
         return framePosition;
     }
 
-    @Override
     public long getMicrosecondPosition() {
         return (long) (framePosition / format.getSampleRate() * 1000000);
     }
 
-    @Override
     public void setMicrosecondPosition(long microseconds) {
         setFramePosition((int) (microseconds * format.getSampleRate() / 1000000));
-    }
-
-    @Override
-    public boolean isRunning() {
-        return active;
-    }
-
-    @Override
-    public boolean isActive() {
-        return active;
-    }
-
-    @Override
-    public boolean isOpen() {
-        return open;
-    }
-
-    @Override
-    public Line.Info getLineInfo() {
-        return new DataLine.Info(ApexClip.class, format);
     }
 
     private void playAudio() {
         int frameRate = (int) format.getFrameRate();
         int frameSize = format.getFrameSize();
-        while (active) {
+        while (playing) {
             readAudio(frameRate * frameSize);
             int frameLength = getFrameLength();
             int limit = loopEnd > frameLength || loopEnd == -1 || loopCount == 0 ? frameLength : loopEnd;
@@ -258,7 +124,7 @@ public class ApexClip implements Clip {
                         continue;
                     }
                     framePosition = loopStart;
-                    if (loopCount != LOOP_CONTINUOUSLY)
+                    if (loopCount != Clip.LOOP_CONTINUOUSLY)
                         loopCount--;
                     continue;
                 }
@@ -286,10 +152,8 @@ public class ApexClip implements Clip {
                 data = buffer;
                 return;
             }
-            byte[] merged = new byte[data.length + totalRead];
-            System.arraycopy(data, 0, merged, 0, data.length);
-            System.arraycopy(buffer, 0, merged, data.length, totalRead);
-            data = merged;
+            data = Arrays.copyOf(data, data.length + totalRead);
+            System.arraycopy(buffer, 0, data, data.length - totalRead, totalRead);
         });
     }
 }

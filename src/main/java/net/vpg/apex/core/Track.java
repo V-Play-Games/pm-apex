@@ -1,8 +1,8 @@
 package net.vpg.apex.core;
 
 import net.vpg.apex.Util;
-import net.vpg.vjson.value.JSONArray;
 import net.vpg.vjson.value.JSONObject;
+import net.vpg.vjson.value.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,8 @@ public class Track {
     public static final Map<String, Track> entries =
         Util.compute(Resources.get("tracks.json"), JSONObject::parse)
             .getArray("entries")
-            .stream(JSONArray::getObject)
+            .stream()
+            .map(JSONValue::toObject)
             .map(Track::new)
             .collect(Collectors.toMap(Track::getId, info -> info));
     private final String id;
@@ -35,7 +36,7 @@ public class Track {
     private Track(JSONObject data) {
         id = data.getString("id");
         name = data.getString("name");
-        logger.info("Loaded Track Info for ID: " + id);
+        logger.info("Loaded Track Info for ID: {}", id);
     }
 
     public static Track get(File file) {

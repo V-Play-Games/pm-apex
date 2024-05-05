@@ -5,6 +5,7 @@ import net.vpg.apex.Util;
 import net.vpg.apex.components.Downloader;
 import net.vpg.vjson.value.JSONArray;
 import net.vpg.vjson.value.JSONObject;
+import net.vpg.vjson.value.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +112,7 @@ public class Resources {
     }
 
     private void shiftFiles() {
-        info.getArray("required").stream(JSONArray::getString).forEach(this::shiftFile);
+        info.getArray("required").stream().map(JSONValue::toString).forEach(this::shiftFile);
         shiftFile("info.json");
     }
 
@@ -171,7 +172,8 @@ public class Resources {
 
     private List<OnlineTrack> getOnlineResources() throws IOException {
         return JSONArray.parse(Downloader.download("https://api.github.com/repos/" + repo + "/contents/" + additionalRes, "contents.json", null))
-            .stream(JSONArray::getObject)
+            .stream()
+            .map(JSONValue::toObject)
             .map(jo -> new OnlineTrack(jo.getString("name"), jo.getLong("size")))
             .collect(Collectors.toList());
     }
