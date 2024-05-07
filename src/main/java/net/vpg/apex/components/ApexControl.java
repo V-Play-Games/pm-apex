@@ -8,32 +8,32 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ApexControl {
-    public static WrappedTextArea trackId;
-    public static WrappedTextArea trackName;
-    public static WrappedTextArea trackIndex;
-    public static WrappedTextArea fileProgressText;
-    public static WrappedTextArea totalProgressText;
-    public static WrappedTextArea tracksFound;
-    public static SearchTextArea searchTextArea;
-    public static JProgressBar fileProgressBar;
-    public static JProgressBar totalProgressBar;
-    public static JButton next;
-    public static JButton previous;
-    public static JButton shuffle;
-    public static JButton playPause;
-    public static JButton stop;
-    public static JButton search;
-    public static JButton lookupTracks;
-    public static JButton downloadAll;
-    public static JButton surpriseMe;
-    public static DefaultListModel<String> trackListModel;
-    public static JList<String> trackList;
-    public static JScrollPane trackListPane;
+    public static final WrappedTextArea trackId;
+    public static final WrappedTextArea trackName;
+    public static final WrappedTextArea trackIndex;
+    public static final WrappedTextArea fileProgressText;
+    public static final WrappedTextArea totalProgressText;
+    public static final WrappedTextArea tracksFound;
+    public static final SearchTextArea searchTextArea;
+    public static final JProgressBar fileProgressBar;
+    public static final JProgressBar totalProgressBar;
+    public static final JButton next;
+    public static final JButton previous;
+    public static final JButton shuffleButton;
+    public static final JButton playPause;
+    public static final JButton stop;
+    public static final JButton search;
+    public static final JButton lookupTracks;
+    public static final JButton downloadAll;
+    public static final DefaultListModel<String> trackListModel;
+    public static final JList<String> trackList;
+    public static final JScrollPane trackListPane;
 
-    public static void init() {
-        Util.lookAndFeel();
+    static {
         trackListModel = new DefaultListModel<>();
         trackName = Util.makeTextArea("Track Name", textArea -> textArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12)));
         trackId = Util.makeTextArea("Track ID", textArea -> textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12)));
@@ -50,12 +50,10 @@ public class ApexControl {
 
         next = Util.makeButton("Next Track", "Go to the next track", 0);
         previous = Util.makeButton("Previous Track", "Go to the previous track", 1);
-        shuffle = Util.makeButton("Shuffle", "Shuffle the playlist", 2);
+        shuffleButton = Util.makeButton("Shuffle OFF", "Shuffle the playlist", 2);
         stop = Util.makeButton("Stop", "Stop the track", 3);
         playPause = Util.makeButton("Play", "Play the track", 4);
-        search = Util.makeButton("Search and Play", "Type the name of a track above to search and play it" +
-            "For example: Typing 'Wally' plays 'Battle! Wally'", 5);
-        surpriseMe = Util.makeButton("Surprise Me!", "Plays a random track", 8);
+        search = Util.makeButton("Search and Play", "Search a track", 5);
 
         tracksFound = new WrappedTextArea("0 new tracks found");
         fileProgressText = new WrappedTextArea();
@@ -72,5 +70,25 @@ public class ApexControl {
             new DownloadTask(Resources.getInstance().getMissingTracks(), () -> Apex.APEX.takeAction(6));
             Util.run(() -> Downloader.download(Resources.getInstance().getBaseDownloadUrl() + "src/main/resources/net/vpg/apex/tracks.json", null));
         });
+
+        trackList = new JList<>(ApexControl.trackListModel);
+        trackList.setVisibleRowCount(7);
+        trackList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                    Apex.APEX.takeAction(7);
+                }
+            }
+        });
+        trackList.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == '\n') {
+                    Apex.APEX.takeAction(7);
+                }
+            }
+        });
+        trackListPane = new JScrollPane(trackList);
     }
 }

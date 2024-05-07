@@ -182,7 +182,7 @@ public class Resources {
         List<String> availableIds = Apex.APEX.getPlaylist().stream().map(Track::getId).collect(Collectors.toList());
         return Util.get(this::getOnlineResources).stream()
             .filter(ot -> ot.getName().endsWith(".ogg"))
-            .filter(ot -> !availableIds.contains(Util.getId(ot.getName())))
+            .filter(ot -> !availableIds.contains(Util.removeExtension(ot.getName())))
             .collect(Collectors.toList());
     }
 }

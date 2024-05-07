@@ -19,27 +19,7 @@ public class PlayerPanel extends JPanel {
         this.setBorder(new EmptyBorder(15, 15, 0, 15));
         this.setLayout(new BorderLayout());
         Util.addBox(this, "North",
-            ApexControl.trackListPane = new JScrollPane(
-                Util.apply(ApexControl.trackList = new JList<>(ApexControl.trackListModel),
-                    list -> list.setVisibleRowCount(7),
-                    list -> list.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                            if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                                Apex.APEX.takeAction(7);
-                            }
-                        }
-                    }),
-                    list -> list.addKeyListener(new KeyAdapter() {
-                        @Override
-                        public void keyTyped(KeyEvent e) {
-                            if (e.getKeyChar() == '\n') {
-                                Apex.APEX.takeAction(7);
-                            }
-                        }
-                    })
-                )
-            ),
+            ApexControl.trackListPane,
             Box.createHorizontalStrut(10),
             ApexControl.trackName,
             Box.createVerticalStrut(5),

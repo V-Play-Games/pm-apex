@@ -41,7 +41,7 @@ public class Track {
 
     public static Track get(File file) {
         String filename = file.getName();
-        Track info = entries.computeIfAbsent(Util.getId(filename), Track::makeDefaultInfo);
+        Track info = entries.computeIfAbsent(Util.removeExtension(filename), Track::makeDefaultInfo);
         if (!info.isInitDone()) {
             info.init(file);
         }

@@ -16,24 +16,23 @@ public class ApexWindow extends JFrame {
         Box box = Util.addBox(this, null);
         box.setBorder(new EmptyBorder(3, 3, 3, 3));
         box.add(Util.apply(new JTabbedPane(),
-            tabPane -> tabPane.add(PlayerPanel.getInstance()),
-            tabPane -> tabPane.add(DownloadPanel.getInstance()),
-            tabPane -> tabPane.add(CreditsPanel.getInstance())));
+            pane -> pane.add(PlayerPanel.getInstance()),
+            pane -> pane.add(DownloadPanel.getInstance()),
+            pane -> pane.add(CreditsPanel.getInstance())));
         Util.addBox(this, "South",
             ApexControl.searchTextArea,
             Util.apply(new JPanel(),
-                buttonPanel -> buttonPanel.setAlignmentX(0),
-                buttonPanel -> buttonPanel.add(ApexControl.search),
-                buttonPanel -> buttonPanel.add(ApexControl.surpriseMe)),
+                panel -> panel.setAlignmentX(0),
+                panel -> panel.add(ApexControl.search)),
             Box.createVerticalStrut(5),
             Util.apply(new JPanel(),
-                buttonPanel -> buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER)),
-                buttonPanel -> buttonPanel.setAlignmentX(0),
-                buttonPanel -> buttonPanel.add(ApexControl.shuffle),
-                buttonPanel -> buttonPanel.add(ApexControl.next),
-                buttonPanel -> buttonPanel.add(ApexControl.stop),
-                buttonPanel -> buttonPanel.add(ApexControl.playPause),
-                buttonPanel -> buttonPanel.add(ApexControl.previous)));
+                panel -> panel.setLayout(new FlowLayout(FlowLayout.CENTER)),
+                panel -> panel.setAlignmentX(0),
+                panel -> panel.add(ApexControl.shuffleButton),
+                panel -> panel.add(ApexControl.next),
+                panel -> panel.add(ApexControl.stop),
+                panel -> panel.add(ApexControl.playPause),
+                panel -> panel.add(ApexControl.previous)));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setResizable(true);

@@ -1,6 +1,5 @@
 package net.vpg.apex;
 
-import net.vpg.apex.components.ApexControl;
 import net.vpg.apex.components.ApexWindow;
 import net.vpg.apex.core.ApexClip;
 import net.vpg.apex.core.ApexThreadFactory;
@@ -26,14 +25,15 @@ public class Apex {
     private final ApexClip clip = new ApexClip();
     private final ScheduledThreadPoolExecutor mainExecutor = new ScheduledThreadPoolExecutor(2, new ApexThreadFactory("Main"));
     private List<Track> playlist = new ArrayList<>();
-    private int index = 0;
+    private int index;
+    private boolean shuffle = false;
 
     public static void main(String[] args) {
         APEX.start();
     }
 
     private void start() {
-        ApexControl.init();
+        Util.lookAndFeel();
         ApexWindow.getInstance().setVisible(true);
         this.updatePlaylist();
         this.setIndex(0);
@@ -70,6 +70,9 @@ public class Apex {
     }
 
     public void setIndex(int index) {
+        if (shuffle) {
+            index = (int) (Math.random() * playlist.size());
+        }
         modifyAndUpdateApp(playlist.get(index), index);
     }
 
@@ -91,9 +94,8 @@ public class Apex {
                 setIndex(index - 1);
                 break;
             case 2: // Shuffle
-                Util.shuffle(playlist);
-                index = playlist.indexOf(track);
-                updateListModel();
+                shuffle = !shuffle;
+                shuffleButton.setText("Shuffle " + (shuffle ? "ON" : "OFF"));
                 break;
             case 3: // Stop
                 clip.stop();
@@ -111,9 +113,6 @@ public class Apex {
                 break;
             case 7: // Mouse Double-click/Enter on the playlist
                 setIndex(trackList.getSelectedIndex());
-                break;
-            case 8: // Surprise Me
-                setIndex(Util.random(0, playlist.size()));
                 break;
         }
         this.update();
@@ -147,8 +146,8 @@ public class Apex {
 
     public void update() {
         trackIndex.setText("Track " + (index + 1) + "/" + APEX.getPlaylist().size());
-        next.setEnabled(index != playlist.size() - 1);
-        previous.setEnabled(index != 0);
+        next.setEnabled(shuffle || index != playlist.size() - 1);
+        previous.setEnabled(shuffle || index != 0);
         stop.setEnabled(!clip.isStopped());
         playPause.setText(clip.isPlaying() ? "Pause" : "Play");
         playPause.setToolTipText(clip.isPlaying() ? "Pause the track" : "Play the track");
