@@ -63,10 +63,10 @@ public class ApexControl {
 
         lookupTracks = new JButton("Refresh");
         downloadAll = new JButton("Download all found tracks");
-        lookupTracks.addActionListener(e -> tracksFound.setText(Resources.getInstance().getMissingTracks().size() + " more tracks found"));
-        downloadAll.addActionListener(e -> {
-            ApexControl.lookupTracks.setEnabled(false);
-            ApexControl.downloadAll.setEnabled(false);
+        lookupTracks.addActionListener(_ -> tracksFound.setText(Resources.getInstance().getMissingTracks().size() + " more tracks found"));
+        downloadAll.addActionListener(_ -> {
+            lookupTracks.setEnabled(false);
+            downloadAll.setEnabled(false);
             new DownloadTask(Resources.getInstance().getMissingTracks(), () -> Apex.APEX.takeAction(6));
             Util.run(() -> Downloader.download(Resources.getInstance().getBaseDownloadUrl() + "src/main/resources/net/vpg/apex/tracks.json", null));
         });

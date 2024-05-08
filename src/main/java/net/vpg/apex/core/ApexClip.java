@@ -20,21 +20,34 @@ public class ApexClip {
     private boolean playing;
     private boolean stopped = true;
 
-    public void open(Track track, AudioFormat format) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        this.stream = AudioSystem.getAudioInputStream(format, AudioSystem.getAudioInputStream(track.getFile()));
+    public void play(Track track) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        AudioInputStream sourceStream = AudioSystem.getAudioInputStream(track.getFile());
+        AudioFormat sourceFormat = sourceStream.getFormat();
+        AudioFormat targetFormat = new AudioFormat(
+            AudioFormat.Encoding.PCM_SIGNED,
+            sourceFormat.getSampleRate(),
+            16,
+            sourceFormat.getChannels(),
+            4,
+            sourceFormat.getSampleRate(), // Note: Keep Sample Rate = Frame Rate
+            sourceFormat.isBigEndian()
+        );
+        stream = AudioSystem.getAudioInputStream(targetFormat, sourceStream);
         data = null;
         playing = true;
         stopped = false;
-        if (this.format != format) {
-            this.format = format;
+        framePosition = 0;
+        if (format != targetFormat) {
+            format = targetFormat;
             if (sourceDataLine != null)
                 sourceDataLine.close();
-            sourceDataLine = AudioSystem.getSourceDataLine(format);
+            sourceDataLine = AudioSystem.getSourceDataLine(targetFormat);
             sourceDataLine.open();
         }
-        loopStart = track.getLoopStart();
-        loopEnd = track.getLoopEnd();
+        loopStart = track.loopStart();
+        loopEnd = track.loopEnd();
         loopCount = Clip.LOOP_CONTINUOUSLY;
+        executor.execute(this::playAudio);
     }
 
     public void togglePlayPause() {
@@ -53,6 +66,8 @@ public class ApexClip {
             return;
         playing = false;
         stopped = true;
+        framePosition = 0;
+        sourceDataLine.flush();
         sourceDataLine.stop();
     }
 

@@ -2,559 +2,837 @@
   "entries": [
     {
       "id": "bgm_battle01",
-      "name": "Battle! Sync Pair"
+      "name": "Battle! Sync Pair",
+      "loopStart": 206896,
+      "loopEnd": 4046895
     },
     {
       "id": "bgm_battle02",
-      "name": "Battle! Powerful Sync Pair"
+      "name": "Battle! Powerful Sync Pair",
+      "loopStart": 330492,
+      "loopEnd": 3855737
     },
     {
       "id": "bgm_battle_achroma",
-      "name": "Battle! Colress"
+      "name": "Battle! Colress",
+      "loopStart": 596178,
+      "loopEnd": 3677961
     },
     {
       "id": "bgm_battle_adeku",
-      "name": "Battle! Alder"
+      "name": "Battle! Alder",
+      "loopStart": 670345,
+      "loopEnd": 3384827
     },
     {
       "id": "bgm_battle_akagi",
-      "name": "Battle! Cyrus"
+      "name": "Battle! Cyrus",
+      "loopStart": 798169,
+      "loopEnd": 3431311
     },
     {
       "id": "bgm_battle_aogiri",
-      "name": "Battle! Archie"
+      "name": "Battle! Archie",
+      "loopStart": 809552,
+      "loopEnd": 3703880
     },
     {
       "id": "bgm_battle_aqua_magma",
-      "name": "Battle! Team Aqua and Team Magma"
+      "name": "Battle! Team Aqua and Team Magma",
+      "loopStart": 537931,
+      "loopEnd": 3186207
     },
     {
       "id": "bgm_battle_aqua_magma_02",
-      "name": "Battle! Team Aqua and Team Magma Admin"
+      "name": "Battle! Team Aqua and Team Magma Admin",
+      "loopStart": 701909,
+      "loopEnd": 3249045
     },
     {
       "id": "bgm_battle_beet",
-      "name": "Battle! Bede"
+      "name": "Battle! Bede",
+      "loopStart": 540000,
+      "loopEnd": 3344211
     },
     {
       "id": "bgm_battle_bell",
-      "name": "Battle! Cheren and Bianca"
+      "name": "Battle! Cheren and Bianca",
+      "loopStart": 728182,
+      "loopEnd": 3739090
     },
     {
       "id": "bgm_battle_big4_a",
-      "name": "Battle! Alola Elite Four"
+      "name": "Battle! Alola Elite Four",
+      "loopStart": 813600,
+      "loopEnd": 3808799
     },
     {
       "id": "bgm_battle_big4_a_acerola",
-      "name": "Battle! Alola Elite Four: Acerola"
+      "name": "Battle! Alola Elite Four: Acerola",
+      "loopStart": 813600,
+      "loopEnd": 3520800
     },
     {
       "id": "bgm_battle_big4_a_hara",
-      "name": "Battle! Alola Elite Four: Hala"
+      "name": "Battle! Alola Elite Four: Hala",
+      "loopStart": 813600,
+      "loopEnd": 3578399
     },
     {
       "id": "bgm_battle_big4_a_kahiri",
-      "name": "Battle! Alola Elite Four: Kahili"
+      "name": "Battle! Alola Elite Four: Kahili",
+      "loopStart": 813600,
+      "loopEnd": 3088800
     },
     {
       "id": "bgm_battle_big4_a_litchi",
-      "name": "Battle! Alola Elite Four: Olivia"
+      "name": "Battle! Alola Elite Four: Olivia",
+      "loopStart": 813600,
+      "loopEnd": 3578400
     },
     {
       "id": "bgm_battle_big4_a_molayne",
-      "name": "Battle! Alola Elite Four: Molayne"
+      "name": "Battle! Alola Elite Four: Molayne",
+      "loopStart": 813600,
+      "loopEnd": 3866400
     },
     {
       "id": "bgm_battle_big4_c",
-      "name": "Battle! Kalos Elite Four"
+      "name": "Battle! Kalos Elite Four",
+      "loopStart": 584000,
+      "loopEnd": 3911999
     },
     {
       "id": "bgm_battle_big4_h",
-      "name": "Battle! Hoenn Elite Four"
+      "name": "Battle! Hoenn Elite Four",
+      "loopStart": 713207,
+      "loopEnd": 3864904
     },
     {
       "id": "bgm_battle_big4_h_fuyo",
-      "name": "Battle! Hoenn Elite Four: Phoebe"
+      "name": "Battle! Hoenn Elite Four: Phoebe",
+      "loopStart": 655775,
+      "loopEnd": 3305916
     },
     {
       "id": "bgm_battle_big4_h_genji",
-      "name": "Battle! Hoenn Elite Four: Drake"
+      "name": "Battle! Hoenn Elite Four: Drake",
+      "loopStart": 655775,
+      "loopEnd": 3305916
     },
     {
       "id": "bgm_battle_big4_h_kagetsu",
-      "name": "Battle! Hoenn Elite Four: Sydney"
+      "name": "Battle! Hoenn Elite Four: Sydney",
+      "loopStart": 655775,
+      "loopEnd": 3576338
     },
     {
       "id": "bgm_battle_big4_h_prim",
-      "name": "Battle! Hoenn Elite Four: Glacia"
+      "name": "Battle! Hoenn Elite Four: Glacia",
+      "loopStart": 655775,
+      "loopEnd": 3414085
     },
     {
       "id": "bgm_battle_big4_i",
-      "name": "Battle! Unova Elite Four"
+      "name": "Battle! Unova Elite Four",
+      "loopStart": 553263,
+      "loopEnd": 4069894
     },
     {
       "id": "bgm_battle_big4_i_cattleya",
-      "name": "Battle! Unova Elite Four: Caitlin"
+      "name": "Battle! Unova Elite Four: Caitlin",
+      "loopStart": 613895,
+      "loopEnd": 3584841
     },
     {
       "id": "bgm_battle_big4_i_gima",
-      "name": "Battle! Unova Elite Four: Grimsley"
+      "name": "Battle! Unova Elite Four: Grimsley",
+      "loopStart": 613895,
+      "loopEnd": 3402947
     },
     {
       "id": "bgm_battle_big4_i_renbu",
-      "name": "Battle! Unova Elite Four: Marshal"
+      "name": "Battle! Unova Elite Four: Marshal",
+      "loopStart": 371369,
+      "loopEnd": 3524210
     },
     {
       "id": "bgm_battle_big4_i_shikimi",
-      "name": "Battle! Unova Elite Four: Shauntal"
+      "name": "Battle! Unova Elite Four: Shauntal",
+      "loopStart": 613895,
+      "loopEnd": 3160420
     },
     {
       "id": "bgm_battle_big4_j_itsuki",
-      "name": "Battle! Johto Elite Four: Will"
+      "name": "Battle! Johto Elite Four: Will",
+      "loopStart": 739047,
+      "loopEnd": 3055237
     },
     {
       "id": "bgm_battle_big4_j_karin",
-      "name": "Battle! Johto Elite Four: Karen"
+      "name": "Battle! Johto Elite Four: Karen",
+      "loopStart": 739047,
+      "loopEnd": 3359999
     },
     {
       "id": "bgm_battle_big4_j_kyo",
-      "name": "Battle! Johto Elite Four: Koga"
+      "name": "Battle! Johto Elite Four: Koga",
+      "loopStart": 739047,
+      "loopEnd": 3299046
     },
     {
       "id": "bgm_battle_big4_j_shiba",
-      "name": "Battle! Johto Elite Four: Bruno"
+      "name": "Battle! Johto Elite Four: Bruno",
+      "loopStart": 739047,
+      "loopEnd": 3299046
     },
     {
       "id": "bgm_battle_big4_k_kanna",
-      "name": "Battle! Kanto Elite Four: Lorelei"
+      "name": "Battle! Kanto Elite Four: Lorelei",
+      "loopStart": 735158,
+      "loopEnd": 3402947
     },
     {
       "id": "bgm_battle_big4_k_kikuko",
-      "name": "Battle! Kanto Elite Four: Agatha"
+      "name": "Battle! Kanto Elite Four: Agatha",
+      "loopStart": 735158,
+      "loopEnd": 3645473
     },
     {
       "id": "bgm_battle_big4_k_shiba",
-      "name": "Battle! Kanto Elite Four: Bruno"
+      "name": "Battle! Kanto Elite Four: Bruno",
+      "loopStart": 735158,
+      "loopEnd": 3584841
     },
     {
       "id": "bgm_battle_big4_k_wataru",
-      "name": "Battle! Kanto Elite Four: Lance"
+      "name": "Battle! Kanto Elite Four: Lance",
+      "loopStart": 735158,
+      "loopEnd": 3827368
     },
     {
       "id": "bgm_battle_big4_s",
-      "name": "Battle! Sinnoh Elite Four"
+      "name": "Battle! Sinnoh Elite Four",
+      "loopStart": 712000,
+      "loopEnd": 4167999
     },
     {
       "id": "bgm_battle_big4_s_goyo",
-      "name": "Battle! Sinnoh Elite Four: Lucian"
+      "name": "Battle! Sinnoh Elite Four: Lucian",
+      "loopStart": 776000,
+      "loopEnd": 3720000
     },
     {
       "id": "bgm_battle_big4_s_kikuno",
-      "name": "Battle! Sinnoh Elite Four: Bertha"
+      "name": "Battle! Sinnoh Elite Four: Bertha",
+      "loopStart": 776000,
+      "loopEnd": 3464000
     },
     {
       "id": "bgm_battle_big4_s_oba",
-      "name": "Battle! Sinnoh Elite Four: Flint"
+      "name": "Battle! Sinnoh Elite Four: Flint",
+      "loopStart": 776000,
+      "loopEnd": 3592000
     },
     {
       "id": "bgm_battle_big4_s_ryo",
-      "name": "Battle! Sinnoh Elite Four: Aaron"
+      "name": "Battle! Sinnoh Elite Four: Aaron",
+      "loopStart": 776000,
+      "loopEnd": 3464000
     },
     {
       "id": "bgm_battle_break01",
-      "name": "Battle! Team Break"
+      "name": "Battle! Team Break",
+      "loopStart": 567273,
+      "loopEnd": 3778908
     },
     {
       "id": "bgm_battle_break02",
-      "name": "Battle! Team Break (Bosses)"
+      "name": "Battle! Team Break (Bosses)",
+      "loopStart": 520000,
+      "loopEnd": 3463999
     },
     {
       "id": "bgm_battle_carnet",
-      "name": "Battle! Diantha"
+      "name": "Battle! Diantha",
+      "loopStart": 630486,
+      "loopEnd": 3743999
     },
     {
       "id": "bgm_battle_christmas",
-      "name": "Battle! Trainer (Holiday)"
+      "name": "Battle! Trainer (Holiday)",
+      "loopStart": 229299,
+      "loopEnd": 2944202
     },
     {
       "id": "bgm_battle_champion_hau",
-      "name": "Battle! Champion Hau"
+      "name": "Battle! Champion Hau",
+      "loopStart": 657000,
+      "loopEnd": 3393000
     },
     {
       "id": "bgm_battle_chatelaine",
-      "name": "Battle! Battle Chatelaine"
+      "name": "Battle! Battle Chatelaine",
+      "loopStart": 380952,
+      "loopEnd": 3367619
     },
     {
       "id": "bgm_battle_daigo",
-      "name": "Battle! Steven"
+      "name": "Battle! Steven",
+      "loopStart": 625171,
+      "loopEnd": 3434926
     },
     {
       "id": "bgm_battle_daigo_02",
-      "name": "Decisive Battle! Steven"
+      "name": "Decisive Battle! Steven",
+      "loopStart": 774857,
+      "loopEnd": 3517714
     },
     {
       "id": "bgm_battle_dande",
-      "name": "Battle! Leon"
+      "name": "Battle! Leon",
+      "loopStart": 667952,
+      "loopEnd": 3929638
     },
     {
       "id": "bgm_battle_enemy01",
-      "name": "Battle! Rachel and Sawyer"
+      "name": "Battle! Rachel and Sawyer",
+      "loopStart": 840000,
+      "loopEnd": 4167999
     },
     {
       "id": "bgm_battle_enemy02",
-      "name": "Battle! Lear"
+      "name": "Battle! Lear",
+      "loopStart": 584000,
+      "loopEnd": 4039999
     },
     {
       "id": "bgm_battle_fb_h",
-      "name": "Battle! Hoenn Frontier Brain"
+      "name": "Battle! Hoenn Frontier Brain",
+      "loopStart": 320000,
+      "loopEnd": 3916189
     },
     {
       "id": "bgm_battle_fb_js",
-      "name": "Battle! Sinnoh Frontier Brain"
+      "name": "Battle! Sinnoh Frontier Brain",
+      "loopStart": 795790,
+      "loopEnd": 4009262
     },
     {
       "id": "bgm_battle_fleurdelis",
-      "name": "Battle! Lysandre"
+      "name": "Battle! Lysandre",
+      "loopStart": 550873,
+      "loopEnd": 3102281
     },
     {
       "id": "bgm_battle_ghetsis",
-      "name": "Battle! Ghetsis"
+      "name": "Battle! Ghetsis",
+      "loopStart": 470400,
+      "loopEnd": 3772799
     },
     {
       "id": "bgm_battle_ginga",
-      "name": "Battle! Team Galactic"
+      "name": "Battle! Team Galactic",
+      "loopStart": 759131,
+      "loopEnd": 3013043
     },
     {
       "id": "bgm_battle_ginga_02",
-      "name": "Battle! Team Galactic Commander"
+      "name": "Battle! Team Galactic Commander",
+      "loopStart": 698400,
+      "loopEnd": 3232800
     },
     {
       "id": "bgm_battle_gladion",
-      "name": "Battle! Gladion"
+      "name": "Battle! Gladion",
+      "loopStart": 730000,
+      "loopEnd": 3689999
     },
     {
       "id": "bgm_battle_gladion_short",
-      "name": "Battle! Gladion (Short)"
+      "name": "Battle! Gladion (Short)",
+      "loopStart": 250000,
+      "loopEnd": 3209999
     },
     {
       "id": "bgm_battle_gl_a",
-      "name": "Battle! Island Kahuna"
+      "name": "Battle! Island Kahuna",
+      "loopStart": 784719,
+      "loopEnd": 3373481
     },
     {
       "id": "bgm_battle_gl_c",
-      "name": "Battle! Kalos Gym Leader"
+      "name": "Battle! Kalos Gym Leader",
+      "loopStart": 547200,
+      "loopEnd": 3926399
     },
     {
       "id": "bgm_battle_gl_g",
-      "name": "Battle! Galar Gym Leader"
+      "name": "Battle! Galar Gym Leader",
+      "loopStart": 833143,
+      "loopEnd": 3795427
     },
     {
       "id": "bgm_battle_gl_h",
-      "name": "Battle! Hoenn Gym Leader"
+      "name": "Battle! Hoenn Gym Leader",
+      "loopStart": 598154,
+      "loopEnd": 4201845
     },
     {
       "id": "bgm_battle_gl_i",
-      "name": "Battle! Unova Gym Leader"
+      "name": "Battle! Unova Gym Leader",
+      "loopStart": 335455,
+      "loopEnd": 4131817
     },
     {
       "id": "bgm_battle_gl_j",
-      "name": "Battle! Johto Gym Leader"
+      "name": "Battle! Johto Gym Leader",
+      "loopStart": 678095,
+      "loopEnd": 3786665
     },
     {
       "id": "bgm_battle_gl_k",
-      "name": "Battle! Kanto Gym Leader"
+      "name": "Battle! Kanto Gym Leader",
+      "loopStart": 696522,
+      "loopEnd": 4327825
     },
     {
       "id": "bgm_battle_gl_s",
-      "name": "Battle! Sinnoh Gym Leader"
+      "name": "Battle! Sinnoh Gym Leader",
+      "loopStart": 712000,
+      "loopEnd": 4103999
     },
     {
       "id": "bgm_battle_green",
-      "name": "Battle! Blue"
+      "name": "Battle! Blue",
+      "loopStart": 879070,
+      "loopEnd": 4093953
     },
     {
       "id": "bgm_battle_guzuma",
-      "name": "Battle! Guzma"
+      "name": "Battle! Guzma",
+      "loopStart": 735884,
+      "loopEnd": 4422283
     },
     {
       "id": "bgm_battle_halloween",
-      "name": "Battle! Trainer (Halloween)"
+      "name": "Battle! Trainer (Halloween)",
+      "loopStart": 536727,
+      "loopEnd": 3050180
     },
     {
       "id": "bgm_battle_handsome",
-      "name": "Battle! Looker"
+      "name": "Battle! Looker",
+      "loopStart": 547200,
+      "loopEnd": 3465600
     },
     {
       "id": "bgm_battle_hau",
-      "name": "Battle! Hau"
+      "name": "Battle! Hau",
+      "loopStart": 451862,
+      "loopEnd": 3629792
     },
     {
       "id": "bgm_battle_higana",
-      "name": "Battle! Zinnia"
+      "name": "Battle! Zinnia",
+      "loopStart": 755027,
+      "loopEnd": 4740323
     },
     {
       "id": "bgm_battle_hop",
-      "name": "Battle! Hop"
+      "name": "Battle! Hop",
+      "loopStart": 720000,
+      "loopEnd": 3201231
     },
     {
       "id": "bgm_battle_iris",
-      "name": "Battle! Champion Iris"
+      "name": "Battle! Champion Iris",
+      "loopStart": 727500,
+      "loopEnd": 3727499
     },
     {
       "id": "bgm_battle_jun",
-      "name": "Battle! Barry"
+      "name": "Battle! Barry",
+      "loopStart": 448524,
+      "loopEnd": 3973769
     },
     {
       "id": "bgm_battle_kukui",
-      "name": "Battle! Kukui"
+      "name": "Battle! Kukui",
+      "loopStart": 1109809,
+      "loopEnd": 3824712
     },
     {
       "id": "bgm_battle_legend_agnom",
-      "name": "Battle! Lake Guardian"
+      "name": "Battle! Lake Guardian",
+      "loopStart": 750968,
+      "loopEnd": 3228386
     },
     {
       "id": "bgm_battle_legend_cresselia",
-      "name": "Battle! Cresselia"
+      "name": "Battle! Cresselia",
+      "loopStart": 766957,
+      "loopEnd": 3333912
     },
     {
       "id": "bgm_battle_legend_entei",
-      "name": "Battle! Entei"
+      "name": "Battle! Entei",
+      "loopStart": 648000,
+      "loopEnd": 3975999
     },
     {
       "id": "bgm_battle_legend_hooh",
-      "name": "Battle! Ho-oh"
+      "name": "Battle! Ho-oh",
+      "loopStart": 957362,
+      "loopEnd": 3615823
     },
     {
       "id": "bgm_battle_legend_kanto",
-      "name": "Battle! Kanto Legendary Pokemon"
+      "name": "Battle! Kanto Legendary Pokemon",
+      "loopStart": 759131,
+      "loopEnd": 3451305
     },
     {
       "id": "bgm_battle_legend_kapu",
-      "name": "Battle! Island Guardian"
+      "name": "Battle! Island Guardian",
+      "loopStart": 802759,
+      "loopEnd": 3980689
     },
     {
       "id": "bgm_battle_legend_lati",
-      "name": "Battle! Latias and Latios"
+      "name": "Battle! Latias and Latios",
+      "loopStart": 716308,
+      "loopEnd": 3079384
     },
     {
       "id": "bgm_battle_legend_pm01",
-      "name": "Battle! Legendary Pokemon [Legendary Face-Off]"
+      "name": "Battle! Legendary Pokemon [Legendary Face-Off]",
+      "loopStart": 604138,
+      "loopEnd": 4046895
     },
     {
       "id": "bgm_battle_legend_regi",
-      "name": "Battle! Legendary Titans"
+      "name": "Battle! Legendary Titans",
+      "loopStart": 585000,
+      "loopEnd": 3392999
     },
     {
       "id": "bgm_battle_legend_sm",
-      "name": "Battle! Alola Legendary Pokemon"
+      "name": "Battle! Alola Legendary Pokemon",
+      "loopStart": 751347,
+      "loopEnd": 3631346
     },
     {
       "id": "bgm_battle_legend_superancient",
-      "name": "Battle! Super-Ancient Pokemon"
+      "name": "Battle! Super-Ancient Pokemon",
+      "loopStart": 834462,
+      "loopEnd": 3433845
     },
     {
       "id": "bgm_battle_legend_unova",
-      "name": "Battle! Unova  Legendary Pokemon"
+      "name": "Battle! Unova  Legendary Pokemon",
+      "loopStart": 935172,
+      "loopEnd": 4001674
     },
     {
       "id": "bgm_battle_lillie",
-      "name": "Battle! Lillie"
+      "name": "Battle! Lillie",
+      "loopStart": 788764,
+      "loopEnd": 3636404
     },
     {
       "id": "bgm_battle_lillie_short",
-      "name": "Battle! Lillie (Short)"
+      "name": "Battle! Lillie (Short)",
+      "loopStart": 137528,
+      "loopEnd": 2985168
     },
     {
       "id": "bgm_battle_lucia",
-      "name": "Battle! Lisia"
+      "name": "Battle! Lisia",
+      "loopStart": 617143,
+      "loopEnd": 3562104
     },
     {
       "id": "bgm_battle_lusamine",
-      "name": "Battle! Lusamine"
+      "name": "Battle! Lusamine",
+      "loopStart": 873000,
+      "loopEnd": 4040999
     },
     {
       "id": "bgm_battle_lusamine_short",
-      "name": "Battle! Lusamine (Short)"
+      "name": "Battle! Lusamine (Short)",
+      "loopStart": 153000,
+      "loopEnd": 3320999
     },
     {
       "id": "bgm_battle_mary",
-      "name": "Battle! Marnie"
+      "name": "Battle! Marnie",
+      "loopStart": 605618,
+      "loopEnd": 3485617
     },
     {
       "id": "bgm_battle_matsubusa",
-      "name": "Battle! Maxie"
+      "name": "Battle! Maxie",
+      "loopStart": 702090,
+      "loopEnd": 3338508
     },
     {
       "id": "bgm_battle_matsubusa_short",
-      "name": "Battle! Maxie (Short)"
+      "name": "Battle! Maxie (Short)",
+      "loopStart": 587274,
+      "loopEnd": 1963788
     },
     {
       "id": "bgm_battle_mikuri",
-      "name": "Battle! Wallace"
+      "name": "Battle! Wallace",
+      "loopStart": 698400,
+      "loopEnd": 3578399
     },
     {
       "id": "bgm_battle_mitsuru",
-      "name": "Battle! Wally"
+      "name": "Battle! Wally",
+      "loopStart": 781715,
+      "loopEnd": 3414856
     },
     {
       "id": "bgm_battle_n",
-      "name": "Battle! N"
+      "name": "Battle! N",
+      "loopStart": 712000,
+      "loopEnd": 3815999
     },
     {
       "id": "bgm_battle_newyear",
-      "name": "Battle! Trainer (New Year)"
+      "name": "Battle! Trainer (New Year)",
+      "loopStart": 534857,
+      "loopEnd": 3085713
     },
     {
       "id": "bgm_battle_nezz",
-      "name": "Battle! Piers"
+      "name": "Battle! Piers",
+      "loopStart": 689438,
+      "loopEnd": 3555109
     },
     {
       "id": "bgm_battle_platane",
-      "name": "Battle! Sycamore"
+      "name": "Battle! Sycamore",
+      "loopStart": 735158,
+      "loopEnd": 3402947
     },
     {
       "id": "bgm_battle_player",
-      "name": "Battle! Region's Best"
+      "name": "Battle! Region's Best",
+      "loopStart": 485582,
+      "loopEnd": 3901395
     },
     {
       "id": "bgm_battle_plumeria",
-      "name": "Battle! Plumeria"
+      "name": "Battle! Plumeria",
+      "loopStart": 900317,
+      "loopEnd": 4021864
     },
     {
       "id": "bgm_battle_pokevision",
-      "name": "Battle! Special Costume Trainer"
+      "name": "Battle! Special Costume Trainer",
+      "loopStart": 436115,
+      "loopEnd": 3069257
     },
     {
       "id": "bgm_battle_ranking",
-      "name": "Battle! Trainer (Prestige)"
+      "name": "Battle! Trainer (Prestige)",
+      "loopStart": 445714,
+      "loopEnd": 3298285
     },
     {
       "id": "bgm_battle_red",
-      "name": "Battle! Red"
+      "name": "Battle! Red",
+      "loopStart": 1197392,
+      "loopEnd": 3576521
     },
     {
       "id": "bgm_battle_rgl",
-      "name": "Battle! Red, Blue and Leaf"
+      "name": "Battle! Red, Blue and Leaf",
+      "loopStart": 383479,
+      "loopEnd": 3513913
     },
     {
       "id": "bgm_battle_rival",
-      "name": "Battle! Paulo"
+      "name": "Battle! Paulo",
+      "loopStart": 197260,
+      "loopEnd": 3511232
     },
     {
       "id": "bgm_battle_rocket",
-      "name": "Battle! Team Rocket"
+      "name": "Battle! Team Rocket",
+      "loopStart": 495238,
+      "loopEnd": 3299046
     },
     {
       "id": "bgm_battle_rocket_02",
-      "name": "Battle! Team Rocket Executive"
+      "name": "Battle! Team Rocket Executive",
+      "loopStart": 273103,
+      "loopEnd": 2921379
     },
     {
       "id": "bgm_battle_royalmask",
-      "name": "Battle! The Masked Royal"
+      "name": "Battle! The Masked Royal",
+      "loopStart": 240000,
+      "loopEnd": 3120000
     },
     {
       "id": "bgm_battle_sakaki",
-      "name": "Battle! Giovanni"
+      "name": "Battle! Giovanni",
+      "loopStart": 731077,
+      "loopEnd": 3566769
     },
     {
       "id": "bgm_battle_sakaki_02",
-      "name": "Decisive Battle! Giovanni"
+      "name": "Decisive Battle! Giovanni",
+      "loopStart": 709253,
+      "loopEnd": 3460298
     },
     {
       "id": "bgm_battle_satoshi",
-      "name": "Battle! Ash"
+      "name": "Battle! Ash",
+      "loopStart": 197803,
+      "loopEnd": 3378462
     },
     {
       "id": "bgm_battle_shimakq",
-      "name": "Battle! Trial Captain"
+      "name": "Battle! Trial Captain",
+      "loopStart": 969230,
+      "loopEnd": 3923075
     },
     {
       "id": "bgm_battle_shirona",
-      "name": "Battle! Cynthia"
+      "name": "Battle! Cynthia",
+      "loopStart": 685348,
+      "loopEnd": 3888769
     },
     {
       "id": "bgm_battle_shirona_02",
-      "name": "Decisive Battle! Cynthia"
+      "name": "Decisive Battle! Cynthia",
+      "loopStart": 577425,
+      "loopEnd": 3143762
     },
     {
       "id": "bgm_battle_silver",
-      "name": "Battle! Silver"
+      "name": "Battle! Silver",
+      "loopStart": 517127,
+      "loopEnd": 3444861
     },
     {
       "id": "bgm_battle_sonia",
-      "name": "Battle! Sonia"
+      "name": "Battle! Sonia",
+      "loopStart": 784719,
+      "loopEnd": 3632360
     },
     {
       "id": "bgm_battle_subwaymaster",
-      "name": "Battle! Subway Master"
+      "name": "Battle! Subway Master",
+      "loopStart": 744407,
+      "loopEnd": 3404746
     },
     {
       "id": "bgm_battle_summer",
-      "name": "Battle! Trainer (Summer) [Sync Pair Showtime]"
+      "name": "Battle! Trainer (Summer) [Sync Pair Showtime]",
+      "loopStart": 645517,
+      "loopEnd": 2870067
     },
     {
       "id": "bgm_battle_trainer_c",
-      "name": "Battle! Kalos Trainer"
+      "name": "Battle! Kalos Trainer",
+      "loopStart": 584000,
+      "loopEnd": 3911999
     },
     {
       "id": "bgm_battle_trainer_g",
-      "name": "Battle! Galar Trainer"
+      "name": "Battle! Galar Trainer",
+      "loopStart": 410233,
+      "loopEnd": 3357209
     },
     {
       "id": "bgm_battle_trainer_i",
-      "name": "Battle! Unova Trainer"
+      "name": "Battle! Unova Trainer",
+      "loopStart": 793637,
+      "loopEnd": 3411817
     },
     {
       "id": "bgm_battle_trainer_j",
-      "name": "Battle! Johto Trainer"
+      "name": "Battle! Johto Trainer",
+      "loopStart": 739047,
+      "loopEnd": 3512380
     },
     {
       "id": "bgm_battle_trainer_s",
-      "name": "Battle! Trainer (Sinnoh)"
+      "name": "Battle! Trainer (Sinnoh)",
+      "loopStart": 759131,
+      "loopEnd": 3326086
     },
     {
       "id": "bgm_battle_wataru",
-      "name": "Battle! Lance"
+      "name": "Battle! Lance",
+      "loopStart": 1134783,
+      "loopEnd": 3639130
     },
     {
       "id": "bgm_battle_wds",
-      "name": "Battle! Cynthia, Lance and Steven"
+      "name": "Battle! Cynthia, Lance and Steven",
+      "loopStart": 764407,
+      "loopEnd": 3598202
     },
     {
       "id": "bgm_battle_yasei_a",
-      "name": "Battle! Wild Pokemon: Alola"
+      "name": "Battle! Wild Pokemon: Alola",
+      "loopStart": 514286,
+      "loopEnd": 3046153
     },
     {
       "id": "bgm_battle_yasei_c",
-      "name": "Battle! Wild Pokemon: Kalos"
+      "name": "Battle! Wild Pokemon: Kalos",
+      "loopStart": 482823,
+      "loopEnd": 2244705
     },
     {
       "id": "bgm_battle_yasei_g",
-      "name": "Battle! Wild Pokemon: Galar"
+      "name": "Battle! Wild Pokemon: Galar",
+      "loopStart": 519344,
+      "loopEnd": 3415081
     },
     {
       "id": "bgm_battle_yasei_h",
-      "name": "Battle! Wild Pokemon: Hoenn"
+      "name": "Battle! Wild Pokemon: Hoenn",
+      "loopStart": 716308,
+      "loopEnd": 2606768
     },
     {
       "id": "bgm_battle_yasei_i",
-      "name": "Battle! Wild Pokemon: Unova"
+      "name": "Battle! Wild Pokemon: Unova",
+      "loopStart": 735158,
+      "loopEnd": 3160420
     },
     {
       "id": "bgm_battle_yasei_j",
-      "name": "Battle! Wild Pokemon: Johto"
+      "name": "Battle! Wild Pokemon: Johto",
+      "loopStart": 763279,
+      "loopEnd": 2525901
     },
     {
       "id": "bgm_battle_yasei_k",
-      "name": "Battle! Wild Pokemon: Kanto"
+      "name": "Battle! Wild Pokemon: Kanto",
+      "loopStart": 759131,
+      "loopEnd": 2261738
     },
     {
       "id": "bgm_battle_yasei_s",
-      "name": "Battle! Wild Pokemon: Sinnoh"
+      "name": "Battle! Wild Pokemon: Sinnoh",
+      "loopStart": 759130,
+      "loopEnd": 3513912
     },
     {
       "id": "bgm_battle_yuki_haruka",
-      "name": "Battle! Brendan and May"
+      "name": "Battle! Brendan and May",
+      "loopStart": 716308,
+      "loopEnd": 3256615
     }
   ]
 }

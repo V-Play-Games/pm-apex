@@ -23,7 +23,7 @@ public class DownloadPanel extends JPanel {
                 ApexControl.lookupTracks.setEnabled(false);
                 ApexControl.downloadAll.setEnabled(false);
                 ApexControl.tracksFound.setVisible(false);
-                ApexControl.tracksFound.setText(Resources.getInstance().getMissingTracks().size() + " more tracks found");
+                ApexControl.tracksFound.setText(STR."\{Resources.getInstance().getMissingTracks().size()} more tracks found");
                 ApexControl.lookupTracks.setEnabled(true);
                 ApexControl.downloadAll.setEnabled(true);
                 ApexControl.tracksFound.setVisible(true);

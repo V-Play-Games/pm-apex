@@ -8,7 +8,6 @@ import net.vpg.apex.core.Track;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sound.sampled.AudioFormat;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,14 +20,13 @@ import static net.vpg.apex.components.ApexControl.*;
 public class Apex {
     public static final Apex APEX = new Apex();
     public static final Logger LOGGER = LoggerFactory.getLogger(Apex.class);
-    public static final AudioFormat AUDIO_FORMAT = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 48000, false);
     private final ApexClip clip = new ApexClip();
     private final ScheduledThreadPoolExecutor mainExecutor = new ScheduledThreadPoolExecutor(2, new ApexThreadFactory("Main"));
     private List<Track> playlist = new ArrayList<>();
     private int index;
     private boolean shuffle = false;
 
-    public static void main(String[] args) {
+    public static void main() {
         APEX.start();
     }
 
@@ -47,15 +45,15 @@ public class Apex {
             .values()
             .stream()
             .filter(f -> f.getName().endsWith(".ogg"))
-            .map(Track::get)
-            .sorted(Comparator.comparing(Track::getId))
+            .map(Track::of)
+            .sorted(Comparator.comparing(Track::id))
             .collect(Collectors.toList());
         updateListModel();
     }
 
     private void updateListModel() {
         trackListModel.clear();
-        trackListModel.addAll(playlist.stream().map(Track::getName).collect(Collectors.toList()));
+        trackListModel.addAll(playlist.stream().map(Track::name).collect(Collectors.toList()));
         trackList.setSelectedIndex(index);
         Util.sleep(100);
         updateScrollBar();
@@ -122,7 +120,7 @@ public class Apex {
         String searchText = searchTextArea.getText().toLowerCase().replaceAll("\n", "");
         for (int i = start; i < end; i++) {
             Track t = playlist.get(i);
-            if ((t.getId() + t.getName().toLowerCase()).contains(searchText)) {
+            if ((t.id() + t.name().toLowerCase()).contains(searchText)) {
                 modifyAndUpdateApp(t, i);
                 return true;
             }
@@ -137,15 +135,15 @@ public class Apex {
     private void modifyAndUpdateApp(Track track, int index) {
         clip.stop();
         this.index = index;
-        Util.run(() -> clip.open(track, AUDIO_FORMAT));
+        Util.run(() -> clip.play(track));
         trackList.setSelectedIndex(index);
         updateScrollBar();
-        trackName.setText(track.getName());
-        trackId.setText(track.getId());
+        trackName.setText(track.name());
+        trackId.setText(track.id());
     }
 
     public void update() {
-        trackIndex.setText("Track " + (index + 1) + "/" + APEX.getPlaylist().size());
+        trackIndex.setText(STR."Track \{index + 1}/\{playlist.size()}");
         next.setEnabled(shuffle || index != playlist.size() - 1);
         previous.setEnabled(shuffle || index != 0);
         stop.setEnabled(!clip.isStopped());

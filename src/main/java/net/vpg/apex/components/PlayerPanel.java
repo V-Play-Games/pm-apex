@@ -1,15 +1,10 @@
 package net.vpg.apex.components;
 
-import net.vpg.apex.Apex;
 import net.vpg.apex.Util;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class PlayerPanel extends JPanel {
     private static final PlayerPanel instance = new PlayerPanel();

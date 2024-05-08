@@ -87,7 +87,7 @@ public class Resources {
             }
         }
         Path defaultPath = Paths.get(first, more);
-        logger.warn(envVar + " not defined in environment, falling back on \"" + defaultPath + "\"");
+        logger.warn("{} not defined in environment, falling back on \"{}\"", envVar, defaultPath);
         return defaultPath;
     }
 
@@ -107,7 +107,7 @@ public class Resources {
                 });
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Unexpected Exception", e);
         }
     }
 
@@ -117,6 +117,7 @@ public class Resources {
     }
 
     private void shiftFile(String resource) {
+        //noinspection DataFlowIssue
         try (InputStream input = Apex.class.getResource(resource).openStream()) {
             try (OutputStream output = new FileOutputStream(Paths.get(dataDir.toString(), resource).toString())) {
                 byte[] buffer = new byte[1024];
@@ -126,8 +127,7 @@ public class Resources {
                 }
             }
         } catch (IOException e) {
-            logger.warn("Unable to copy " + resource + " to the resource directory");
-            e.printStackTrace();
+            logger.error(STR."Unable to copy \{resource} to the resource directory", e);
         }
     }
 
@@ -144,7 +144,7 @@ public class Resources {
     }
 
     public String getBaseDownloadUrl() {
-        return "https://raw.githubusercontent.com/" + repo + "/release/";
+        return STR."https://raw.githubusercontent.com/\{repo}/release/";
     }
 
     public File create(String filename) {
@@ -171,7 +171,7 @@ public class Resources {
     }
 
     private List<OnlineTrack> getOnlineResources() throws IOException {
-        return JSONArray.parse(Downloader.download("https://api.github.com/repos/" + repo + "/contents/" + additionalRes, "contents.json", null))
+        return JSONArray.parse(Downloader.download(STR."https://api.github.com/repos/\{repo}/contents/\{additionalRes}", "contents.json", null))
             .stream()
             .map(JSONValue::toObject)
             .map(jo -> new OnlineTrack(jo.getString("name"), jo.getLong("size")))
@@ -179,7 +179,7 @@ public class Resources {
     }
 
     public List<OnlineTrack> getMissingTracks() {
-        List<String> availableIds = Apex.APEX.getPlaylist().stream().map(Track::getId).collect(Collectors.toList());
+        List<String> availableIds = Apex.APEX.getPlaylist().stream().map(Track::id).toList();
         return Util.get(this::getOnlineResources).stream()
             .filter(ot -> ot.getName().endsWith(".ogg"))
             .filter(ot -> !availableIds.contains(Util.removeExtension(ot.getName())))

@@ -1,6 +1,8 @@
 package net.vpg.apex;
 
 import net.vpg.apex.components.WrappedTextArea;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +14,8 @@ import java.util.List;
 import static net.vpg.apex.Apex.APEX;
 
 public class Util {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Util.class);
+
     public static void sleep(int millis) {
         run(() -> Thread.sleep(millis));
     }
@@ -20,34 +24,28 @@ public class Util {
         try {
             runnable.run();
         } catch (Exception e) {
+            LOGGER.error("Encountered unexpected exception", e);
             throw new RuntimeException(e);
         }
     }
 
     @SafeVarargs
     public static <E> E apply(E input, ConsumerWithAChanceOfException<E>... functions) {
-        for (ConsumerWithAChanceOfException<E> consumer : functions) {
-            try {
-                consumer.accept(input);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        for (var consumer : functions) {
+            run(() -> consumer.accept(input));
         }
         return input;
     }
 
     public static <E, T> T compute(E input, FunctionWithAChanceOfException<E, T> function) {
-        try {
-            return function.accept(input);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return get(() -> function.accept(input));
     }
 
     public static <E> E get(SupplierWithAChanceOfException<E> supplier) {
         try {
             return supplier.get();
         } catch (Exception e) {
+            LOGGER.error("Encountered unexpected exception", e);
             throw new RuntimeException(e);
         }
     }

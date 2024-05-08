@@ -3,6 +3,8 @@ package net.vpg.apex.core;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.FormatProcessor.FMT;
+
 public class ApexThreadFactory implements ThreadFactory {
     private final String type;
     private final AtomicInteger integer = new AtomicInteger(0);
@@ -14,6 +16,6 @@ public class ApexThreadFactory implements ThreadFactory {
     @Override
     public Thread newThread(Runnable r) {
         int threadId = integer.incrementAndGet();
-        return new Thread(r, String.format("Apex %s Thread: %s%d", type, threadId < 10 ? "0" : "", threadId));
+        return new Thread(r, FMT."Apex \{type} Thread: %02d\{threadId}");
     }
 }
