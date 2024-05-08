@@ -28,16 +28,18 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.13.0</version>
         <configuration>
-          <source>21</source>
-          <target>21</target>
+          <release>21</release>
+          <compilerArgs>
+            <arg>--enable-preview</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.4.0</version>
+        <version>3.5.3</version>
         <executions>
           <execution>
             <goals>
@@ -64,8 +66,8 @@
     </dependency>
     <dependency>
       <groupId>com.github.trilarion</groupId>
-      <artifactId>vorbis-support</artifactId>
-      <version>1.1.0</version>
+      <artifactId>java-vorbis-support</artifactId>
+      <version>1.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -78,10 +80,4 @@
       <version>1.5.6</version>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>nexus-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </repository>
-  </repositories>
 </project>

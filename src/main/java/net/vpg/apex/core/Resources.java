@@ -16,6 +16,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -77,7 +78,7 @@ public class Resources {
     private void shiftFile(String resource) {
         //noinspection DataFlowIssue
         try (InputStream input = Apex.class.getResource(resource).openStream()) {
-            Files.copy(input, dataDir.toPath().resolve(resource));
+            Files.copy(input, dataDir.toPath().resolve(resource), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             logger.error(STR."Unable to copy \{resource} to the resource directory", e);
         }

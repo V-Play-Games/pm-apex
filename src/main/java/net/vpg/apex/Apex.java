@@ -39,7 +39,7 @@ public class Apex {
         trackListModel.clear();
         trackListModel.addAll(playlist.stream().map(Track::name).collect(Collectors.toList()));
         trackList.setSelectedIndex(index);
-        Util.sleep(100);
+        Util.sleep(200);
         updateScrollBar();
     }
 
