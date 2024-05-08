@@ -74,7 +74,7 @@ public class AudioData {
 
     public byte[] readData(int frames) {
         int frameSize = format.getFrameSize();
-        if (readPos + frames < cachedPos) {
+        if (readPos + frames <= cachedPos) {
             readPos += frames;
             return Arrays.copyOfRange(data, readPos * frameSize, (readPos + frames) * frameSize);
         } else if (caching) {

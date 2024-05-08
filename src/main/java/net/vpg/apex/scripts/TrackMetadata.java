@@ -28,6 +28,7 @@ public class TrackMetadata {
     private static void init(File file, JSONObject obj) {
         if (!file.exists())
             System.out.println(file + " doesn't exist, skipping...");
+        int loopStart = -1, loopEnd = -1, loopLength = -1, frameLength;
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -36,24 +37,36 @@ public class TrackMetadata {
                     int val = Integer.parseInt(m.group(2));
                     switch (m.group(1)) {
                         case "LOOPSTART":
-                            obj.put("loopStart", val);
+                            loopStart = val;
                             break;
                         case "LOOPEND":
-                            obj.put("loopEnd", val);
+                            loopEnd = val;
+                            break;
+                        case "LOOPLENGTH":
+                            loopLength = val;
                             break;
                     }
                 }
-                if (!obj.isNull("loopStart") && !obj.isNull("loopEnd")) {
+                if (loopStart != -1 && (loopEnd != -1 || loopLength != -1)) {
                     break;
                 }
             }
-            obj.put("frameLength", frameLength(file));
+            frameLength = frameLength(file);
+            if (loopLength != -1) {
+                loopEnd = loopStart + loopLength;
+            }
+            if (loopEnd > frameLength) {
+                loopEnd = frameLength;
+            }
         } catch (IOException | UnsupportedAudioFileException e) {
             throw new RuntimeException(e);
         }
+        obj.put("loopStart", loopStart)
+            .put("loopEnd", loopEnd)
+            .put("frameLength", frameLength);
     }
 
-    public static long frameLength(File file) throws IOException, UnsupportedAudioFileException {
+    public static int frameLength(File file) throws IOException, UnsupportedAudioFileException {
         AudioInputStream sourceStream = AudioSystem.getAudioInputStream(file);
         AudioFormat sourceFormat = sourceStream.getFormat();
         AudioFormat targetFormat = new AudioFormat(
@@ -66,16 +79,9 @@ public class TrackMetadata {
             sourceFormat.isBigEndian()
         );
         AudioInputStream stream = AudioSystem.getAudioInputStream(targetFormat, sourceStream);
-        long frameLength = stream.getFrameLength();
-        if (frameLength != AudioSystem.NOT_SPECIFIED) {
-            return frameLength;
-        }
-        int frameSize = stream.getFormat().getFrameSize();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[512 * frameSize];
-        int read;
-        while ((read = stream.read(buffer)) != -1)
-            outputStream.write(buffer, 0, read);
-        return outputStream.size() / frameSize;
+        int frameLength = (int) stream.getFrameLength();
+        return frameLength != AudioSystem.NOT_SPECIFIED
+            ? frameLength
+            : stream.readAllBytes().length / stream.getFormat().getFrameSize();
     }
 }
