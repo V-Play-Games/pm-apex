@@ -2,26 +2,23 @@ package net.vpg.apex;
 
 import net.vpg.apex.components.ApexWindow;
 import net.vpg.apex.core.ApexClip;
-import net.vpg.apex.core.ApexThreadFactory;
 import net.vpg.apex.core.Resources;
 import net.vpg.apex.core.Track;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static net.vpg.apex.components.ApexControl.*;
 
 public class Apex {
     public static final Apex APEX = new Apex();
-    public static final Logger LOGGER = LoggerFactory.getLogger(Apex.class);
+    public static final Executor EXECUTOR = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 0).factory());
     private final ApexClip clip = new ApexClip();
-    private final ScheduledThreadPoolExecutor mainExecutor = new ScheduledThreadPoolExecutor(2, new ApexThreadFactory("Main"));
     private List<Track> playlist = new ArrayList<>();
     private int index;
     private boolean shuffle = false;
@@ -74,12 +71,8 @@ public class Apex {
         modifyAndUpdateApp(playlist.get(index), index);
     }
 
-    public ScheduledThreadPoolExecutor getMainExecutor() {
-        return mainExecutor;
-    }
-
     public void takeAction(int action) {
-        mainExecutor.execute(() -> takeAction0(action));
+        EXECUTOR.execute(() -> takeAction0(action));
     }
 
     private void takeAction0(int action) {

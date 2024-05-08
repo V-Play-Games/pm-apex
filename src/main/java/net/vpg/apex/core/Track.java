@@ -6,13 +6,16 @@ import net.vpg.vjson.value.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public record Track(
     String id,
     String name,
+    int frameLength,
     int loopStart,
     int loopEnd
 ) {
@@ -29,6 +32,7 @@ public record Track(
         this(
             data.getString("id"),
             data.getString("name"),
+            data.getInt("frameLength"),
             data.getInt("loopStart"),
             data.getInt("loopEnd")
         );
@@ -40,6 +44,10 @@ public record Track(
 
     public static Track of(File file) {
         return entries.get(Util.removeExtension(file.getName()));
+    }
+
+    public AudioData getData() throws UnsupportedAudioFileException, IOException {
+        return new AudioData(getFile(), frameLength);
     }
 
     public File getFile() {

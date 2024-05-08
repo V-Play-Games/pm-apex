@@ -257,14 +257,6 @@ ij_properties_spaces_around_key_value_delimiter = false
 indent_size = 2
 tab_width = 2
 ij_continuation_indent_size = 4
-ij_protobuf_keep_blank_lines_in_code = 2
-ij_protobuf_keep_indents_on_empty_lines = false
-ij_protobuf_keep_line_breaks = true
-ij_protobuf_space_after_comma = true
-ij_protobuf_space_before_comma = false
-ij_protobuf_spaces_around_assignment_operators = true
-ij_protobuf_spaces_within_braces = false
-ij_protobuf_spaces_within_brackets = false
 
 [.editorconfig]
 ij_editorconfig_align_group_field_declarations = false
@@ -574,7 +566,7 @@ ij_json_keep_indents_on_empty_lines = false
 ij_json_keep_line_breaks = true
 ij_json_space_after_colon = true
 ij_json_space_after_comma = true
-ij_json_space_before_colon = true
+ij_json_space_before_colon = false
 ij_json_space_before_comma = false
 ij_json_spaces_within_braces = false
 ij_json_spaces_within_brackets = false

@@ -1,5 +1,6 @@
 package net.vpg.apex.components;
 
+import net.vpg.apex.Apex;
 import net.vpg.apex.Util;
 import net.vpg.apex.core.OnlineTrack;
 import net.vpg.apex.core.Resources;
@@ -8,13 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import static net.vpg.apex.components.ApexControl.*;
 
 public class DownloadTask implements Downloader.EventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadTask.class);
-    public static ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
     private final long totalSize;
     private final List<OnlineTrack> tracks;
     private final Runnable onEachFileDownloaded;
@@ -32,7 +31,7 @@ public class DownloadTask implements Downloader.EventListener {
     }
 
     public void downloadNext() {
-        executor.execute(() -> {
+        Apex.EXECUTOR.execute(() -> {
             index++;
             if (index == tracks.size()) {
                 DownloadPanel.getInstance().hideDownload();
