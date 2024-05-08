@@ -1,11 +1,10 @@
 {
-  "version": 1,
+  "version": 2,
   "override": true,
-  "repo": "V-Play-Games/pm-apex",
-  "additionalRes": "bgm",
+  "additionalRes": "https://raw.githubusercontent.com/V-Play-Games/pm-apex/release/bgm/",
   "appName": "Apex",
   "required": [
-    "bgm_battle01.ogg",
+    "info.json",
     "icon.png",
     "tracks.json"
   ]

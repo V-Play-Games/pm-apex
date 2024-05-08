@@ -12,7 +12,7 @@ import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LoopFinder {
+public class TrackMetadata {
     public static final Pattern headerPattern = Pattern.compile("([A-Z]+)=(\\d+)");
 
     public static void main() throws FileNotFoundException {

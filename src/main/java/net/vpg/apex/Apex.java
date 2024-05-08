@@ -2,7 +2,6 @@ package net.vpg.apex;
 
 import net.vpg.apex.components.ApexWindow;
 import net.vpg.apex.core.ApexClip;
-import net.vpg.apex.core.Resources;
 import net.vpg.apex.core.Track;
 
 import javax.swing.*;
@@ -24,44 +23,24 @@ public class Apex {
     private boolean shuffle = false;
 
     public static void main() {
-        APEX.start();
-    }
-
-    private void start() {
-        Util.lookAndFeel();
+        Util.apply(UIManager.getSystemLookAndFeelClassName(), UIManager::setLookAndFeel);
         ApexWindow.getInstance().setVisible(true);
-        this.updatePlaylist();
-        this.setIndex(0);
-        clip.stop();
-        this.update();
+        APEX.updatePlaylist();
+        APEX.setIndex(0);
+        APEX.clip.stop();
+        APEX.update();
     }
 
     private void updatePlaylist() {
-        playlist = Resources.getInstance()
-            .getResources()
-            .values()
+        playlist = Track.entries.values()
             .stream()
-            .filter(f -> f.getName().endsWith(".ogg"))
-            .map(Track::of)
             .sorted(Comparator.comparing(Track::id))
-            .collect(Collectors.toList());
-        updateListModel();
-    }
-
-    private void updateListModel() {
+            .toList();
         trackListModel.clear();
         trackListModel.addAll(playlist.stream().map(Track::name).collect(Collectors.toList()));
         trackList.setSelectedIndex(index);
         Util.sleep(100);
         updateScrollBar();
-    }
-
-    public List<Track> getPlaylist() {
-        return playlist;
-    }
-
-    public int getIndex() {
-        return index;
     }
 
     public void setIndex(int index) {

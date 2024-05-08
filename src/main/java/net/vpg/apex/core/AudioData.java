@@ -9,6 +9,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 
 public class AudioData {
@@ -21,7 +22,14 @@ public class AudioData {
     private boolean caching;
 
     public AudioData(File file, int frameLength) throws UnsupportedAudioFileException, IOException {
-        AudioInputStream sourceStream = AudioSystem.getAudioInputStream(file);
+        this(AudioSystem.getAudioInputStream(file), frameLength);
+    }
+
+    public AudioData(URL url, int frameLength) throws UnsupportedAudioFileException, IOException {
+        this(AudioSystem.getAudioInputStream(url), frameLength);
+    }
+
+    public AudioData(AudioInputStream sourceStream, int frameLength) {
         AudioFormat sourceFormat = sourceStream.getFormat();
         format = new AudioFormat(
             AudioFormat.Encoding.PCM_SIGNED,

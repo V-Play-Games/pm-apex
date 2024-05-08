@@ -12,12 +12,10 @@ public class ApexWindow extends JFrame {
     private static final ApexWindow instance = new ApexWindow();
 
     private ApexWindow() {
-        super("PM APEX");
         Box box = Util.addBox(this, null);
         box.setBorder(new EmptyBorder(3, 3, 3, 3));
         box.add(Util.apply(new JTabbedPane(),
             pane -> pane.add(PlayerPanel.getInstance()),
-            pane -> pane.add(DownloadPanel.getInstance()),
             pane -> pane.add(CreditsPanel.getInstance())));
         Util.addBox(this, "South",
             ApexControl.searchTextArea,
@@ -29,10 +27,12 @@ public class ApexWindow extends JFrame {
                 panel -> panel.setLayout(new FlowLayout(FlowLayout.CENTER)),
                 panel -> panel.setAlignmentX(0),
                 panel -> panel.add(ApexControl.shuffleButton),
-                panel -> panel.add(ApexControl.next),
+                panel -> panel.add(ApexControl.previous),
                 panel -> panel.add(ApexControl.stop),
                 panel -> panel.add(ApexControl.playPause),
-                panel -> panel.add(ApexControl.previous)));
+                panel -> panel.add(ApexControl.next))
+        );
+        this.setTitle("PM APEX");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setResizable(true);

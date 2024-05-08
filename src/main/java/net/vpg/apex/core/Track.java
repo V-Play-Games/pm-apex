@@ -42,12 +42,13 @@ public record Track(
         logger.info("Loaded Track Info for ID: {}", id);
     }
 
-    public static Track of(File file) {
-        return entries.get(Util.removeExtension(file.getName()));
-    }
-
     public AudioData getData() throws UnsupportedAudioFileException, IOException {
-        return new AudioData(getFile(), frameLength);
+        String filename = STR."\{id}.ogg";
+        File file = Resources.get(filename);
+        if (file != null && file.exists())
+            return new AudioData(getFile(), frameLength);
+        else
+            return new AudioData(Resources.getInstance().getAdditionResourceURL(filename), frameLength);
     }
 
     public File getFile() {

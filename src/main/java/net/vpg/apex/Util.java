@@ -1,6 +1,5 @@
 package net.vpg.apex;
 
-import net.vpg.apex.components.WrappedTextArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,10 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import static net.vpg.apex.Apex.APEX;
 
 public class Util {
     private static final Logger LOGGER = LoggerFactory.getLogger(Util.class);
@@ -77,30 +73,6 @@ public class Util {
         return tor;
     }
 
-    public static JButton makeButton(String name, String toolTip, int action) {
-        return Util.apply(new JButton(name),
-            button -> button.setToolTipText(toolTip),
-            button -> button.addActionListener(e -> APEX.takeAction(action)));
-    }
-
-    @SafeVarargs
-    public static WrappedTextArea makeTextArea(String toolTip, ConsumerWithAChanceOfException<WrappedTextArea>... actions) {
-        return makeTextArea("Loading...", toolTip, actions);
-    }
-
-    @SuppressWarnings("unchecked")
-    @SafeVarargs
-    public static WrappedTextArea makeTextArea(String name, String toolTip, ConsumerWithAChanceOfException<WrappedTextArea>... actions) {
-        List<ConsumerWithAChanceOfException<WrappedTextArea>> actualActions = new ArrayList<>();
-        Collections.addAll(actualActions, actions);
-        actualActions.add(text -> text.setToolTipText(toolTip));
-        return Util.apply(new WrappedTextArea(name), actualActions.toArray(new ConsumerWithAChanceOfException[0]));
-    }
-
-    public static void lookAndFeel() {
-        apply(UIManager.getSystemLookAndFeelClassName(), UIManager::setLookAndFeel);
-    }
-
     public static String bytesToString(long bytes) {
         String[] arr = {"bytes", "KB", "MB"};
         int i = 0;
@@ -111,16 +83,6 @@ public class Util {
             bytes /= 1024;
         }
         return bytes + " " + arr[i];
-    }
-
-    public static <E> void shuffle(List<E> base) {
-        for (int i = base.size(); i > 0; i--) {
-            base.add(base.remove(random(0, i)));
-        }
-    }
-
-    public static int random(int from, int to) {
-        return (int) (Math.random() * (to - from) + from);
     }
 
     public interface RunnableWithAChanceOfException {
