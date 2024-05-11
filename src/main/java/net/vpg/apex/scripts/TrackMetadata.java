@@ -25,6 +25,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
+import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +37,7 @@ public class TrackMetadata {
             .getArray("entries")
             .stream()
             .map(JSONValue::toObject)
+            .sorted(Comparator.comparing(obj -> obj.getString("id")))
             .peek(obj -> init(new File(STR."bgm/\{obj.getString("id")}.ogg"), obj))
             .map(JSONValue::toString)
             .forEach(System.out::println);
@@ -44,6 +46,8 @@ public class TrackMetadata {
     private static void init(File file, JSONObject obj) {
         if (!file.exists())
             System.out.println(file + " doesn't exist, skipping...");
+        if (!obj.isNull("loopStart") && !obj.isNull("loopEnd") && !obj.isNull("frameLength"))
+            return;
         int loopStart = -1, loopEnd = -1, loopLength = -1, frameLength;
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
