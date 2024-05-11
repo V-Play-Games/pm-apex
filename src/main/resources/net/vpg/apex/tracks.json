@@ -68,14 +68,14 @@
       "name": "Battle! Cheren and Bianca",
       "frameLength": 3739091,
       "loopStart": 728182,
-      "loopEnd": 3739090
+      "loopEnd": 3739091
     },
     {
       "id": "bgm_battle_big4_a",
       "name": "Battle! Alola Elite Four",
       "frameLength": 3808800,
       "loopStart": 813600,
-      "loopEnd": 3808799
+      "loopEnd": 3808800
     },
     {
       "id": "bgm_battle_big4_a_acerola",
@@ -89,7 +89,7 @@
       "name": "Battle! Alola Elite Four: Hala",
       "frameLength": 3578400,
       "loopStart": 813600,
-      "loopEnd": 3578399
+      "loopEnd": 3578400
     },
     {
       "id": "bgm_battle_big4_a_kahiri",
@@ -117,34 +117,34 @@
       "name": "Battle! Kalos Elite Four",
       "frameLength": 3912000,
       "loopStart": 584000,
-      "loopEnd": 3911999
+      "loopEnd": 3912000
     },
     {
       "id": "bgm_battle_big4_c_dracaena",
-      "name": "",
+      "name": "Battle! Kalos Elite Four: Drasna",
       "frameLength": 3464000,
       "loopStart": 648000,
       "loopEnd": 3464000
     },
     {
       "id": "bgm_battle_big4_c_gampi",
-      "name": "",
+      "name": "Battle! Kalos Elite Four: Wikstrom",
       "frameLength": 3589824,
       "loopStart": 776000,
       "loopEnd": 3589824
     },
     {
       "id": "bgm_battle_big4_c_pachira",
-      "name": "",
+      "name": "Battle! Kalos Elite Four: Drasna",
       "frameLength": 3464000,
       "loopStart": 648000,
       "loopEnd": 3464000
     },
     {
       "id": "bgm_battle_big4_c_zumi",
-      "name": "",
+      "name": "Battle! Kalos Elite Four: Siebold",
       "frameLength": 3528000,
-      "loopStart": 904000,
+      "loopStart": 648000,
       "loopEnd": 3528000
     },
     {
@@ -152,7 +152,7 @@
       "name": "Battle! Hoenn Elite Four",
       "frameLength": 3864905,
       "loopStart": 713207,
-      "loopEnd": 3864904
+      "loopEnd": 3864905
     },
     {
       "id": "bgm_battle_big4_h_fuyo",
@@ -187,14 +187,14 @@
       "name": "Battle! Unova Elite Four",
       "frameLength": 4069895,
       "loopStart": 553263,
-      "loopEnd": 4069894
+      "loopEnd": 4069895
     },
     {
       "id": "bgm_battle_big4_i_cattleya",
       "name": "Battle! Unova Elite Four: Caitlin",
       "frameLength": 3584842,
       "loopStart": 613895,
-      "loopEnd": 3584841
+      "loopEnd": 3584842
     },
     {
       "id": "bgm_battle_big4_i_gima",
@@ -215,7 +215,7 @@
       "name": "Battle! Unova Elite Four: Shauntal",
       "frameLength": 3160421,
       "loopStart": 613895,
-      "loopEnd": 3160420
+      "loopEnd": 3160421
     },
     {
       "id": "bgm_battle_big4_j_itsuki",
@@ -229,21 +229,21 @@
       "name": "Battle! Johto Elite Four: Karen",
       "frameLength": 3360000,
       "loopStart": 739047,
-      "loopEnd": 3359999
+      "loopEnd": 3360000
     },
     {
       "id": "bgm_battle_big4_j_kyo",
       "name": "Battle! Johto Elite Four: Koga",
       "frameLength": 3299047,
       "loopStart": 739047,
-      "loopEnd": 3299046
+      "loopEnd": 3299047
     },
     {
       "id": "bgm_battle_big4_j_shiba",
       "name": "Battle! Johto Elite Four: Bruno",
       "frameLength": 3299047,
       "loopStart": 739047,
-      "loopEnd": 3299046
+      "loopEnd": 3299047
     },
     {
       "id": "bgm_battle_big4_k_kanna",
@@ -257,42 +257,42 @@
       "name": "Battle! Kanto Elite Four: Agatha",
       "frameLength": 3645474,
       "loopStart": 735158,
-      "loopEnd": 3645473
+      "loopEnd": 3645474
     },
     {
       "id": "bgm_battle_big4_k_shiba",
       "name": "Battle! Kanto Elite Four: Bruno",
       "frameLength": 3584842,
       "loopStart": 735158,
-      "loopEnd": 3584841
+      "loopEnd": 3584842
     },
     {
       "id": "bgm_battle_big4_k_wataru",
       "name": "Battle! Kanto Elite Four: Lance",
       "frameLength": 3827369,
       "loopStart": 735158,
-      "loopEnd": 3827368
+      "loopEnd": 3827369
     },
     {
       "id": "bgm_battle_big4_p_chiri",
-      "name": "",
+      "name": "Battle! Paldea Elite Four: Rika",
       "frameLength": 3437143,
       "loopStart": 694286,
-      "loopEnd": 3437142
+      "loopEnd": 3437143
     },
     {
       "id": "bgm_battle_big4_p_poppy",
-      "name": "",
+      "name": "Battle! Paldea Elite Four: Poppy",
       "frameLength": 3300000,
       "loopStart": 694286,
-      "loopEnd": 3299999
+      "loopEnd": 3300000
     },
     {
       "id": "bgm_battle_big4_s",
       "name": "Battle! Sinnoh Elite Four",
       "frameLength": 4168000,
       "loopStart": 712000,
-      "loopEnd": 4167999
+      "loopEnd": 4168000
     },
     {
       "id": "bgm_battle_big4_s_goyo",
@@ -327,25 +327,25 @@
       "name": "Battle! Team Break",
       "frameLength": 3778909,
       "loopStart": 567273,
-      "loopEnd": 3778908
+      "loopEnd": 3778909
     },
     {
       "id": "bgm_battle_break02",
       "name": "Battle! Team Break (Bosses)",
       "frameLength": 3464000,
       "loopStart": 520000,
-      "loopEnd": 3463999
+      "loopEnd": 3464000
     },
     {
       "id": "bgm_battle_button",
-      "name": "",
+      "name": "Battle! Penny",
       "frameLength": 3574286,
       "loopStart": 282858,
       "loopEnd": 3574286
     },
     {
       "id": "bgm_battle_captain_hisui",
-      "name": "",
+      "name": "Battle! Hisui Warden",
       "frameLength": 3254694,
       "loopStart": 551021,
       "loopEnd": 3254694
@@ -355,14 +355,14 @@
       "name": "Battle! Diantha",
       "frameLength": 3744000,
       "loopStart": 630486,
-      "loopEnd": 3743999
+      "loopEnd": 3744000
     },
     {
       "id": "bgm_battle_carnet_02",
-      "name": "",
+      "name": "Decisive Battle! Diantha",
       "frameLength": 3889566,
       "loopStart": 633913,
-      "loopEnd": 3889565
+      "loopEnd": 3889566
     },
     {
       "id": "bgm_battle_champion_hau",
@@ -383,7 +383,7 @@
       "name": "Battle! Trainer (Holiday)",
       "frameLength": 2944203,
       "loopStart": 229299,
-      "loopEnd": 2944202
+      "loopEnd": 2944203
     },
     {
       "id": "bgm_battle_daigo",
@@ -404,11 +404,11 @@
       "name": "Battle! Leon",
       "frameLength": 3929639,
       "loopStart": 667952,
-      "loopEnd": 3929638
+      "loopEnd": 3929639
     },
     {
       "id": "bgm_battle_dande_02",
-      "name": "",
+      "name": "Decisive Battle! Leon",
       "frameLength": 3289846,
       "loopStart": 897231,
       "loopEnd": 3289846
@@ -425,11 +425,11 @@
       "name": "Battle! Lear",
       "frameLength": 4040000,
       "loopStart": 584000,
-      "loopEnd": 4039999
+      "loopEnd": 4040000
     },
     {
       "id": "bgm_battle_ether",
-      "name": "",
+      "name": "Battle! Aether Foundation",
       "frameLength": 3081600,
       "loopStart": 316800,
       "loopEnd": 3081600
@@ -439,7 +439,7 @@
       "name": "Battle! Hoenn Frontier Brain",
       "frameLength": 3916190,
       "loopStart": 320000,
-      "loopEnd": 3916189
+      "loopEnd": 3916190
     },
     {
       "id": "bgm_battle_fb_js",
@@ -450,10 +450,10 @@
     },
     {
       "id": "bgm_battle_flare",
-      "name": "",
+      "name": "Battle! Team Flare",
       "frameLength": 3532235,
       "loopStart": 550588,
-      "loopEnd": 3532234
+      "loopEnd": 3532235
     },
     {
       "id": "bgm_battle_fleurdelis",
@@ -464,31 +464,31 @@
     },
     {
       "id": "bgm_battle_fleurdelis_02",
-      "name": "",
+      "name": "Decisive Battle! Lysandre",
       "frameLength": 3318857,
       "loopStart": 685714,
-      "loopEnd": 3318856
+      "loopEnd": 3318857
     },
     {
       "id": "bgm_battle_friends",
-      "name": "",
+      "name": "Battle! Friend",
       "frameLength": 3600000,
       "loopStart": 753882,
-      "loopEnd": 3599999
+      "loopEnd": 3600000
     },
     {
       "id": "bgm_battle_ghetsis",
       "name": "Battle! Ghetsis",
       "frameLength": 3772800,
       "loopStart": 470400,
-      "loopEnd": 3772799
+      "loopEnd": 3772800
     },
     {
       "id": "bgm_battle_ginga",
       "name": "Battle! Team Galactic",
       "frameLength": 3013044,
       "loopStart": 759131,
-      "loopEnd": 3013043
+      "loopEnd": 3013044
     },
     {
       "id": "bgm_battle_ginga_02",
@@ -502,7 +502,7 @@
       "name": "Battle! Island Kahuna",
       "frameLength": 3373483,
       "loopStart": 784719,
-      "loopEnd": 3373481
+      "loopEnd": 3373483
     },
     {
       "id": "bgm_battle_gl_c",
@@ -516,11 +516,11 @@
       "name": "Battle! Galar Gym Leader",
       "frameLength": 3795428,
       "loopStart": 833143,
-      "loopEnd": 3795427
+      "loopEnd": 3795428
     },
     {
       "id": "bgm_battle_gl_g_99",
-      "name": "",
+      "name": "Battle! Galar Gym Leader [Pokemon Masters EX Special]",
       "frameLength": 3531520,
       "loopStart": 686117,
       "loopEnd": 3531520
@@ -537,25 +537,25 @@
       "name": "Battle! Unova Gym Leader",
       "frameLength": 4131818,
       "loopStart": 335455,
-      "loopEnd": 4131817
+      "loopEnd": 4131818
     },
     {
       "id": "bgm_battle_gl_j",
       "name": "Battle! Johto Gym Leader",
       "frameLength": 3786666,
       "loopStart": 678095,
-      "loopEnd": 3786665
+      "loopEnd": 3786666
     },
     {
       "id": "bgm_battle_gl_k",
       "name": "Battle! Kanto Gym Leader",
       "frameLength": 4327826,
       "loopStart": 696522,
-      "loopEnd": 4327825
+      "loopEnd": 4327826
     },
     {
       "id": "bgm_battle_gl_p",
-      "name": "",
+      "name": "Battle! Paldea Gym Leader",
       "frameLength": 3753000,
       "loopStart": 441000,
       "loopEnd": 3753000
@@ -565,25 +565,25 @@
       "name": "Battle! Sinnoh Gym Leader",
       "frameLength": 4104000,
       "loopStart": 712000,
-      "loopEnd": 4103999
+      "loopEnd": 4104000
     },
     {
       "id": "bgm_battle_gladion",
       "name": "Battle! Gladion",
       "frameLength": 3690000,
       "loopStart": 730000,
-      "loopEnd": 3689999
+      "loopEnd": 3690000
     },
     {
       "id": "bgm_battle_green",
       "name": "Battle! Blue",
       "frameLength": 4093954,
       "loopStart": 879070,
-      "loopEnd": 4093953
+      "loopEnd": 4093954
     },
     {
       "id": "bgm_battle_guardian_alora",
-      "name": "",
+      "name": "Battle! New Wind on Alola",
       "frameLength": 3639452,
       "loopStart": 562192,
       "loopEnd": 3639452
@@ -600,7 +600,7 @@
       "name": "Battle! Trainer (Halloween)",
       "frameLength": 3050181,
       "loopStart": 536727,
-      "loopEnd": 3050180
+      "loopEnd": 3050181
     },
     {
       "id": "bgm_battle_handsome",
@@ -621,11 +621,11 @@
       "name": "Battle! Zinnia",
       "frameLength": 4740324,
       "loopStart": 755027,
-      "loopEnd": 4740323
+      "loopEnd": 4740324
     },
     {
       "id": "bgm_battle_homika",
-      "name": "",
+      "name": "Battle! Roxie",
       "frameLength": 3084546,
       "loopStart": 466364,
       "loopEnd": 3084546
@@ -639,7 +639,7 @@
     },
     {
       "id": "bgm_battle_hugh",
-      "name": "",
+      "name": "Battle! Hugh",
       "frameLength": 2963076,
       "loopStart": 895384,
       "loopEnd": 2963076
@@ -656,7 +656,7 @@
       "name": "Battle! Barry",
       "frameLength": 3973770,
       "loopStart": 448524,
-      "loopEnd": 3973769
+      "loopEnd": 3973770
     },
     {
       "id": "bgm_battle_kukui",
@@ -670,14 +670,14 @@
       "name": "Battle! Lake Guardian",
       "frameLength": 3228387,
       "loopStart": 750968,
-      "loopEnd": 3228386
+      "loopEnd": 3228387
     },
     {
       "id": "bgm_battle_legend_cresselia",
       "name": "Battle! Cresselia",
       "frameLength": 3333913,
       "loopStart": 766957,
-      "loopEnd": 3333912
+      "loopEnd": 3333913
     },
     {
       "id": "bgm_battle_legend_entei",
@@ -691,7 +691,7 @@
       "name": "Battle! Ho-oh",
       "frameLength": 3615824,
       "loopStart": 957362,
-      "loopEnd": 3615823
+      "loopEnd": 3615824
     },
     {
       "id": "bgm_battle_legend_kanto",
@@ -705,14 +705,14 @@
       "name": "Battle! Island Guardian",
       "frameLength": 3980690,
       "loopStart": 802759,
-      "loopEnd": 3980689
+      "loopEnd": 3980690
     },
     {
       "id": "bgm_battle_legend_lati",
       "name": "Battle! Latias and Latios",
       "frameLength": 3079385,
       "loopStart": 716308,
-      "loopEnd": 3079384
+      "loopEnd": 3079385
     },
     {
       "id": "bgm_battle_legend_pm01",
@@ -723,7 +723,7 @@
     },
     {
       "id": "bgm_battle_legend_raikou",
-      "name": "",
+      "name": "Battle1 Raikou",
       "frameLength": 3039158,
       "loopStart": 735158,
       "loopEnd": 3039158
@@ -733,7 +733,7 @@
       "name": "Battle! Legendary Titans",
       "frameLength": 3393000,
       "loopStart": 585000,
-      "loopEnd": 3392999
+      "loopEnd": 3393000
     },
     {
       "id": "bgm_battle_legend_sm",
@@ -754,42 +754,42 @@
       "name": "Battle! Unova  Legendary Pokemon",
       "frameLength": 4001675,
       "loopStart": 935172,
-      "loopEnd": 4001674
+      "loopEnd": 4001675
     },
     {
       "id": "bgm_battle_lillie",
       "name": "Battle! Lillie",
       "frameLength": 3636405,
       "loopStart": 788764,
-      "loopEnd": 3636404
+      "loopEnd": 3636405
     },
     {
       "id": "bgm_battle_lucia",
       "name": "Battle! Lisia",
       "frameLength": 3562105,
       "loopStart": 617143,
-      "loopEnd": 3562104
+      "loopEnd": 3562105
     },
     {
       "id": "bgm_battle_lusamine",
       "name": "Battle! Lusamine",
       "frameLength": 4041000,
       "loopStart": 873000,
-      "loopEnd": 4040999
+      "loopEnd": 4041000
     },
     {
       "id": "bgm_battle_mary",
       "name": "Battle! Marnie",
       "frameLength": 3485618,
       "loopStart": 605618,
-      "loopEnd": 3485617
+      "loopEnd": 3485618
     },
     {
       "id": "bgm_battle_matiere",
-      "name": "",
+      "name": "Battle! Emma",
       "frameLength": 3592000,
       "loopStart": 520000,
-      "loopEnd": 3591999
+      "loopEnd": 3592000
     },
     {
       "id": "bgm_battle_matsubusa",
@@ -803,11 +803,11 @@
       "name": "Battle! Wallace",
       "frameLength": 3578400,
       "loopStart": 698400,
-      "loopEnd": 3578399
+      "loopEnd": 3578400
     },
     {
       "id": "bgm_battle_minaki",
-      "name": "",
+      "name": "Battle! Eusine",
       "frameLength": 3054857,
       "loopStart": 586285,
       "loopEnd": 3054857
@@ -817,60 +817,60 @@
       "name": "Battle! Wally",
       "frameLength": 3414857,
       "loopStart": 781715,
-      "loopEnd": 3414856
+      "loopEnd": 3414857
     },
     {
       "id": "bgm_battle_n",
       "name": "Battle! N",
       "frameLength": 3816000,
       "loopStart": 712000,
-      "loopEnd": 3815999
+      "loopEnd": 3816000
     },
     {
       "id": "bgm_battle_n_02",
-      "name": "",
+      "name": "Decisive Battle! N",
       "frameLength": 3352227,
       "loopStart": 866332,
-      "loopEnd": 3352226
+      "loopEnd": 3352227
     },
     {
       "id": "bgm_battle_nemo",
-      "name": "",
+      "name": "Battle! Nemona",
       "frameLength": 2963076,
       "loopStart": 747692,
       "loopEnd": 2963076
     },
     {
       "id": "bgm_battle_neochamp_galar",
-      "name": "",
+      "name": "Battle! Galar Neo Champion",
       "frameLength": 3906000,
       "loopStart": 594000,
       "loopEnd": 3906000
     },
     {
       "id": "bgm_battle_neochamp_jhoto",
-      "name": "",
+      "name": "Battle! Johto Neo Champion",
       "frameLength": 3723871,
       "loopStart": 750968,
       "loopEnd": 3723871
     },
     {
       "id": "bgm_battle_neochamp_kalos",
-      "name": "",
+      "name": "Battle! Kalos Neo Champion",
       "frameLength": 3461715,
       "loopStart": 725715,
-      "loopEnd": 3461714
+      "loopEnd": 3461715
     },
     {
       "id": "bgm_battle_neochamp_kanto",
-      "name": "",
+      "name": "Battle! Kanto Neo Champion",
       "frameLength": 3806270,
       "loopStart": 755027,
       "loopEnd": 3806270
     },
     {
       "id": "bgm_battle_neochamp_unova",
-      "name": "",
+      "name": "Battle! Unova Neo Champion",
       "frameLength": 3363038,
       "loopStart": 154937,
       "loopEnd": 3363038
@@ -880,63 +880,63 @@
       "name": "Battle! Trainer (New Year)",
       "frameLength": 3085714,
       "loopStart": 534857,
-      "loopEnd": 3085713
+      "loopEnd": 3085714
     },
     {
       "id": "bgm_battle_nezz",
       "name": "Battle! Piers",
       "frameLength": 3555110,
       "loopStart": 689438,
-      "loopEnd": 3555109
+      "loopEnd": 3555110
     },
     {
       "id": "bgm_battle_nezz_02",
-      "name": "",
+      "name": "Decisive Battle! Piers",
       "frameLength": 3352672,
       "loopStart": 890382,
       "loopEnd": 3352672
     },
     {
       "id": "bgm_battle_olive",
-      "name": "",
+      "name": "Battle! Oleana",
       "frameLength": 3261176,
       "loopStart": 550588,
       "loopEnd": 3261176
     },
     {
       "id": "bgm_battle_omodaka",
-      "name": "",
+      "name": "Battle! Geeta",
       "frameLength": 3156251,
       "loopStart": 712615,
-      "loopEnd": 3156250
+      "loopEnd": 3156251
     },
     {
       "id": "bgm_battle_plasma",
-      "name": "",
+      "name": "Battle! Team Plasma",
       "frameLength": 3125647,
       "loopStart": 686117,
-      "loopEnd": 3125646
+      "loopEnd": 3125647
     },
     {
       "id": "bgm_battle_platane",
       "name": "Battle! Sycamore",
       "frameLength": 3402948,
       "loopStart": 735158,
-      "loopEnd": 3402947
+      "loopEnd": 3402948
     },
     {
       "id": "bgm_battle_player",
       "name": "Battle! Region's Best",
       "frameLength": 3901396,
       "loopStart": 485582,
-      "loopEnd": 3901395
+      "loopEnd": 3901396
     },
     {
       "id": "bgm_battle_plumeria",
       "name": "Battle! Plumeria",
       "frameLength": 4021865,
       "loopStart": 900317,
-      "loopEnd": 4021864
+      "loopEnd": 4021865
     },
     {
       "id": "bgm_battle_pokevision",
@@ -947,7 +947,7 @@
     },
     {
       "id": "bgm_battle_pokewood",
-      "name": "",
+      "name": "Battle! Pokestar",
       "frameLength": 3528000,
       "loopStart": 712000,
       "loopEnd": 3528000
@@ -957,14 +957,14 @@
       "name": "Battle! Trainer (Prestige)",
       "frameLength": 3298286,
       "loopStart": 445714,
-      "loopEnd": 3298285
+      "loopEnd": 3298286
     },
     {
       "id": "bgm_battle_red",
       "name": "Battle! Red",
       "frameLength": 3576522,
       "loopStart": 1197392,
-      "loopEnd": 3576521
+      "loopEnd": 3576522
     },
     {
       "id": "bgm_battle_rgl",
@@ -982,7 +982,7 @@
     },
     {
       "id": "bgm_battle_rival_02",
-      "name": "",
+      "name": "Decisive Battle! Paulo",
       "frameLength": 3497143,
       "loopStart": 675918,
       "loopEnd": 3497143
@@ -992,7 +992,7 @@
       "name": "Battle! Team Rocket",
       "frameLength": 3299047,
       "loopStart": 495238,
-      "loopEnd": 3299046
+      "loopEnd": 3299047
     },
     {
       "id": "bgm_battle_rocket_02",
@@ -1003,7 +1003,7 @@
     },
     {
       "id": "bgm_battle_rose",
-      "name": "",
+      "name": "Battle! Rose",
       "frameLength": 3526661,
       "loopStart": 705437,
       "loopEnd": 3526661
@@ -1031,7 +1031,7 @@
     },
     {
       "id": "bgm_battle_sakaki_03",
-      "name": "",
+      "name": "Final Battle! Giovanni",
       "frameLength": 3433536,
       "loopStart": 631827,
       "loopEnd": 3433536
@@ -1045,31 +1045,31 @@
     },
     {
       "id": "bgm_battle_scull",
-      "name": "",
+      "name": "Battle! Team Skull",
       "frameLength": 3366848,
       "loopStart": 576000,
       "loopEnd": 3366848
     },
     {
       "id": "bgm_battle_shadowtriad",
-      "name": "",
+      "name": "Battle! Shadow Triad",
       "frameLength": 3336000,
       "loopStart": 776000,
-      "loopEnd": 3335999
+      "loopEnd": 3336000
     },
     {
       "id": "bgm_battle_shimakq",
       "name": "Battle! Trial Captain",
       "frameLength": 3923076,
       "loopStart": 969230,
-      "loopEnd": 3923075
+      "loopEnd": 3923076
     },
     {
       "id": "bgm_battle_shirona",
       "name": "Battle! Cynthia",
       "frameLength": 3888770,
       "loopStart": 685348,
-      "loopEnd": 3888769
+      "loopEnd": 3888770
     },
     {
       "id": "bgm_battle_shirona_02",
@@ -1083,7 +1083,7 @@
       "name": "Battle! Silver",
       "frameLength": 3444862,
       "loopStart": 517127,
-      "loopEnd": 3444861
+      "loopEnd": 3444862
     },
     {
       "id": "bgm_battle_sonia",
@@ -1101,28 +1101,28 @@
     },
     {
       "id": "bgm_battle_subwaymaster_99",
-      "name": "",
+      "name": "Battle! Subway Master [Pokemon Masters EX Special]",
       "frameLength": 8788800,
       "loopStart": 0,
-      "loopEnd": 8788799
+      "loopEnd": 8788800
     },
     {
       "id": "bgm_battle_summer",
       "name": "Battle! Trainer (Summer) [Sync Pair Showtime]",
       "frameLength": 2870068,
       "loopStart": 645517,
-      "loopEnd": 2870067
+      "loopEnd": 2870068
     },
     {
       "id": "bgm_battle_teacher_paldea",
-      "name": "",
+      "name": "Battle! Teacher?",
       "frameLength": 3510415,
       "loopStart": 537512,
       "loopEnd": 3510415
     },
     {
       "id": "bgm_battle_thanksday",
-      "name": "",
+      "name": "Battle! Trainer [Palentine's Day]",
       "frameLength": 3635904,
       "loopStart": 288000,
       "loopEnd": 3635904
@@ -1143,7 +1143,7 @@
     },
     {
       "id": "bgm_battle_trainer_hisui",
-      "name": "",
+      "name": "Battle! People of Hisui",
       "frameLength": 3812416,
       "loopStart": 711246,
       "loopEnd": 3812416
@@ -1160,63 +1160,63 @@
       "name": "Battle! Johto Trainer",
       "frameLength": 3512381,
       "loopStart": 739047,
-      "loopEnd": 3512380
+      "loopEnd": 3512381
     },
     {
       "id": "bgm_battle_trainer_kanto",
-      "name": "",
+      "name": "Battle! Kanto Trainer",
       "frameLength": 3578947,
       "loopStart": 816842,
       "loopEnd": 3578947
     },
     {
       "id": "bgm_battle_trainer_s",
-      "name": "Battle! Trainer (Sinnoh)",
+      "name": "Battle! Sinnoh Trainer",
       "frameLength": 3326087,
       "loopStart": 759131,
-      "loopEnd": 3326086
+      "loopEnd": 3326087
     },
     {
       "id": "bgm_battle_wataru",
       "name": "Battle! Lance",
       "frameLength": 3639131,
       "loopStart": 1134783,
-      "loopEnd": 3639130
+      "loopEnd": 3639131
     },
     {
       "id": "bgm_battle_wds",
       "name": "Battle! Cynthia, Lance and Steven",
       "frameLength": 3598203,
       "loopStart": 764407,
-      "loopEnd": 3598202
+      "loopEnd": 3598203
     },
     {
       "id": "bgm_battle_yasei_a",
       "name": "Battle! Wild Pokemon: Alola",
       "frameLength": 3046154,
       "loopStart": 514286,
-      "loopEnd": 3046153
+      "loopEnd": 3046154
     },
     {
       "id": "bgm_battle_yasei_c",
       "name": "Battle! Wild Pokemon: Kalos",
       "frameLength": 2244706,
       "loopStart": 482823,
-      "loopEnd": 2244705
+      "loopEnd": 2244706
     },
     {
       "id": "bgm_battle_yasei_g",
       "name": "Battle! Wild Pokemon: Galar",
       "frameLength": 3415082,
       "loopStart": 519344,
-      "loopEnd": 3415081
+      "loopEnd": 3415082
     },
     {
       "id": "bgm_battle_yasei_h",
       "name": "Battle! Wild Pokemon: Hoenn",
       "frameLength": 2606769,
       "loopStart": 716308,
-      "loopEnd": 2606768
+      "loopEnd": 2606769
     },
     {
       "id": "bgm_battle_yasei_i",
@@ -1230,18 +1230,18 @@
       "name": "Battle! Wild Pokemon: Johto",
       "frameLength": 2525902,
       "loopStart": 763279,
-      "loopEnd": 2525901
+      "loopEnd": 2525902
     },
     {
       "id": "bgm_battle_yasei_k",
       "name": "Battle! Wild Pokemon: Kanto",
       "frameLength": 2261739,
       "loopStart": 759131,
-      "loopEnd": 2261738
+      "loopEnd": 2261739
     },
     {
       "id": "bgm_battle_yasei_p",
-      "name": "",
+      "name": "Battle! Wild Pokemon: Paldea",
       "frameLength": 4074353,
       "loopStart": 279529,
       "loopEnd": 4074353
@@ -1255,7 +1255,7 @@
     },
     {
       "id": "bgm_battle_yell",
-      "name": "",
+      "name": "Battle! Team Yell",
       "frameLength": 3355584,
       "loopStart": 827235,
       "loopEnd": 3355584
@@ -1265,7 +1265,7 @@
       "name": "Battle! Brendan and May",
       "frameLength": 3256616,
       "loopStart": 716308,
-      "loopEnd": 3256615
+      "loopEnd": 3256616
     }
   ]
 }
