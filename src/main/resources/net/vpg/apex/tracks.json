@@ -575,13 +575,6 @@
       "loopEnd": 3689999
     },
     {
-      "id": "bgm_battle_gladion_short",
-      "name": "Battle! Gladion (Short)",
-      "frameLength": 3210000,
-      "loopStart": 250000,
-      "loopEnd": 3209999
-    },
-    {
       "id": "bgm_battle_green",
       "name": "Battle! Blue",
       "frameLength": 4093954,
@@ -771,13 +764,6 @@
       "loopEnd": 3636404
     },
     {
-      "id": "bgm_battle_lillie_short",
-      "name": "Battle! Lillie (Short)",
-      "frameLength": 2985169,
-      "loopStart": 137528,
-      "loopEnd": 2985168
-    },
-    {
       "id": "bgm_battle_lucia",
       "name": "Battle! Lisia",
       "frameLength": 3562105,
@@ -790,13 +776,6 @@
       "frameLength": 4041000,
       "loopStart": 873000,
       "loopEnd": 4040999
-    },
-    {
-      "id": "bgm_battle_lusamine_short",
-      "name": "Battle! Lusamine (Short)",
-      "frameLength": 3321000,
-      "loopStart": 153000,
-      "loopEnd": 3320999
     },
     {
       "id": "bgm_battle_mary",
@@ -818,13 +797,6 @@
       "frameLength": 3338508,
       "loopStart": 702090,
       "loopEnd": 3338508
-    },
-    {
-      "id": "bgm_battle_matsubusa_short",
-      "name": "Battle! Maxie (Short)",
-      "frameLength": 3338508,
-      "loopStart": 587274,
-      "loopEnd": 1963788
     },
     {
       "id": "bgm_battle_mikuri",
