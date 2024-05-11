@@ -29,9 +29,9 @@ import java.net.URL;
 import java.util.Arrays;
 
 public class AudioData {
-    private final int frameLength;
-    private final AudioFormat format;
-    private final byte[] data;
+    private int frameLength;
+    private AudioFormat format;
+    private byte[] data;
     private AudioInputStream stream;
     private int readPos;
     private int cachedPos;
@@ -111,6 +111,13 @@ public class AudioData {
         }
         caching = false;
         stream.close();
+        stream = null;
+    }
+
+    public void close() {
+        caching = false;
+        data = null;
+        format = null;
         stream = null;
     }
 }

@@ -34,7 +34,7 @@ public class ApexClip {
     public void play(Track track) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         playing = false;
         if (data != null)
-            data.stopCaching();
+            data.close();
         data = track.getData();
         data.startCaching();
         if (format != data.getFormat()) {
