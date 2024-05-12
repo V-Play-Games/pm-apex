@@ -29,8 +29,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static net.vpg.apex.Apex.APEX;
-
 public class ApexWindow extends JFrame {
     public final JTextArea trackName;
     public final JTextArea searchTextArea;
@@ -43,8 +41,11 @@ public class ApexWindow extends JFrame {
     public final DefaultListModel<String> trackListModel;
     public final JList<String> trackList;
     public final JScrollPane trackListPane;
+    private final Apex apex;
 
-    public ApexWindow() {
+    public ApexWindow(Apex apex) {
+        this.apex = apex;
+
         trackName = createTextArea("Loading...");
         trackName.setToolTipText("Track Name");
 
@@ -52,7 +53,7 @@ public class ApexWindow extends JFrame {
             search -> search.addKeyListener(new KeyAdapter() {
                 public void keyTyped(KeyEvent e) {
                     if (e.getKeyChar() == '\n')
-                        Apex.APEX.takeAction(5);
+                        ApexWindow.this.apex.takeAction(5);
                 }
             }),
             search -> search.setAlignmentX(0),
@@ -64,12 +65,12 @@ public class ApexWindow extends JFrame {
             search -> search.setRows(0)
         );
 
-        next = makeButton("Next Track", "Go to the next track", 0);
-        previous = makeButton("Previous Track", "Go to the previous track", 1);
-        shuffleButton = makeButton("Shuffle OFF", "Shuffle the playlist", 2);
-        stop = makeButton("Stop", "Stop the track", 3);
-        playPause = makeButton("Play", "Play the track", 4);
-        search = makeButton("Search and Play", "Search a track", 5);
+        next = createButton("Next Track", "Go to the next track", 0);
+        previous = createButton("Previous Track", "Go to the previous track", 1);
+        shuffleButton = createButton("Shuffle OFF", "Shuffle the playlist", 2);
+        stop = createButton("Stop", "Stop the track", 3);
+        playPause = createButton("Play", "Play the track", 4);
+        search = createButton("Search and Play", "Search a track", 5);
 
         trackListModel = new DefaultListModel<>();
         trackList = new JList<>(trackListModel);
@@ -78,7 +79,7 @@ public class ApexWindow extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                    Apex.APEX.takeAction(7);
+                    apex.takeAction(7);
                 }
             }
         });
@@ -86,7 +87,7 @@ public class ApexWindow extends JFrame {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == '\n') {
-                    Apex.APEX.takeAction(7);
+                    apex.takeAction(7);
                 }
             }
         });
@@ -97,10 +98,10 @@ public class ApexWindow extends JFrame {
 
     private void createMainFrame() {
         add(Util.apply(new JTabbedPane(),
-            pane -> pane.add(playerPanel()),
-            pane -> pane.add(creditsPanel()))
+            pane -> pane.add(createPlayerPanel()),
+            pane -> pane.add(createCreditsPanel()))
         );
-        addBox(this, "South",
+        createBox(this, "South",
             Util.apply(new JPanel(),
                 panel -> panel.setLayout(new FlowLayout(FlowLayout.CENTER)),
                 panel -> panel.add(searchTextArea),
@@ -123,7 +124,7 @@ public class ApexWindow extends JFrame {
         pack();
     }
 
-    private JPanel playerPanel() {
+    private JPanel createPlayerPanel() {
         return createPanel("Player",
             trackListPane,
             Box.createVerticalStrut(10),
@@ -132,7 +133,7 @@ public class ApexWindow extends JFrame {
         );
     }
 
-    private JPanel creditsPanel() {
+    private JPanel createCreditsPanel() {
         return createPanel("Credits and Info",
             createTextArea("Welcome to Pokemon Masters Audio Player EX, PM APEX in short."),
             Box.createVerticalStrut(10),
@@ -160,18 +161,18 @@ public class ApexWindow extends JFrame {
             panel -> panel.setName(name),
             panel -> panel.setBorder(new EmptyBorder(15, 15, 0, 15)),
             panel -> panel.setLayout(new BorderLayout()),
-            panel -> addBox(panel, "North", components)
+            panel -> createBox(panel, "North", components)
         );
     }
 
-    private JButton makeButton(String name, String toolTip, int action) {
+    private JButton createButton(String name, String toolTip, int action) {
         JButton button = new JButton(name);
         button.setToolTipText(toolTip);
-        button.addActionListener(_ -> APEX.takeAction(action));
+        button.addActionListener(_ -> apex.takeAction(action));
         return button;
     }
 
-    private void addBox(Container container, String constraints, Component... components) {
+    private void createBox(Container container, String constraints, Component... components) {
         Box box = Box.createVerticalBox();
         container.add(box, constraints);
         for (Component component : components)
