@@ -40,28 +40,24 @@ public class Downloader {
     }
 
     public static File download(String url, File file, EventListener listener) throws IOException {
-        long startingTime = System.currentTimeMillis();
+        listener = listener != null ? listener : System.out::println;
+        long startingTime = System.nanoTime();
         int bytesRead = 0;
         int len;
-        try (InputStream input = URI.create(url).toURL().openStream()) {
-            try (FileOutputStream output = new FileOutputStream(file)) {
-                byte[] buffer = new byte[4096];
-                while ((len = input.read(buffer)) > 0) {
-                    bytesRead += len;
-                    output.write(buffer, 0, len);
-                    long timeTaken = System.currentTimeMillis() - startingTime;
-                    long speed = bytesRead * 100L / timeTaken;
-                    if (listener != null) {
-                        listener.progress(new Event(file, startingTime, timeTaken, len, bytesRead, speed, bytesRead == len ? STARTED : IN_PROGRESS));
-                    }
-                }
+        try (InputStream input = URI.create(url).toURL().openStream();
+             FileOutputStream output = new FileOutputStream(file)) {
+            byte[] buffer = new byte[4096];
+            while ((len = input.read(buffer)) >= 0) {
+                bytesRead += len;
+                output.write(buffer, 0, len);
+                long timeTaken = System.nanoTime() - startingTime;
+                long speed = bytesRead * 100L / timeTaken;
+                listener.progress(new Event(file, startingTime, timeTaken, len, bytesRead, speed, bytesRead == len ? STARTED : IN_PROGRESS));
             }
         }
-        long timeTaken = System.currentTimeMillis() - startingTime;
+        long timeTaken = System.nanoTime() - startingTime;
         long speed = bytesRead * 100L / timeTaken;
-        if (listener != null) {
-            listener.progress(new Event(file, startingTime, timeTaken, len, bytesRead, speed, DONE));
-        }
+        listener.progress(new Event(file, startingTime, timeTaken, len, bytesRead, speed, DONE));
         return file;
     }
 
