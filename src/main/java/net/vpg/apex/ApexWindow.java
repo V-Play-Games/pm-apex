@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package net.vpg.apex.components;
+package net.vpg.apex;
 
-import net.vpg.apex.Apex;
-import net.vpg.apex.Util;
 import net.vpg.apex.core.Resources;
 
 import javax.imageio.ImageIO;
@@ -28,6 +26,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import static net.vpg.apex.Apex.Action.*;
 
 public class ApexWindow extends JFrame {
     public final JTextArea trackName;
@@ -53,7 +53,7 @@ public class ApexWindow extends JFrame {
             search -> search.addKeyListener(new KeyAdapter() {
                 public void keyTyped(KeyEvent e) {
                     if (e.getKeyChar() == '\n')
-                        ApexWindow.this.apex.takeAction(5);
+                        apex.takeAction(SEARCH);
                 }
             }),
             search -> search.setAlignmentX(0),
@@ -65,12 +65,12 @@ public class ApexWindow extends JFrame {
             search -> search.setRows(0)
         );
 
-        next = createButton("Next Track", "Go to the next track", 0);
-        previous = createButton("Previous Track", "Go to the previous track", 1);
-        shuffleButton = createButton("Shuffle OFF", "Shuffle the playlist", 2);
-        stop = createButton("Stop", "Stop the track", 3);
-        playPause = createButton("Play", "Play the track", 4);
-        search = createButton("Search and Play", "Search a track", 5);
+        next = createButton("Next Track", "Go to the next track", NEXT);
+        previous = createButton("Previous Track", "Go to the previous track", PREVIOUS);
+        shuffleButton = createButton("Shuffle OFF", "Shuffle the playlist", SHUFFLE);
+        stop = createButton("Stop", "Stop the track", STOP);
+        playPause = createButton("Play", "Play the track", PLAY_PAUSE);
+        search = createButton("Search and Play", "Search a track", SEARCH);
 
         trackListModel = new DefaultListModel<>();
         trackList = new JList<>(trackListModel);
@@ -79,7 +79,7 @@ public class ApexWindow extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                    apex.takeAction(7);
+                    apex.takeAction(CLICK_ON_PLAYLIST);
                 }
             }
         });
@@ -87,7 +87,7 @@ public class ApexWindow extends JFrame {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == '\n') {
-                    apex.takeAction(7);
+                    apex.takeAction(CLICK_ON_PLAYLIST);
                 }
             }
         });
@@ -116,7 +116,7 @@ public class ApexWindow extends JFrame {
                 panel -> panel.add(next))
         );
         setTitle("PM APEX");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
         setMinimumSize(new Dimension(500, 400));

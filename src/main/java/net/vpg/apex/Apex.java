@@ -16,7 +16,6 @@
 
 package net.vpg.apex;
 
-import net.vpg.apex.components.ApexWindow;
 import net.vpg.apex.core.ApexClip;
 import net.vpg.apex.core.Track;
 
@@ -142,5 +141,16 @@ public class Apex {
         } else if (index > firstVisibleIndex + visibleAmount - 1) {
             scrollBar.setValue(Math.min(index - visibleAmount + 1, playlist.size() - visibleAmount + 1) * rowHeight);
         }
+    }
+
+    public static class Action {
+        public static final int NEXT = 1;
+        public static final int PREVIOUS = 2;
+        public static final int SHUFFLE = 3;
+        public static final int STOP = 4;
+        public static final int PLAY_PAUSE = 5;
+        public static final int SEARCH = 6;
+        public static final int UPDATE_PLAYLIST = 7;
+        public static final int CLICK_ON_PLAYLIST = 8;
     }
 }

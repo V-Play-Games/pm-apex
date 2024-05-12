@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package net.vpg.apex.components;
-
-import net.vpg.apex.core.Resources;
+package net.vpg.apex.core;
 
 import java.io.File;
 import java.io.FileOutputStream;
