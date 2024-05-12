@@ -42,7 +42,8 @@ public class ApexControl {
     public static final JScrollPane trackListPane;
 
     static {
-        trackName = makeTextArea("Track Name");
+        trackName = new WrappedTextArea("Track Name");
+        trackName.setToolTipText("Track Name");
 
         searchTextArea = Util.apply(new JTextArea("Search and Play"),
             search -> search.addKeyListener(new KeyAdapter() {
@@ -94,11 +95,5 @@ public class ApexControl {
         button.setToolTipText(toolTip);
         button.addActionListener(_ -> APEX.takeAction(action));
         return button;
-    }
-
-    private static WrappedTextArea makeTextArea(String toolTip) {
-        WrappedTextArea textArea = new WrappedTextArea();
-        textArea.setToolTipText(toolTip);
-        return textArea;
     }
 }
