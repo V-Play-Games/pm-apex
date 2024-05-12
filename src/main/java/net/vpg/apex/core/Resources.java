@@ -27,9 +27,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -38,32 +35,30 @@ import java.util.stream.Collectors;
 public class Resources {
     private static final Logger logger = LoggerFactory.getLogger(Resources.class);
     private static Resources instance;
-    private final URI additionalRes;
+    private final JSONObject properties;
     private final File dataDir;
     private final Map<String, File> resources;
 
     private Resources() {
         // init basic json info
-        JSONObject info = Util.compute(Apex.class.getResource("info.json"), JSONObject::parse);
-        additionalRes = URI.create(info.getString("additionalRes"));
-        String appName = info.getString("appName");
+        properties = Util.compute(Apex.class.getResource("info.json"), JSONObject::parse);
+        String appName = properties.getString("appName");
 
         // init directories
         String os = System.getProperty("os.name");
         String home = System.getProperty("user.home");
         Path dataPath;
-        if (os.contains("Mac")) {
+        if (os.contains("Mac"))
             dataPath = Paths.get(home, "Library", "Application Support");
-        } else if (os.contains("Windows")) {
+        else if (os.contains("Windows"))
             dataPath = getPathFromEnv("LOCALAPPDATA", false, home, "AppData", "Local");
-        } else { // Linux/Unix
+        else // Linux/Unix
             dataPath = getPathFromEnv("XDG_DATA_HOME", true, home, ".local", "share");
-        }
         dataDir = dataPath.resolve(appName).toFile();
         //noinspection ResultOfMethodCallIgnored
         dataDir.mkdirs();
         resources = Util.collectFilesOf(dataDir).stream().collect(Collectors.toMap(File::getName, file -> file));
-        info.getArray("required")
+        properties.getArray("required")
             .stream()
             .map(JSONValue::toString)
             .forEach(this::shiftFile);
@@ -79,6 +74,16 @@ public class Resources {
 
     public static <T> T get(String filename, Util.FunctionWithAChanceOfException<File, T> func) {
         return Util.compute(get(filename), func);
+    }
+
+    public static JSONValue getProperty(String prop) {
+        return getInstance().properties.get(prop);
+    }
+
+    public File create(String filename) {
+        File file = new File(dataDir, filename);
+        resources.put(filename, file);
+        return file;
     }
 
     private Path getPathFromEnv(String envVar, boolean mustBeAbsolute, String first, String... more) {
@@ -102,15 +107,5 @@ public class Resources {
         } catch (IOException e) {
             logger.error(STR."Unable to copy \{resource} to the resource directory", e);
         }
-    }
-
-    public URL getAdditionResourceURL(String res) throws MalformedURLException {
-        return additionalRes.resolve(res).toURL();
-    }
-
-    public File create(String filename) {
-        File file = new File(dataDir, filename);
-        resources.put(filename, file);
-        return file;
     }
 }

@@ -1,7 +1,7 @@
 {
   "version": 2,
   "override": true,
-  "additionalRes": "https://raw.githubusercontent.com/V-Play-Games/pm-apex/release/bgm/",
+  "additionalRes": "https://github.com/VGM-Apex/%s/raw/main/%s.%s",
   "appName": "Apex",
   "required": [
     "info.json",

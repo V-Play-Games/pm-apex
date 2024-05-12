@@ -16,6 +16,7 @@
 
 package net.vpg.apex.core;
 
+import net.vpg.apex.Util;
 import net.vpg.vjson.value.JSONObject;
 import net.vpg.vjson.value.JSONValue;
 import org.slf4j.Logger;
@@ -24,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -60,11 +63,20 @@ public record Track(
     }
 
     public AudioData getData() throws UnsupportedAudioFileException, IOException {
-        String filename = STR."\{id}.ogg";
-        File file = Resources.get(filename);
+        File file = getFile();
         if (file != null && file.exists())
             return new AudioData(file, frameLength);
         else
-            return new AudioData(Resources.getInstance().getAdditionResourceURL(filename), frameLength);
+            return new AudioData(getURL(), frameLength);
+    }
+
+    public File getFile() {
+        return Resources.get(STR."\{id}.ogg");
+    }
+
+    public URL getURL() {
+        return Util.get(() -> URI.create(Resources.getProperty("additionalRes")
+            .toString()
+            .formatted(category, id, "ogg")).toURL());
     }
 }
