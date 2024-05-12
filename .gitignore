@@ -1,4 +1,5 @@
 target/
 .idea/
+bgm/
 *.iml
 dependency-reduced-pom.xml

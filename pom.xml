@@ -10,20 +10,6 @@
   <artifactId>pm-apex</artifactId>
   <version>0.1.0</version>
   <build>
-    <resources>
-      <resource>
-        <directory>bgm</directory>
-        <excludes>
-          <exclude>**/*.ogg</exclude>
-        </excludes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*.*</include>
-        </includes>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
