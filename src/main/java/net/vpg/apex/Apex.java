@@ -26,6 +26,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import static net.vpg.apex.Apex.Action.*;
+
 public class Apex {
     public static final Executor EXECUTOR = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 0).factory());
     private final ApexClip clip = new ApexClip();
@@ -57,35 +59,20 @@ public class Apex {
 
     private void takeAction0(int action) {
         switch (action) {
-            case 0: // Next
-                setIndex(index + 1);
-                break;
-            case 1: // Previous
-                setIndex(index - 1);
-                break;
-            case 2: // Shuffle
+            case NEXT -> setIndex(index + 1);
+            case PREVIOUS -> setIndex(index - 1);
+            case SHUFFLE -> {
                 shuffle = !shuffle;
                 window.shuffleButton.setText("Shuffle " + (shuffle ? "ON" : "OFF"));
-                break;
-            case 3: // Stop
-                clip.stop();
-                break;
-            case 4: // Pause/Play
-                clip.togglePlayPause();
-                break;
-            case 5: // Search
+            }
+            case STOP -> clip.stop();
+            case PLAY_PAUSE -> clip.togglePlayPause();
+            case SEARCH -> {
                 window.searchTextArea.setText("");
                 if (!searchAndPlay(index + 1, playlist.size()))
                     searchAndPlay(0, index);
-                break;
-            case 6: // Update
-                Track track = playlist.get(index);
-                updatePlaylist();
-                index = playlist.indexOf(track);
-                break;
-            case 7: // Mouse Double-click/Enter on the playlist
-                setIndex(window.trackList.getSelectedIndex());
-                break;
+            }
+            case CLICK_ON_PLAYLIST -> setIndex(window.trackList.getSelectedIndex());
         }
         this.updateButtons();
     }
@@ -150,7 +137,6 @@ public class Apex {
         public static final int STOP = 4;
         public static final int PLAY_PAUSE = 5;
         public static final int SEARCH = 6;
-        public static final int UPDATE_PLAYLIST = 7;
-        public static final int CLICK_ON_PLAYLIST = 8;
+        public static final int CLICK_ON_PLAYLIST = 7;
     }
 }
