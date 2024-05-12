@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public record Track(
     String id,
     String name,
+    String category,
     int frameLength,
     int loopStart,
     int loopEnd
@@ -47,6 +48,7 @@ public record Track(
         this(
             data.getString("id"),
             data.getString("name"),
+            data.getString("category"),
             data.getInt("frameLength"),
             data.getInt("loopStart"),
             data.getInt("loopEnd")
