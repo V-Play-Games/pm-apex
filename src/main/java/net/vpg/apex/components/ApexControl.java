@@ -17,9 +17,10 @@
 package net.vpg.apex.components;
 
 import net.vpg.apex.Apex;
+import net.vpg.apex.Util;
 
 import javax.swing.*;
-import java.awt.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -41,15 +42,23 @@ public class ApexControl {
     public static final JScrollPane trackListPane;
 
     static {
-        searchTextArea = new SearchTextArea("Search and Play");
-        searchTextArea.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == '\n') {
-                    Apex.APEX.takeAction(5);
+        trackName = makeTextArea("Track Name");
+
+        searchTextArea = Util.apply(new JTextArea("Search and Play"),
+            search -> search.addKeyListener(new KeyAdapter() {
+                public void keyTyped(KeyEvent e) {
+                    if (e.getKeyChar() == '\n')
+                        Apex.APEX.takeAction(5);
                 }
-            }
-        });
+            }),
+            search -> search.setAlignmentX(0),
+            search -> search.setBorder(new EmptyBorder(5, 5, 0, 5)),
+            search -> search.setEditable(true),
+            search -> search.setLineWrap(false),
+            search -> search.setFont(new JLabel().getFont()),
+            search -> search.setFocusable(true),
+            search -> search.setRows(0)
+        );
 
         next = makeButton("Next Track", "Go to the next track", 0);
         previous = makeButton("Previous Track", "Go to the previous track", 1);
