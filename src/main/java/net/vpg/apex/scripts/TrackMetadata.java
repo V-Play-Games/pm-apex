@@ -16,6 +16,7 @@
 
 package net.vpg.apex.scripts;
 
+import net.vpg.apex.Util;
 import net.vpg.apex.core.Resources;
 import net.vpg.vjson.value.JSONObject;
 import net.vpg.vjson.value.JSONValue;
@@ -32,55 +33,44 @@ import java.util.regex.Pattern;
 public class TrackMetadata {
     public static final Pattern headerPattern = Pattern.compile("([A-Z]+)=(\\d+)");
 
-    public static void main() throws FileNotFoundException {
-        JSONObject.parse(Resources.get("tracks.json"))
+    public static void main() {
+        Resources.get("tracks.json", JSONObject::parse)
             .getArray("entries")
             .stream()
             .map(JSONValue::toObject)
             .sorted(Comparator.comparing(obj -> obj.getString("id")))
-            .peek(obj -> init(new File(STR."bgm/\{obj.getString("id")}.ogg"), obj))
+            .peek(obj -> Util.run(() -> init(new File(STR."bgm/\{obj.getString("id")}.ogg"), obj)))
             .map(JSONValue::toString)
             .forEach(System.out::println);
     }
 
-    private static void init(File file, JSONObject obj) {
+    private static void init(File file, JSONObject obj) throws UnsupportedAudioFileException, IOException {
         if (!file.exists())
             System.out.println(file + " doesn't exist, skipping...");
         if (!obj.isNull("loopStart") && !obj.isNull("loopEnd") && !obj.isNull("frameLength"))
             return;
         int loopStart = -1, loopEnd = -1, loopLength = -1, frameLength;
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            frameLength = frameLength(file);
             String line;
             while ((line = reader.readLine()) != null) {
                 Matcher m = headerPattern.matcher(line);
                 while (m.find()) {
                     int val = Integer.parseInt(m.group(2));
                     switch (m.group(1)) {
-                        case "LOOPSTART":
-                            loopStart = val;
-                            break;
-                        case "LOOPEND":
-                            loopEnd = val;
-                            break;
-                        case "LOOPLENGTH":
-                            loopLength = val;
-                            break;
+                        case "LOOPSTART" -> loopStart = val;
+                        case "LOOPEND" -> loopEnd = val;
+                        case "LOOPLENGTH" -> loopLength = val;
                     }
                 }
-                if (loopStart != -1 && (loopEnd != -1 || loopLength != -1)) {
+                if (loopStart != -1 && (loopEnd != -1 || loopLength != -1))
                     break;
-                }
             }
-            frameLength = frameLength(file);
-            if (loopLength != -1) {
-                loopEnd = loopStart + loopLength;
-            }
-            if (loopEnd > frameLength) {
-                loopEnd = frameLength;
-            }
-        } catch (IOException | UnsupportedAudioFileException e) {
-            throw new RuntimeException(e);
         }
+        if (loopLength != -1)
+            loopEnd = loopStart + loopLength;
+        if (loopEnd > frameLength)
+            loopEnd = frameLength;
         obj.put("loopStart", loopStart)
             .put("loopEnd", loopEnd)
             .put("frameLength", frameLength);

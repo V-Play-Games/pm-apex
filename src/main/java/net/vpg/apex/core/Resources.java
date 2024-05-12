@@ -24,15 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -78,6 +77,10 @@ public class Resources {
         return getInstance().resources.get(filename);
     }
 
+    public static <T> T get(String filename, Util.FunctionWithAChanceOfException<File, T> func) {
+        return Util.compute(get(filename), func);
+    }
+
     private Path getPathFromEnv(String envVar, boolean mustBeAbsolute, String first, String... more) {
         String envDir = System.getenv(envVar);
         if (envDir != null && !envDir.isEmpty()) {
@@ -92,9 +95,10 @@ public class Resources {
     }
 
     private void shiftFile(String resource) {
-        //noinspection DataFlowIssue
-        try (InputStream input = Apex.class.getResource(resource).openStream()) {
-            Files.copy(input, dataDir.toPath().resolve(resource), StandardCopyOption.REPLACE_EXISTING);
+        try (InputStream input = Apex.class.getResourceAsStream(resource);
+             FileOutputStream output = new FileOutputStream(new File(dataDir, resource))) {
+            //noinspection DataFlowIssue
+            input.transferTo(output);
         } catch (IOException e) {
             logger.error(STR."Unable to copy \{resource} to the resource directory", e);
         }

@@ -16,7 +16,6 @@
 
 package net.vpg.apex.core;
 
-import net.vpg.apex.Util;
 import net.vpg.vjson.value.JSONObject;
 import net.vpg.vjson.value.JSONValue;
 import org.slf4j.Logger;
@@ -37,7 +36,7 @@ public record Track(
 ) {
     private static final Logger logger = LoggerFactory.getLogger(Track.class);
     public static final Map<String, Track> entries =
-        Util.compute(Resources.get("tracks.json"), JSONObject::parse)
+        Resources.get("tracks.json", JSONObject::parse)
             .getArray("entries")
             .stream()
             .map(JSONValue::toObject)
@@ -62,12 +61,8 @@ public record Track(
         String filename = STR."\{id}.ogg";
         File file = Resources.get(filename);
         if (file != null && file.exists())
-            return new AudioData(getFile(), frameLength);
+            return new AudioData(file, frameLength);
         else
             return new AudioData(Resources.getInstance().getAdditionResourceURL(filename), frameLength);
-    }
-
-    public File getFile() {
-        return Resources.get(STR."\{id}.ogg");
     }
 }

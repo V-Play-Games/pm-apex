@@ -29,7 +29,7 @@ import java.net.URL;
 import java.util.Arrays;
 
 public class AudioData {
-    private int frameLength;
+    private final int frameLength;
     private AudioFormat format;
     private byte[] data;
     private AudioInputStream stream;
