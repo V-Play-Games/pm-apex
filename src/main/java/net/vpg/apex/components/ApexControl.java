@@ -42,7 +42,7 @@ public class ApexControl {
     public static final JScrollPane trackListPane;
 
     static {
-        trackName = new WrappedTextArea("Track Name");
+        trackName = new WrappedTextArea("Loading...");
         trackName.setToolTipText("Track Name");
 
         searchTextArea = Util.apply(new JTextArea("Search and Play"),

@@ -24,37 +24,80 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+import static net.vpg.apex.components.ApexControl.*;
+
 public class ApexWindow extends JFrame {
     private static final ApexWindow instance = new ApexWindow();
 
     private ApexWindow() {
-        Box box = Util.addBox(this, null);
-        box.setBorder(new EmptyBorder(3, 3, 3, 3));
-        box.add(Util.apply(new JTabbedPane(),
-            pane -> pane.add(PlayerPanel.getInstance()),
-            pane -> pane.add(CreditsPanel.getInstance())));
+        Util.addBox(this, null,
+            Util.apply(new JTabbedPane(),
+                pane -> pane.add(playerPanel()),
+                pane -> pane.add(creditsPanel()))
+        );
         Util.addBox(this, "South",
-            ApexControl.searchTextArea,
+            searchTextArea,
             Util.apply(new JPanel(),
                 panel -> panel.setAlignmentX(0),
-                panel -> panel.add(ApexControl.search)),
+                panel -> panel.add(search)),
             Box.createVerticalStrut(5),
             Util.apply(new JPanel(),
                 panel -> panel.setLayout(new FlowLayout(FlowLayout.CENTER)),
                 panel -> panel.setAlignmentX(0),
-                panel -> panel.add(ApexControl.shuffleButton),
-                panel -> panel.add(ApexControl.previous),
-                panel -> panel.add(ApexControl.stop),
-                panel -> panel.add(ApexControl.playPause),
-                panel -> panel.add(ApexControl.next))
+                panel -> panel.add(shuffleButton),
+                panel -> panel.add(previous),
+                panel -> panel.add(stop),
+                panel -> panel.add(playPause),
+                panel -> panel.add(next))
         );
-        this.setTitle("PM APEX");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);
-        this.setResizable(true);
-        this.setMinimumSize(new Dimension(500, 400));
-        this.setIconImage(Util.get(() -> ImageIO.read(Resources.get("icon.png"))));
-        this.pack();
+        setTitle("PM APEX");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setResizable(true);
+        setMinimumSize(new Dimension(500, 400));
+        setIconImage(Resources.get("icon.png", ImageIO::read));
+        pack();
+    }
+
+    private JPanel playerPanel() {
+        JPanel panel = (new JPanel());
+        panel.setName("Player");
+        panel.setBorder(new EmptyBorder(15, 15, 0, 15));
+        panel.setLayout(new BorderLayout());
+        Util.addBox(panel, "North",
+            trackListPane,
+            Box.createVerticalStrut(10),
+            trackName,
+            Box.createVerticalStrut(5));
+        return panel;
+    }
+
+    private JPanel creditsPanel() {
+        JPanel panel = new JPanel();
+        panel.setName("Credits and Info");
+        panel.setBorder(new EmptyBorder(15, 15, 0, 15));
+        panel.setLayout(new BorderLayout());
+        Util.addBox(panel, "North",
+            new WrappedTextArea("Welcome to Pokemon Masters Audio Player EX, PM APEX in short."),
+            Box.createVerticalStrut(10),
+            new WrappedTextArea("""
+                This is an application made for playing audio tracks from Pokemon Masters.
+                It also has looping support, which means you can loop your favourite battle theme for as long as you want!
+                Although you can't download tracks right now, you can play them online!
+                Have Fun!
+                """),
+            Box.createVerticalStrut(20),
+            Util.apply(new WrappedTextArea("Credits"),
+                textArea -> textArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14))
+            ),
+            Box.createVerticalStrut(5),
+            new WrappedTextArea("V Play Games#9783 - The Author and Maintainer of this project"),
+            Box.createVerticalStrut(3),
+            new WrappedTextArea("Trilarion (GitHub) - For Providing OGG File Support"),
+            Box.createVerticalStrut(3),
+            new WrappedTextArea("Made with Java, Built with Maven 3")
+        );
+        return panel;
     }
 
     public static ApexWindow getInstance() {
