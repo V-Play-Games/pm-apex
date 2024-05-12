@@ -28,8 +28,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static net.vpg.apex.components.ApexControl.*;
-
 public class Apex {
     public static final Apex APEX = new Apex();
     public static final Executor EXECUTOR = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 0).factory());
@@ -54,9 +52,9 @@ public class Apex {
             .stream()
             .sorted(Comparator.comparing(Track::id))
             .toList();
-        trackListModel.clear();
-        trackListModel.addAll(playlist.stream().map(Track::name).collect(Collectors.toList()));
-        trackList.setSelectedIndex(index);
+        window.trackListModel.clear();
+        window.trackListModel.addAll(playlist.stream().map(Track::name).collect(Collectors.toList()));
+        window.trackList.setSelectedIndex(index);
         Util.sleep(200);
         updateScrollBar();
     }
@@ -83,7 +81,7 @@ public class Apex {
                 break;
             case 2: // Shuffle
                 shuffle = !shuffle;
-                shuffleButton.setText("Shuffle " + (shuffle ? "ON" : "OFF"));
+                window.shuffleButton.setText("Shuffle " + (shuffle ? "ON" : "OFF"));
                 break;
             case 3: // Stop
                 clip.stop();
@@ -94,21 +92,21 @@ public class Apex {
             case 5: // Search
                 if (!searchAndPlay(index + 1, playlist.size()))
                     searchAndPlay(0, index);
-                searchTextArea.setText("");
+                window.searchTextArea.setText("");
                 break;
             case 6: // Update
                 updatePlaylist();
                 index = playlist.indexOf(track);
                 break;
             case 7: // Mouse Double-click/Enter on the playlist
-                setIndex(trackList.getSelectedIndex());
+                setIndex(window.trackList.getSelectedIndex());
                 break;
         }
         this.update();
     }
 
     public boolean searchAndPlay(int start, int end) {
-        String searchText = searchTextArea.getText().toLowerCase().replaceAll("\n", "");
+        String searchText = window.searchTextArea.getText().toLowerCase().replaceAll("\n", "");
         for (int i = start; i < end; i++) {
             Track t = playlist.get(i);
             if ((t.id() + t.name().toLowerCase()).contains(searchText)) {
@@ -127,20 +125,20 @@ public class Apex {
         clip.stop();
         this.index = index;
         Util.run(() -> clip.play(track));
-        trackList.setSelectedIndex(index);
+        window.trackList.setSelectedIndex(index);
         updateScrollBar();
-        trackName.setText(STR."NOW PLAYING: \{track.name()} (\{index + 1}/\{playlist.size()})");
+        window.trackName.setText(STR."NOW PLAYING: \{track.name()} (\{index + 1}/\{playlist.size()})");
     }
 
     public void update() {
-        next.setEnabled(shuffle || index != playlist.size() - 1);
-        previous.setEnabled(shuffle || index != 0);
-        stop.setEnabled(!clip.isStopped());
-        playPause.setText(clip.isPlaying() ? "Pause" : "Play");
+        window.next.setEnabled(shuffle || index != playlist.size() - 1);
+        window.previous.setEnabled(shuffle || index != 0);
+        window.stop.setEnabled(!clip.isStopped());
+        window.playPause.setText(clip.isPlaying() ? "Pause" : "Play");
     }
 
     private void updateScrollBar() {
-        JScrollBar scrollBar = trackListPane.getVerticalScrollBar();
+        JScrollBar scrollBar = window.trackListPane.getVerticalScrollBar();
         int rowHeight = scrollBar.getMaximum() / playlist.size();
         int firstVisibleIndex = scrollBar.getValue() / rowHeight;
         int visibleAmount = scrollBar.getVisibleAmount() / rowHeight;
