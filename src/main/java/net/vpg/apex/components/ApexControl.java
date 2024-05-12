@@ -24,15 +24,12 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.function.Consumer;
 
 import static net.vpg.apex.Apex.APEX;
 
 public class ApexControl {
-    public static final WrappedTextArea trackId;
     public static final WrappedTextArea trackName;
-    public static final WrappedTextArea trackIndex;
-    public static final SearchTextArea searchTextArea;
+    public static final JTextArea searchTextArea;
     public static final JButton next;
     public static final JButton previous;
     public static final JButton shuffleButton;
@@ -44,10 +41,6 @@ public class ApexControl {
     public static final JScrollPane trackListPane;
 
     static {
-        trackListModel = new DefaultListModel<>();
-        trackName = makeTextArea("Track Name", textArea -> textArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12)));
-        trackId = makeTextArea("Track ID", textArea -> textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12)));
-        trackIndex = makeTextArea("Index of the track in the playlist");
         searchTextArea = new SearchTextArea("Search and Play");
         searchTextArea.addKeyListener(new KeyAdapter() {
             @Override
@@ -65,7 +58,8 @@ public class ApexControl {
         playPause = makeButton("Play", "Play the track", 4);
         search = makeButton("Search and Play", "Search a track", 5);
 
-        trackList = new JList<>(ApexControl.trackListModel);
+        trackListModel = new DefaultListModel<>();
+        trackList = new JList<>(trackListModel);
         trackList.setVisibleRowCount(7);
         trackList.addMouseListener(new MouseAdapter() {
             @Override
@@ -93,11 +87,8 @@ public class ApexControl {
         return button;
     }
 
-    @SafeVarargs
-    private static WrappedTextArea makeTextArea(String toolTip, Consumer<WrappedTextArea>... actions) {
+    private static WrappedTextArea makeTextArea(String toolTip) {
         WrappedTextArea textArea = new WrappedTextArea();
-        for (var action : actions)
-            action.accept(textArea);
         textArea.setToolTipText(toolTip);
         return textArea;
     }

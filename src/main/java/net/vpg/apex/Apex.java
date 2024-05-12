@@ -126,17 +126,14 @@ public class Apex {
         Util.run(() -> clip.play(track));
         trackList.setSelectedIndex(index);
         updateScrollBar();
-        trackName.setText(track.name());
-        trackId.setText(track.id());
+        trackName.setText(STR."NOW PLAYING: \{track.name()} (\{index + 1}/\{playlist.size()})");
     }
 
     public void update() {
-        trackIndex.setText(STR."Track \{index + 1}/\{playlist.size()}");
         next.setEnabled(shuffle || index != playlist.size() - 1);
         previous.setEnabled(shuffle || index != 0);
         stop.setEnabled(!clip.isStopped());
         playPause.setText(clip.isPlaying() ? "Pause" : "Play");
-        playPause.setToolTipText(clip.isPlaying() ? "Pause the track" : "Play the track");
     }
 
     private void updateScrollBar() {
