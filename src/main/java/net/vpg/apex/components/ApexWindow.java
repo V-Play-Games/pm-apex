@@ -27,23 +27,19 @@ import java.awt.*;
 import static net.vpg.apex.components.ApexControl.*;
 
 public class ApexWindow extends JFrame {
-    private static final ApexWindow instance = new ApexWindow();
-
-    private ApexWindow() {
-        Util.addBox(this, null,
-            Util.apply(new JTabbedPane(),
-                pane -> pane.add(playerPanel()),
-                pane -> pane.add(creditsPanel()))
+    public ApexWindow() {
+        add(Util.apply(new JTabbedPane(),
+            pane -> pane.add(playerPanel()),
+            pane -> pane.add(creditsPanel()))
         );
-        Util.addBox(this, "South",
-            searchTextArea,
+        addBox(this, "South",
             Util.apply(new JPanel(),
-                panel -> panel.setAlignmentX(0),
+                panel -> panel.setLayout(new FlowLayout(FlowLayout.CENTER)),
+                panel -> panel.add(searchTextArea),
                 panel -> panel.add(search)),
             Box.createVerticalStrut(5),
             Util.apply(new JPanel(),
                 panel -> panel.setLayout(new FlowLayout(FlowLayout.CENTER)),
-                panel -> panel.setAlignmentX(0),
                 panel -> panel.add(shuffleButton),
                 panel -> panel.add(previous),
                 panel -> panel.add(stop),
@@ -60,47 +56,69 @@ public class ApexWindow extends JFrame {
     }
 
     private JPanel playerPanel() {
-        JPanel panel = (new JPanel());
-        panel.setName("Player");
-        panel.setBorder(new EmptyBorder(15, 15, 0, 15));
-        panel.setLayout(new BorderLayout());
-        Util.addBox(panel, "North",
+        return createPanel("Player",
             trackListPane,
             Box.createVerticalStrut(10),
             trackName,
-            Box.createVerticalStrut(5));
-        return panel;
+            Box.createVerticalStrut(5)
+        );
     }
 
     private JPanel creditsPanel() {
-        JPanel panel = new JPanel();
-        panel.setName("Credits and Info");
-        panel.setBorder(new EmptyBorder(15, 15, 0, 15));
-        panel.setLayout(new BorderLayout());
-        Util.addBox(panel, "North",
-            new WrappedTextArea("Welcome to Pokemon Masters Audio Player EX, PM APEX in short."),
+        return createPanel("Credits and Info",
+            createTextArea("Welcome to Pokemon Masters Audio Player EX, PM APEX in short."),
             Box.createVerticalStrut(10),
-            new WrappedTextArea("""
+            createTextArea("""
                 This is an application made for playing audio tracks from Pokemon Masters.
                 It also has looping support, which means you can loop your favourite battle theme for as long as you want!
                 Although you can't download tracks right now, you can play them online!
                 Have Fun!
                 """),
             Box.createVerticalStrut(20),
-            Util.apply(new WrappedTextArea("Credits"),
+            Util.apply(createTextArea("Credits"),
                 textArea -> textArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14))
             ),
             Box.createVerticalStrut(5),
-            new WrappedTextArea("V Play Games#9783 - The Author and Maintainer of this project"),
+            createTextArea("V Play Games#9783 - The Author and Maintainer of this project"),
             Box.createVerticalStrut(3),
-            new WrappedTextArea("Trilarion (GitHub) - For Providing OGG File Support"),
+            createTextArea("Trilarion (GitHub) - For Providing OGG File Support"),
             Box.createVerticalStrut(3),
-            new WrappedTextArea("Made with Java, Built with Maven 3")
+            createTextArea("Made with Java, Built with Maven 3")
         );
-        return panel;
     }
 
-    public static ApexWindow getInstance() {
-        return instance;
+    private JPanel createPanel(String name, Component... components) {
+        return Util.apply(new JPanel(),
+            panel -> panel.setName(name),
+            panel -> panel.setBorder(new EmptyBorder(15, 15, 0, 15)),
+            panel -> panel.setLayout(new BorderLayout()),
+            panel -> addBox(panel, "North", components)
+        );
+    }
+
+    private void addBox(Container container, String constraints, Component... components) {
+        Box box = Box.createVerticalBox();
+        container.add(box, constraints);
+        for (Component component : components)
+            box.add(component);
+    }
+
+    public static JTextArea createTextArea(String text) {
+        JTextArea textArea = new JTextArea() {
+            public void paintComponent(Graphics graphics) {
+                setBackground(getParent().getBackground());
+                super.paintComponent(graphics);
+            }
+        };
+        textArea.setAlignmentX(0);
+        textArea.setBorder(new EmptyBorder(0, 0, 0, 0));
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setFont(new JLabel().getFont());
+        textArea.setFocusable(false);
+        textArea.setRows(0);
+        textArea.invalidate();
+        return textArea;
     }
 }

@@ -62,15 +62,6 @@ public class Util {
         }
     }
 
-    public static Box addBox(Container container, String constraints, Component... components) {
-        Box box = Box.createVerticalBox();
-        container.add(box, constraints);
-        for (Component component : components) {
-            box.add(component);
-        }
-        return box;
-    }
-
     @SuppressWarnings("ConstantConditions")
     public static List<File> collectFilesOf(File base) {
         assert base.isDirectory();

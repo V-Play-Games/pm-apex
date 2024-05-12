@@ -29,7 +29,7 @@ import java.awt.event.MouseEvent;
 import static net.vpg.apex.Apex.APEX;
 
 public class ApexControl {
-    public static final WrappedTextArea trackName;
+    public static final JTextArea trackName;
     public static final JTextArea searchTextArea;
     public static final JButton next;
     public static final JButton previous;
@@ -42,7 +42,7 @@ public class ApexControl {
     public static final JScrollPane trackListPane;
 
     static {
-        trackName = new WrappedTextArea("Loading...");
+        trackName = ApexWindow.createTextArea("Loading...");
         trackName.setToolTipText("Track Name");
 
         searchTextArea = Util.apply(new JTextArea("Search and Play"),

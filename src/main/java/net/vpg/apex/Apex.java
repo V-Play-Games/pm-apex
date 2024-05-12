@@ -33,14 +33,16 @@ import static net.vpg.apex.components.ApexControl.*;
 public class Apex {
     public static final Apex APEX = new Apex();
     public static final Executor EXECUTOR = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 0).factory());
+    private ApexWindow window;
     private final ApexClip clip = new ApexClip();
     private List<Track> playlist = new ArrayList<>();
     private int index;
-    private boolean shuffle = false;
+    private boolean shuffle;
 
-    public static void main() {
-        Util.apply(UIManager.getSystemLookAndFeelClassName(), UIManager::setLookAndFeel);
-        ApexWindow.getInstance().setVisible(true);
+    public static void main() throws Exception {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        APEX.window = new ApexWindow();
+        APEX.window.setVisible(true);
         APEX.updatePlaylist();
         APEX.setIndex(0);
         APEX.clip.stop();
@@ -92,6 +94,7 @@ public class Apex {
             case 5: // Search
                 if (!searchAndPlay(index + 1, playlist.size()))
                     searchAndPlay(0, index);
+                searchTextArea.setText("");
                 break;
             case 6: // Update
                 updatePlaylist();
