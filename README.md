@@ -10,7 +10,7 @@ It is a small hobby project aiming to create an audio player dedicated to Pokém
 
 So let's get to the point, how to install and run this
 
-1. Download pm-apex.zip from [here](https://github.com/V-Play-Games/pm-apex/releases/)
+1. Download pm-apex.rar from [here](https://github.com/V-Play-Games/pm-apex/releases/)
 2. Extract the zip to an empty folder.
 3. Run pm-apex.bat file.
 
