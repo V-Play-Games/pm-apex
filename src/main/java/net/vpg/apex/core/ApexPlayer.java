@@ -100,15 +100,17 @@ public class ApexPlayer {
     }
 
     private void playAudio() {
-        int frameRate = (int) format.getFrameRate();
+        int maxFrames = (int) format.getFrameRate() / 20; // push at most 50 ms of audio
         int frameSize = format.getFrameSize();
         while (playing) {
             int limit = loopCount == 0 ? data.getFrameLength() : loopEnd;
-            int len = Math.min(limit - data.getReadPos(), frameRate / 20); // push at most 50 ms of audio
+            int len = Math.min(limit - data.getReadPos(), maxFrames);
             byte[] b = data.readData(len);
-            sourceDataLine.write(b, 0, len * frameSize);
+            sourceDataLine.write(b, 0, b.length);
             if (data.getReadPos() == loopEnd && loopCount != 0) {
                 data.setReadPos(loopStart);
+                b = data.readData(maxFrames - len);
+                sourceDataLine.write(b, 0, b.length);
                 if (loopCount != Clip.LOOP_CONTINUOUSLY)
                     loopCount--;
             }

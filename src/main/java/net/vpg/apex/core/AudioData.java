@@ -52,7 +52,7 @@ public class AudioData {
             sourceFormat.getSampleRate(),
             16,
             sourceFormat.getChannels(),
-            4,
+            sourceFormat.getChannels() * 2,
             sourceFormat.getSampleRate(), // Note: Keep Sample Rate = Frame Rate
             sourceFormat.isBigEndian()
         );
@@ -97,7 +97,6 @@ public class AudioData {
             Util.sleep(25);
             return readData(frames);
         }
-        System.out.println("Error!");
         throw new IllegalStateException();
     }
 
@@ -110,14 +109,19 @@ public class AudioData {
             cachedPos = off / frameSize;
         }
         caching = false;
-        stream.close();
-        stream = null;
+        if (stream != null) {
+            stream.close();
+            stream = null;
+        }
     }
 
-    public void close() {
+    public void close() throws IOException {
         caching = false;
         data = null;
         format = null;
-        stream = null;
+        if (stream != null) {
+            stream.close();
+            stream = null;
+        }
     }
 }

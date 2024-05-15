@@ -41,16 +41,15 @@ public class Apex {
         window = new ApexWindow(this);
         window.setVisible(true);
         updatePlaylist();
-        updateUI(0);
-        clip.stop();
         updateButtons();
     }
 
-    public void setIndex(int index) {
-        if (shuffle) {
+    public void setIndex(int index, boolean shuffleAffected) {
+        if (index < 0)
+            return;
+        if (shuffleAffected && shuffle)
             index = (int) (Math.random() * playlist.size());
-        }
-        updateUI(index);
+        updateTrack(index);
     }
 
     public void takeAction(int action) {
@@ -59,8 +58,8 @@ public class Apex {
 
     private void takeAction0(int action) {
         switch (action) {
-            case NEXT -> setIndex(index + 1);
-            case PREVIOUS -> setIndex(index - 1);
+            case NEXT -> setIndex(index + 1, true);
+            case PREVIOUS -> setIndex(index - 1, true);
             case SHUFFLE -> {
                 shuffle = !shuffle;
                 window.shuffleButton.setText("Shuffle " + (shuffle ? "ON" : "OFF"));
@@ -68,25 +67,20 @@ public class Apex {
             case STOP -> player.stop();
             case PLAY_PAUSE -> player.togglePlayPause();
             case SEARCH -> {
+                updateScrollBar(search(index + 1, playlist.size()));
                 window.searchTextArea.setText("");
-                if (!searchAndPlay(index + 1, playlist.size()))
-                    searchAndPlay(0, index);
             }
-            case CLICK_ON_PLAYLIST -> setIndex(window.trackList.getSelectedIndex());
+            case CLICK_ON_PLAYLIST -> setIndex(window.trackList.getSelectedIndex(), false);
         }
-        this.updateButtons();
+        updateButtons();
     }
 
-    private boolean searchAndPlay(int start, int end) {
-        String searchText = window.searchTextArea.getText().toLowerCase().replaceAll("\n", "");
-        for (int i = start; i < end; i++) {
-            Track t = playlist.get(i);
-            if ((t.id() + t.name().toLowerCase()).contains(searchText)) {
-                updateUI(i);
-                return true;
-            }
-        }
-        return false;
+    private int search(int start, int end) {
+        String searchText = window.searchTextArea.getText().toLowerCase().replace("\n", "");
+        for (int i = start; i < end; i++)
+            if (playlist.get(i).id().toLowerCase().contains(searchText))
+                return i;
+        return start != 0 ? search(0, start) : -1;
     }
 
     private void updatePlaylist() {
@@ -96,19 +90,18 @@ public class Apex {
             .toList();
         window.trackListModel.clear();
         window.trackListModel.addAll(playlist.stream().map(Track::name).collect(Collectors.toList()));
-        window.trackList.setSelectedIndex(index);
         Util.sleep(200);
-        updateScrollBar();
+        updateScrollBar(index);
     }
 
-    private void updateUI(int index) {
-        clip.stop();
-        this.index = index;
-        Track track = playlist.get(index);
-        Util.run(() -> clip.play(track));
-        window.trackList.setSelectedIndex(index);
-        updateScrollBar();
-        window.trackName.setText(STR."NOW PLAYING: \{track.name()} (\{index + 1}/\{playlist.size()})");
+    private void updateTrack(int i) {
+        window.trackName.setText("Loading...");
+        player.stop();
+        index = i;
+        Track track = playlist.get(i);
+        updateScrollBar(index);
+        Util.run(() -> player.play(track));
+        window.trackName.setText(STR."Now Playing: \{track.name()} (\{i + 1}/\{playlist.size()})");
     }
 
     private void updateButtons() {
@@ -118,15 +111,16 @@ public class Apex {
         window.playPause.setText(player.isPlaying() ? "Pause" : "Play");
     }
 
-    private void updateScrollBar() {
+    private void updateScrollBar(int i) {
+        window.trackList.setSelectedIndex(i);
         JScrollBar scrollBar = window.trackListPane.getVerticalScrollBar();
         int rowHeight = scrollBar.getMaximum() / playlist.size();
         int firstVisibleIndex = scrollBar.getValue() / rowHeight;
         int visibleAmount = scrollBar.getVisibleAmount() / rowHeight;
-        if (index < firstVisibleIndex) {
-            scrollBar.setValue(index * rowHeight);
-        } else if (index > firstVisibleIndex + visibleAmount - 1) {
-            scrollBar.setValue(Math.min(index - visibleAmount + 1, playlist.size() - visibleAmount + 1) * rowHeight);
+        if (i < firstVisibleIndex) {
+            scrollBar.setValue(i * rowHeight);
+        } else if (i > firstVisibleIndex + visibleAmount - 1) {
+            scrollBar.setValue(Math.min(i - visibleAmount + 1, playlist.size() - visibleAmount + 1) * rowHeight);
         }
     }
 

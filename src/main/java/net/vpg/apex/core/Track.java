@@ -16,7 +16,6 @@
 
 package net.vpg.apex.core;
 
-import net.vpg.apex.Util;
 import net.vpg.vjson.value.JSONObject;
 import net.vpg.vjson.value.JSONValue;
 import org.slf4j.Logger;
@@ -25,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
@@ -74,9 +74,10 @@ public record Track(
         return Resources.get(STR."\{id}.ogg");
     }
 
-    public URL getURL() {
-        return Util.get(() -> URI.create(Resources.getProperty("additionalRes")
+    public URL getURL() throws MalformedURLException {
+        return URI.create(Resources.getProperty("additionalRes")
             .toString()
-            .formatted(category, id, "ogg")).toURL());
+            .formatted(category, id, "ogg")
+            .replace(" ", "%20")).toURL();
     }
 }

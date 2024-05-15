@@ -22,10 +22,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
 import static net.vpg.apex.Apex.Action.*;
 
@@ -46,10 +43,10 @@ public class ApexWindow extends JFrame {
     public ApexWindow(Apex apex) {
         this.apex = apex;
 
-        trackName = createTextArea("Loading...");
+        trackName = createTextArea("Click on a track to get started!");
         trackName.setToolTipText("Track Name");
 
-        searchTextArea = Util.apply(new JTextArea("Search and Play"),
+        searchTextArea = Util.apply(new JTextArea(1, 10),
             search -> search.addKeyListener(new KeyAdapter() {
                 public void keyTyped(KeyEvent e) {
                     if (e.getKeyChar() == '\n')
@@ -70,7 +67,7 @@ public class ApexWindow extends JFrame {
         shuffleButton = createButton("Shuffle OFF", "Shuffle the playlist", SHUFFLE);
         stop = createButton("Stop", "Stop the track", STOP);
         playPause = createButton("Play", "Play the track", PLAY_PAUSE);
-        search = createButton("Search and Play", "Search a track", SEARCH);
+        search = createButton("Search", "Search a track", SEARCH);
 
         trackListModel = new DefaultListModel<>();
         trackList = new JList<>(trackListModel);
@@ -102,24 +99,15 @@ public class ApexWindow extends JFrame {
             pane -> pane.add(createCreditsPanel()))
         );
         createBox(this, "South",
-            Util.apply(new JPanel(),
-                panel -> panel.setLayout(new FlowLayout(FlowLayout.CENTER)),
-                panel -> panel.add(searchTextArea),
-                panel -> panel.add(search)),
+            createPanel(searchTextArea, search),
             Box.createVerticalStrut(5),
-            Util.apply(new JPanel(),
-                panel -> panel.setLayout(new FlowLayout(FlowLayout.CENTER)),
-                panel -> panel.add(shuffleButton),
-                panel -> panel.add(previous),
-                panel -> panel.add(stop),
-                panel -> panel.add(playPause),
-                panel -> panel.add(next))
+            createPanel(shuffleButton, previous, stop, playPause, next)
         );
         setTitle("PM APEX");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
-        setMinimumSize(new Dimension(500, 400));
+        setMinimumSize(new Dimension(500, 360));
         setIconImage(Resources.get("icon.png", ImageIO::read));
         pack();
     }
@@ -162,6 +150,16 @@ public class ApexWindow extends JFrame {
             panel -> panel.setBorder(new EmptyBorder(15, 15, 0, 15)),
             panel -> panel.setLayout(new BorderLayout()),
             panel -> createBox(panel, "North", components)
+        );
+    }
+
+    private JPanel createPanel(Component... components) {
+        return Util.apply(new JPanel(),
+            panel -> panel.setLayout(new FlowLayout(FlowLayout.CENTER)),
+            panel -> {
+                for (Component component : components)
+                    panel.add(component);
+            }
         );
     }
 
