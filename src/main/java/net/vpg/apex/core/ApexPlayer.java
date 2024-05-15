@@ -21,7 +21,7 @@ import net.vpg.apex.Apex;
 import javax.sound.sampled.*;
 import java.io.IOException;
 
-public class ApexClip {
+public class ApexPlayer {
     private SourceDataLine sourceDataLine;
     private AudioFormat format;
     private volatile AudioData data;

@@ -16,7 +16,7 @@
 
 package net.vpg.apex;
 
-import net.vpg.apex.core.ApexClip;
+import net.vpg.apex.core.ApexPlayer;
 import net.vpg.apex.core.Track;
 
 import javax.swing.*;
@@ -30,7 +30,7 @@ import static net.vpg.apex.Apex.Action.*;
 
 public class Apex {
     public static final Executor EXECUTOR = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 0).factory());
-    private final ApexClip clip = new ApexClip();
+    private final ApexPlayer player = new ApexPlayer();
     private ApexWindow window;
     private List<Track> playlist;
     private int index;
@@ -65,8 +65,8 @@ public class Apex {
                 shuffle = !shuffle;
                 window.shuffleButton.setText("Shuffle " + (shuffle ? "ON" : "OFF"));
             }
-            case STOP -> clip.stop();
-            case PLAY_PAUSE -> clip.togglePlayPause();
+            case STOP -> player.stop();
+            case PLAY_PAUSE -> player.togglePlayPause();
             case SEARCH -> {
                 window.searchTextArea.setText("");
                 if (!searchAndPlay(index + 1, playlist.size()))
@@ -114,8 +114,8 @@ public class Apex {
     private void updateButtons() {
         window.next.setEnabled(shuffle || index != playlist.size() - 1);
         window.previous.setEnabled(shuffle || index != 0);
-        window.stop.setEnabled(!clip.isStopped());
-        window.playPause.setText(clip.isPlaying() ? "Pause" : "Play");
+        window.stop.setEnabled(!player.isStopped());
+        window.playPause.setText(player.isPlaying() ? "Pause" : "Play");
     }
 
     private void updateScrollBar() {
