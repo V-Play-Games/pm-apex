@@ -57,7 +57,7 @@
     <dependency>
       <groupId>com.github.v-play-games</groupId>
       <artifactId>vjson</artifactId>
-      <version>0.0.3</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.github.trilarion</groupId>
