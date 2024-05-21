@@ -17,25 +17,31 @@
 package net.vpg.apex;
 
 import net.vpg.apex.core.Resources;
+import net.vpg.apex.core.Track;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.vpg.apex.Apex.Action.*;
 
 public class ApexWindow extends JFrame {
     public final JTextArea trackName;
     public final JTextArea searchTextArea;
+    public final JComboBox<String> categories;
     public final JButton next;
     public final JButton previous;
     public final JButton shuffleButton;
     public final JButton playPause;
     public final JButton stop;
     public final JButton search;
-    public final DefaultListModel<String> trackListModel;
     public final JList<String> trackList;
     public final JScrollPane trackListPane;
     private final Apex apex;
@@ -43,7 +49,7 @@ public class ApexWindow extends JFrame {
     public ApexWindow(Apex apex) {
         this.apex = apex;
 
-        trackName = createTextArea("Click on a track to get started!");
+        trackName = createTextArea("Double-click on a track to get started!");
         trackName.setToolTipText("Track Name");
 
         searchTextArea = Util.apply(new JTextArea(1, 10),
@@ -62,15 +68,24 @@ public class ApexWindow extends JFrame {
             search -> search.setRows(0)
         );
 
-        next = createButton("Next Track", "Go to the next track", NEXT);
-        previous = createButton("Previous Track", "Go to the previous track", PREVIOUS);
-        shuffleButton = createButton("Shuffle OFF", "Shuffle the playlist", SHUFFLE);
-        stop = createButton("Stop", "Stop the track", STOP);
-        playPause = createButton("Play", "Play the track", PLAY_PAUSE);
-        search = createButton("Search", "Search a track", SEARCH);
+        next = createButton("Next Track", "Go to the next track", NEXT, false);
+        previous = createButton("Previous Track", "Go to the previous track", PREVIOUS, false);
+        shuffleButton = createButton("Shuffle OFF", "Shuffle the playlist", SHUFFLE, true);
+        stop = createButton("Stop", "Stop the track", STOP, false);
+        playPause = createButton("Play", "Play the track", PLAY_PAUSE, false);
+        search = createButton("Search", "Search a track", SEARCH, true);
 
-        trackListModel = new DefaultListModel<>();
-        trackList = new JList<>(trackListModel);
+        List<String> categoriesList = Track.entries.values()
+            .stream()
+            .map(Track::category)
+            .distinct()
+            .sorted()
+            .collect(Collectors.toList());
+        categoriesList.addFirst("-- Select a category --");
+        categories = new JComboBox<>(categoriesList.toArray(String[]::new));
+        categories.addItemListener(_ -> apex.takeAction(UPDATE_CATEGORY));
+
+        trackList = new JList<>();
         trackList.setVisibleRowCount(7);
         trackList.addMouseListener(new MouseAdapter() {
             @Override
@@ -114,6 +129,8 @@ public class ApexWindow extends JFrame {
 
     private JPanel createPlayerPanel() {
         return createPanel("Player",
+            categories,
+            Box.createVerticalStrut(5),
             trackListPane,
             Box.createVerticalStrut(10),
             trackName,
@@ -127,7 +144,7 @@ public class ApexWindow extends JFrame {
             Box.createVerticalStrut(10),
             createTextArea("""
                 This is an application made for playing audio tracks from Pokemon Masters.
-                It also has looping support, which means you can loop your favourite battle theme for as long as you want!
+                It also has looping support, so go loop your favourite battle theme for as long as you want!
                 Although you can't download tracks right now, you can play them online!
                 Have Fun!
                 """),
@@ -163,10 +180,11 @@ public class ApexWindow extends JFrame {
         );
     }
 
-    private JButton createButton(String name, String toolTip, int action) {
+    private JButton createButton(String name, String toolTip, int action, boolean enabled) {
         JButton button = new JButton(name);
         button.setToolTipText(toolTip);
         button.addActionListener(_ -> apex.takeAction(action));
+        button.setEnabled(enabled);
         return button;
     }
 

@@ -17,11 +17,12 @@
 package net.vpg.apex;
 
 import net.vpg.apex.core.ApexPlayer;
+import net.vpg.apex.core.ApexPlaylist;
 import net.vpg.apex.core.Track;
 
 import javax.swing.*;
 import java.util.Comparator;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -30,26 +31,31 @@ import static net.vpg.apex.Apex.Action.*;
 
 public class Apex {
     public static final Executor EXECUTOR = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 0).factory());
-    private final ApexPlayer player = new ApexPlayer();
-    private ApexWindow window;
-    private List<Track> playlist;
-    private int index;
+    private final ApexPlayer player;
+    private final ApexWindow window;
+    private final Map<String, ApexPlaylist> playlists;
+    private ApexPlaylist playlistPlaying;
+    private ApexPlaylist playlistShown;
+    private int index = -1;
     private boolean shuffle;
 
-    public void main() throws Exception {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    {
+        Util.run(() -> UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()));
+        player = new ApexPlayer();
         window = new ApexWindow(this);
-        window.setVisible(true);
-        updatePlaylist();
-        updateButtons();
+        playlists = Track.entries
+            .values()
+            .stream()
+            .sorted(Comparator.comparing(Track::id))
+            .collect(Collectors.groupingBy(Track::category))
+            .entrySet()
+            .stream()
+            .map(e -> new ApexPlaylist(e.getKey(), e.getValue()))
+            .collect(Collectors.toMap(ApexPlaylist::getCategory, x -> x));
     }
 
-    public void setIndex(int index, boolean shuffleAffected) {
-        if (index < 0)
-            return;
-        if (shuffleAffected && shuffle)
-            index = (int) (Math.random() * playlist.size());
-        updateTrack(index);
+    public void main() {
+        window.setVisible(true);
     }
 
     public void takeAction(int action) {
@@ -58,54 +64,60 @@ public class Apex {
 
     private void takeAction0(int action) {
         switch (action) {
-            case NEXT -> setIndex(index + 1, true);
-            case PREVIOUS -> setIndex(index - 1, true);
-            case SHUFFLE -> {
-                shuffle = !shuffle;
-                window.shuffleButton.setText("Shuffle " + (shuffle ? "ON" : "OFF"));
-            }
+            case NEXT -> updateTrack(index + 1, false);
+            case PREVIOUS -> updateTrack(index - 1, false);
+            case SHUFFLE -> window.shuffleButton.setText("Shuffle " + ((shuffle = !shuffle) ? "ON" : "OFF"));
             case STOP -> player.stop();
             case PLAY_PAUSE -> player.togglePlayPause();
-            case SEARCH -> {
-                updateScrollBar(search(index + 1, playlist.size()));
-                window.searchTextArea.setText("");
-            }
-            case CLICK_ON_PLAYLIST -> setIndex(window.trackList.getSelectedIndex(), false);
+            case SEARCH -> search(playlistShown == playlistPlaying ? index + 1 : 0, playlistShown.size());
+            case CLICK_ON_PLAYLIST -> updateTrack(window.trackList.getSelectedIndex(), true);
+            case UPDATE_CATEGORY -> updatePlaylistShown(playlists.get(window.categories.getSelectedItem().toString()));
         }
         updateButtons();
     }
 
-    private int search(int start, int end) {
+    private void search(int start, int end) {
         String searchText = window.searchTextArea.getText().toLowerCase().replace("\n", "");
-        for (int i = start; i < end; i++)
-            if (playlist.get(i).id().toLowerCase().contains(searchText))
-                return i;
-        return start != 0 ? search(0, start) : -1;
+        for (int i = start; i < end; i++) {
+            if (playlistShown.get(i).id().toLowerCase().contains(searchText)) {
+                updateScrollBar(i);
+                window.searchTextArea.setText("");
+                return;
+            }
+        }
+        if (start != 0) {
+            search(0, start);
+        }
     }
 
-    private void updatePlaylist() {
-        playlist = Track.entries.values()
-            .stream()
-            .sorted(Comparator.comparing(Track::id))
-            .toList();
-        window.trackListModel.clear();
-        window.trackListModel.addAll(playlist.stream().map(Track::name).collect(Collectors.toList()));
-        Util.sleep(200);
-        updateScrollBar(index);
+    private void updatePlaylistShown(ApexPlaylist playlist) {
+        if (playlistShown == playlist)
+            return;
+        playlistShown = playlist;
+        window.trackList.setModel(playlistShown.getModel());
+        window.categories.setSelectedItem(playlist.getCategory());
     }
 
-    private void updateTrack(int i) {
+    private void updateTrack(int i, boolean playlistClick) {
+        if (i < 0)
+            return;
+        if (playlistClick)
+            playlistPlaying = playlistShown;
+        else
+            updatePlaylistShown(playlistPlaying);
         window.trackName.setText("Loading...");
         player.stop();
-        index = i;
-        Track track = playlist.get(i);
+        index = playlistClick || !shuffle ? i : (int) (Math.random() * playlistPlaying.size());
+        Track track = playlistPlaying.get(index);
         updateScrollBar(index);
         Util.run(() -> player.play(track));
-        window.trackName.setText(STR."Now Playing: \{track.name()} (\{i + 1}/\{playlist.size()})");
+        window.trackName.setText(STR."Now Playing: \{track.name()} (\{index + 1}/\{playlistPlaying.size()})");
     }
 
     private void updateButtons() {
-        window.next.setEnabled(shuffle || index != playlist.size() - 1);
+        if (index == -1)
+            return;
+        window.next.setEnabled(shuffle || index != playlistPlaying.size() - 1);
         window.previous.setEnabled(shuffle || index != 0);
         window.stop.setEnabled(!player.isStopped());
         window.playPause.setText(player.isPlaying() ? "Pause" : "Play");
@@ -113,14 +125,14 @@ public class Apex {
 
     private void updateScrollBar(int i) {
         window.trackList.setSelectedIndex(i);
-        JScrollBar scrollBar = window.trackListPane.getVerticalScrollBar();
-        int rowHeight = scrollBar.getMaximum() / playlist.size();
+        var scrollBar = window.trackListPane.getVerticalScrollBar();
+        int rowHeight = scrollBar.getMaximum() / playlistShown.size();
         int firstVisibleIndex = scrollBar.getValue() / rowHeight;
         int visibleAmount = scrollBar.getVisibleAmount() / rowHeight;
         if (i < firstVisibleIndex) {
             scrollBar.setValue(i * rowHeight);
         } else if (i > firstVisibleIndex + visibleAmount - 1) {
-            scrollBar.setValue(Math.min(i - visibleAmount + 1, playlist.size() - visibleAmount + 1) * rowHeight);
+            scrollBar.setValue(Math.min(i - visibleAmount + 1, playlistPlaying.size() - visibleAmount + 1) * rowHeight);
         }
     }
 
@@ -132,5 +144,6 @@ public class Apex {
         public static final int PLAY_PAUSE = 5;
         public static final int SEARCH = 6;
         public static final int CLICK_ON_PLAYLIST = 7;
+        public static final int UPDATE_CATEGORY = 8;
     }
 }
