@@ -25,12 +25,14 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static net.vpg.apex.Apex.Action.*;
 
 public class Apex {
-    public static final Executor EXECUTOR = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 0).factory());
+    public static final Executor EXECUTOR
+        = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 1).factory());
     private final ApexPlayer player;
     private final ApexWindow window;
     private final Map<String, ApexPlaylist> playlists;
@@ -52,6 +54,22 @@ public class Apex {
             .stream()
             .map(e -> new ApexPlaylist(e.getKey(), e.getValue()))
             .collect(Collectors.toMap(ApexPlaylist::getCategory, x -> x));
+        //noinspection resource
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            if (player.isPlaying()) {
+                int len = player.getLength();
+                if (window.seekBar.getValueIsAdjusting()) {
+                    int seek = player.getLength() * window.seekBar.getValue() / 10000;
+                    window.progress.setText(String.format("%02d:%02d / %02d:%02d",
+                        seek / 60, seek % 60, len / 60, len % 60));
+                } else {
+                    int pos = player.getPosition();
+                    window.seekBar.setValue(pos * 10000 / len);
+                    window.progress.setText(String.format("%02d:%02d / %02d:%02d",
+                        pos / 60, pos % 60, len / 60, len % 60));
+                }
+            }
+        }, 50, 50, TimeUnit.MILLISECONDS);
     }
 
     public void main() {
@@ -71,7 +89,11 @@ public class Apex {
             case PLAY_PAUSE -> player.togglePlayPause();
             case SEARCH -> search(playlistShown == playlistPlaying ? index + 1 : 0, playlistShown.size());
             case CLICK_ON_PLAYLIST -> updateTrack(window.trackList.getSelectedIndex(), true);
-            case UPDATE_CATEGORY -> updatePlaylistShown(playlists.get(window.categories.getSelectedItem().toString()));
+            case UPDATE_CATEGORY -> updatePlaylistShown(playlists.getOrDefault(
+                window.categories.getSelectedItem().toString(),
+                ApexPlaylist.EMPTY
+            ));
+            case PROGRESS_SEEK -> updateProgress();
         }
         updateButtons();
     }
@@ -87,6 +109,12 @@ public class Apex {
         }
         if (start != 0) {
             search(0, start);
+        }
+    }
+
+    private void updateProgress() {
+        if (window.seekBar.isEnabled()) {
+            player.setPosition(player.getLength() * window.seekBar.getValue() / 10000);
         }
     }
 
@@ -120,6 +148,8 @@ public class Apex {
         window.next.setEnabled(shuffle || index != playlistPlaying.size() - 1);
         window.previous.setEnabled(shuffle || index != 0);
         window.stop.setEnabled(!player.isStopped());
+        window.seekBar.setEnabled(!player.isStopped());
+        window.playPause.setEnabled(true);
         window.playPause.setText(player.isPlaying() ? "Pause" : "Play");
     }
 
@@ -145,5 +175,6 @@ public class Apex {
         public static final int SEARCH = 6;
         public static final int CLICK_ON_PLAYLIST = 7;
         public static final int UPDATE_CATEGORY = 8;
+        public static final int PROGRESS_SEEK = 9;
     }
 }

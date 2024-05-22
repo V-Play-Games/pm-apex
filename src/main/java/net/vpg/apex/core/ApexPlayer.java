@@ -87,30 +87,26 @@ public class ApexPlayer {
         loopCount = count;
     }
 
-    public int getMicrosecondLength() {
-        return (int) (data.getFrameLength() * 1000_000 / format.getSampleRate());
+    public int getLength() {
+        return (int) (data.getFrameLength() / format.getFrameRate());
     }
 
-    public int getMicrosecondPosition() {
-        return (int) (data.getReadPos() * 1000_000 / format.getSampleRate());
+    public int getPosition() {
+        return (int) (data.getReadPos() / format.getFrameRate());
     }
 
-    public void setMicrosecondPosition(int microseconds) {
-        data.setReadPos((int) (microseconds / 1000_000 * format.getSampleRate()));
+    public void setPosition(int seconds) {
+        data.setReadPos((int) (seconds * format.getFrameRate()));
     }
 
     private void playAudio() {
-        int maxFrames = (int) format.getFrameRate() / 20; // push at most 50 ms of audio
-        int frameSize = format.getFrameSize();
         while (playing) {
             int limit = loopCount == 0 ? data.getFrameLength() : loopEnd;
-            int len = Math.min(limit - data.getReadPos(), maxFrames);
+            int len = Math.min(limit - data.getReadPos(), (int) format.getFrameRate() / 20);
             byte[] b = data.readData(len);
             sourceDataLine.write(b, 0, b.length);
             if (data.getReadPos() == loopEnd && loopCount != 0) {
                 data.setReadPos(loopStart);
-                b = data.readData(maxFrames - len);
-                sourceDataLine.write(b, 0, b.length);
                 if (loopCount != Clip.LOOP_CONTINUOUSLY)
                     loopCount--;
             }

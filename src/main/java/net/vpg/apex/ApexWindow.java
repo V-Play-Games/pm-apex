@@ -17,7 +17,7 @@
 package net.vpg.apex;
 
 import net.vpg.apex.core.Resources;
-import net.vpg.apex.core.Track;
+import net.vpg.apex.core.ApexTrack;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -44,6 +44,8 @@ public class ApexWindow extends JFrame {
     public final JButton search;
     public final JList<String> trackList;
     public final JScrollPane trackListPane;
+    public final JTextArea progress;
+    public final JSlider seekBar;
     private final Apex apex;
 
     public ApexWindow(Apex apex) {
@@ -105,6 +107,16 @@ public class ApexWindow extends JFrame {
         });
         trackListPane = new JScrollPane(trackList);
 
+        seekBar = new JSlider(SwingConstants.HORIZONTAL, 0, 10000, 0);
+        seekBar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                apex.takeAction(PROGRESS_SEEK);
+            }
+        });
+        seekBar.setEnabled(false);
+        progress = createTextArea("--:--/--:--");
+
         createMainFrame();
     }
 
@@ -128,14 +140,14 @@ public class ApexWindow extends JFrame {
     }
 
     private JPanel createPlayerPanel() {
-        return createPanel("Player",
-            categories,
-            Box.createVerticalStrut(5),
-            trackListPane,
-            Box.createVerticalStrut(10),
-            trackName,
-            Box.createVerticalStrut(5)
-        );
+        return Util.apply(createPanel("Player",
+                categories,
+                Box.createVerticalStrut(5),
+                trackListPane,
+                Box.createVerticalStrut(10)),
+            panel -> createBox(panel, "Center", trackName),
+            panel -> createBox(panel, "West", progress),
+            panel -> createBox(panel, "South", seekBar));
     }
 
     private JPanel createCreditsPanel() {

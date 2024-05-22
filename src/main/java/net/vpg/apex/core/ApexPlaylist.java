@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.util.List;
 
 public class ApexPlaylist {
+    public static final ApexPlaylist EMPTY = new ApexPlaylist("", List.of());
     private final String category;
     private final List<Track> tracks;
     private final DefaultListModel<String> model;
