@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class Resources {
     private static final Logger logger = LoggerFactory.getLogger(Resources.class);
-    private static Resources instance;
+    private static final Resources instance = new Resources();
     private final JSONObject properties;
     private final File dataDir;
     private final Map<String, File> resources;
@@ -42,7 +42,6 @@ public class Resources {
     private Resources() {
         // init basic json info
         properties = Util.compute(Apex.class.getResource("info.json"), JSONObject::parse);
-        String appName = properties.getString("appName");
 
         // init directories
         String os = System.getProperty("os.name");
@@ -54,22 +53,20 @@ public class Resources {
             dataPath = getPathFromEnv("LOCALAPPDATA", false, home, "AppData", "Local");
         else // Linux/Unix
             dataPath = getPathFromEnv("XDG_DATA_HOME", true, home, ".local", "share");
-        dataDir = dataPath.resolve(appName).toFile();
+        dataDir = dataPath.resolve(properties.getString("appName")).toFile();
         //noinspection ResultOfMethodCallIgnored
         dataDir.mkdirs();
-        resources = Util.collectFilesOf(dataDir).stream().collect(Collectors.toMap(File::getName, file -> file));
+        resources = Util.collectFilesOf(dataDir)
+            .stream()
+            .collect(Collectors.toMap(File::getName, file -> file));
         properties.getArray("required")
             .stream()
             .map(JSONValue::toString)
             .forEach(this::shiftFile);
     }
 
-    public static Resources getInstance() {
-        return instance == null ? instance = new Resources() : instance;
-    }
-
     public static File get(String filename) {
-        return getInstance().resources.get(filename);
+        return instance.resources.get(filename);
     }
 
     public static <T> T get(String filename, Util.FunctionWithAChanceOfException<File, T> func) {
@@ -77,12 +74,12 @@ public class Resources {
     }
 
     public static JSONValue getProperty(String prop) {
-        return getInstance().properties.get(prop);
+        return instance.properties.get(prop);
     }
 
-    public File create(String filename) {
-        File file = new File(dataDir, filename);
-        resources.put(filename, file);
+    public static File create(String filename) {
+        File file = new File(instance.dataDir, filename);
+        instance.resources.put(filename, file);
         return file;
     }
 

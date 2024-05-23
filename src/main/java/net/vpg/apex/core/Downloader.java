@@ -36,7 +36,7 @@ public class Downloader {
     }
 
     public static File download(String url, String filename, EventListener listener) throws IOException {
-        return download(url, Resources.getInstance().create(filename), listener);
+        return download(url, Resources.create(filename), listener);
     }
 
     public static File download(String url, File file, EventListener listener) throws IOException {
