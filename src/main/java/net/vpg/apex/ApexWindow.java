@@ -133,8 +133,8 @@ public class ApexWindow extends JFrame {
         setTitle("PM APEX");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setResizable(true);
-        setMinimumSize(new Dimension(500, 360));
+        setResizable(false);
+        setPreferredSize(new Dimension(500, 350));
         setIconImage(Resources.get("icon.png", ImageIO::read));
         pack();
     }
