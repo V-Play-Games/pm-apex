@@ -8,7 +8,7 @@
   </properties>
   <groupId>com.github.v-play-games</groupId>
   <artifactId>pm-apex</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <build>
     <plugins>
       <plugin>
