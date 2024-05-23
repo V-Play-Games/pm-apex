@@ -31,7 +31,7 @@ public class ApexPlayer {
     private boolean playing;
     private boolean stopped = true;
 
-    public void play(Track track) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    public void play(ApexTrack track) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         playing = false;
         if (data != null)
             data.close();

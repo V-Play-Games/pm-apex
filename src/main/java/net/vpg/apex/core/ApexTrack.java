@@ -30,7 +30,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public record Track(
+public record ApexTrack(
     String id,
     String name,
     String category,
@@ -38,16 +38,16 @@ public record Track(
     int loopStart,
     int loopEnd
 ) {
-    private static final Logger logger = LoggerFactory.getLogger(Track.class);
-    public static final Map<String, Track> entries =
+    private static final Logger logger = LoggerFactory.getLogger(ApexTrack.class);
+    public static final Map<String, ApexTrack> entries =
         Resources.get("tracks.json", JSONObject::parse)
             .getArray("entries")
             .stream()
             .map(JSONValue::toObject)
-            .map(Track::new)
-            .collect(Collectors.toMap(Track::id, info -> info));
+            .map(ApexTrack::new)
+            .collect(Collectors.toMap(ApexTrack::id, info -> info));
 
-    public Track(JSONObject data) {
+    public ApexTrack(JSONObject data) {
         this(
             data.getString("id"),
             data.getString("name"),
@@ -58,7 +58,7 @@ public record Track(
         );
     }
 
-    public Track {
+    public ApexTrack {
         logger.info("Loaded Track Info for ID: {}", id);
     }
 

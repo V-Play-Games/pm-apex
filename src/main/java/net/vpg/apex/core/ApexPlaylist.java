@@ -6,21 +6,21 @@ import java.util.List;
 public class ApexPlaylist {
     public static final ApexPlaylist EMPTY = new ApexPlaylist("", List.of());
     private final String category;
-    private final List<Track> tracks;
+    private final List<ApexTrack> tracks;
     private final DefaultListModel<String> model;
 
-    public ApexPlaylist(String category, List<Track> tracks) {
+    public ApexPlaylist(String category, List<ApexTrack> tracks) {
         this.category = category;
         this.tracks = tracks;
         model = new DefaultListModel<>();
-        model.addAll(tracks.stream().map(Track::name).toList());
+        model.addAll(tracks.stream().map(ApexTrack::name).toList());
     }
 
     public String getCategory() {
         return category;
     }
 
-    public Track get(int index) {
+    public ApexTrack get(int index) {
         return tracks.get(index);
     }
 

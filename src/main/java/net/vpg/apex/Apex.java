@@ -18,7 +18,7 @@ package net.vpg.apex;
 
 import net.vpg.apex.core.ApexPlayer;
 import net.vpg.apex.core.ApexPlaylist;
-import net.vpg.apex.core.Track;
+import net.vpg.apex.core.ApexTrack;
 
 import javax.swing.*;
 import java.util.Comparator;
@@ -45,11 +45,11 @@ public class Apex {
         Util.run(() -> UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()));
         player = new ApexPlayer();
         window = new ApexWindow(this);
-        playlists = Track.entries
+        playlists = ApexTrack.entries
             .values()
             .stream()
-            .sorted(Comparator.comparing(Track::id))
-            .collect(Collectors.groupingBy(Track::category))
+            .sorted(Comparator.comparing(ApexTrack::id))
+            .collect(Collectors.groupingBy(ApexTrack::category))
             .entrySet()
             .stream()
             .map(e -> new ApexPlaylist(e.getKey(), e.getValue()))
@@ -136,7 +136,7 @@ public class Apex {
         window.trackName.setText("Loading...");
         player.stop();
         index = playlistClick || !shuffle ? i : (int) (Math.random() * playlistPlaying.size());
-        Track track = playlistPlaying.get(index);
+        ApexTrack track = playlistPlaying.get(index);
         updateScrollBar(index);
         Util.run(() -> player.play(track));
         window.trackName.setText(STR."Now Playing: \{track.name()} (\{index + 1}/\{playlistPlaying.size()})");

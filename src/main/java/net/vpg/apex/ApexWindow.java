@@ -77,9 +77,9 @@ public class ApexWindow extends JFrame {
         playPause = createButton("Play", "Play the track", PLAY_PAUSE, false);
         search = createButton("Search", "Search a track", SEARCH, true);
 
-        List<String> categoriesList = Track.entries.values()
+        List<String> categoriesList = ApexTrack.entries.values()
             .stream()
-            .map(Track::category)
+            .map(ApexTrack::category)
             .distinct()
             .sorted()
             .collect(Collectors.toList());
