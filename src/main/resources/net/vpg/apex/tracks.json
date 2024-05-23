@@ -12922,7 +12922,7 @@
     {
       "id": "Ranger SOA 101 Title",
       "name": "Ranger SOA 101 Title",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 5099904,
       "loopStart": 1109,
       "loopEnd": 2295538
@@ -12930,7 +12930,7 @@
     {
       "id": "Ranger SOA 102 Menu",
       "name": "Ranger SOA 102 Menu",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 2823104,
       "loopStart": 29194,
       "loopEnd": 1239330
@@ -12938,7 +12938,7 @@
     {
       "id": "Ranger SOA 103 Battle! (Wild Pokemon)",
       "name": "Ranger SOA 103 Battle! (Wild Pokemon)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 7453760,
       "loopStart": 1116,
       "loopEnd": 3509252
@@ -12946,7 +12946,7 @@
     {
       "id": "Ranger SOA 104 Capture Complete (Bridge)",
       "name": "Ranger SOA 104 Capture Complete (Bridge)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 838976,
       "loopStart": 212616,
       "loopEnd": 424605
@@ -12954,7 +12954,7 @@
     {
       "id": "Ranger SOA 105 Prologue",
       "name": "Ranger SOA 105 Prologue",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 2118528,
       "loopStart": 2600,
       "loopEnd": 849548
@@ -12962,7 +12962,7 @@
     {
       "id": "Ranger SOA 106 School Yard",
       "name": "Ranger SOA 106 School Yard",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 9085824,
       "loopStart": 1125,
       "loopEnd": 4343601
@@ -12970,7 +12970,7 @@
     {
       "id": "Ranger SOA 107 Ranger School (Day)",
       "name": "Ranger SOA 107 Ranger School (Day)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 5602176,
       "loopStart": 1106,
       "loopEnd": 2593317
@@ -12978,7 +12978,7 @@
     {
       "id": "Ranger SOA 108 Chase",
       "name": "Ranger SOA 108 Chase",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 3529728,
       "loopStart": 125733,
       "loopEnd": 1619630
@@ -12986,7 +12986,7 @@
     {
       "id": "Ranger SOA 109 Peaceful Aftermath",
       "name": "Ranger SOA 109 Peaceful Aftermath",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 1986048,
       "loopStart": 6114,
       "loopEnd": 802605
@@ -12994,7 +12994,7 @@
     {
       "id": "Ranger SOA 110 Ranger School (Night)",
       "name": "Ranger SOA 110 Ranger School (Night)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 4852224,
       "loopStart": 41422,
       "loopEnd": 2264217
@@ -13002,7 +13002,7 @@
     {
       "id": "Ranger SOA 111 Trouble",
       "name": "Ranger SOA 111 Trouble",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 6749568,
       "loopStart": 130413,
       "loopEnd": 3227565
@@ -13010,7 +13010,7 @@
     {
       "id": "Ranger SOA 112 Basement Laboratory - Cave",
       "name": "Ranger SOA 112 Basement Laboratory - Cave",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 4808448,
       "loopStart": 1211,
       "loopEnd": 2191054
@@ -13018,7 +13018,7 @@
     {
       "id": "Ranger SOA 113 Crisis (Call to Action)",
       "name": "Ranger SOA 113 Crisis (Call to Action)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 2559744,
       "loopStart": 1120,
       "loopEnd": 1060055
@@ -13026,7 +13026,7 @@
     {
       "id": "Ranger SOA 114 School Road",
       "name": "Ranger SOA 114 School Road",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 12129408,
       "loopStart": 652683,
       "loopEnd": 6189027
@@ -13034,7 +13034,7 @@
     {
       "id": "Ranger SOA 115 Vientown",
       "name": "Ranger SOA 115 Vientown",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 5645952,
       "loopStart": 1110,
       "loopEnd": 2606443
@@ -13042,7 +13042,7 @@
     {
       "id": "Ranger SOA 116 Ranger Base (Depot)",
       "name": "Ranger SOA 116 Ranger Base (Depot)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 3353472,
       "loopStart": 1117,
       "loopEnd": 1474328
@@ -13050,7 +13050,7 @@
     {
       "id": "Ranger SOA 117 Chicole Village - Shiver Camp",
       "name": "Ranger SOA 117 Chicole Village - Shiver Camp",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 6263424,
       "loopStart": 19941,
       "loopEnd": 2939934
@@ -13058,7 +13058,7 @@
     {
       "id": "Ranger SOA 118 Vien Forest",
       "name": "Ranger SOA 118 Vien Forest",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 11290752,
       "loopStart": 880357,
       "loopEnd": 6020950
@@ -13066,7 +13066,7 @@
     {
       "id": "Ranger SOA 119 Pueltown",
       "name": "Ranger SOA 119 Pueltown",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 4720896,
       "loopStart": 54186,
       "loopEnd": 2211384
@@ -13074,7 +13074,7 @@
     {
       "id": "Ranger SOA 120 Team Dim Sun Appears!",
       "name": "Ranger SOA 120 Team Dim Sun Appears!",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 5645376,
       "loopStart": 2716959,
       "loopEnd": 5207118
@@ -13082,7 +13082,7 @@
     {
       "id": "Ranger SOA 121 Battle! (Team Dim Sun Grunt)",
       "name": "Ranger SOA 121 Battle! (Team Dim Sun Grunt)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 5382144,
       "loopStart": 615329,
       "loopEnd": 3106523
@@ -13090,7 +13090,7 @@
     {
       "id": "Ranger SOA 122 Boat Cruise - Puel Sea",
       "name": "Ranger SOA 122 Boat Cruise - Puel Sea",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 1192320,
       "loopStart": 214174,
       "loopEnd": 496443
@@ -13098,7 +13098,7 @@
     {
       "id": "Ranger SOA 123 Underwater",
       "name": "Ranger SOA 123 Underwater",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 11908224,
       "loopStart": 1110,
       "loopEnd": 5741675
@@ -13106,7 +13106,7 @@
     {
       "id": "Ranger SOA 124 Sad Story",
       "name": "Ranger SOA 124 Sad Story",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 9483264,
       "loopStart": 276591,
       "loopEnd": 4675742
@@ -13114,7 +13114,7 @@
     {
       "id": "Ranger SOA 125 Volcano Cave",
       "name": "Ranger SOA 125 Volcano Cave",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 5513024,
       "loopStart": 371474,
       "loopEnd": 2911175
@@ -13122,7 +13122,7 @@
     {
       "id": "Ranger SOA 126 Altru Building",
       "name": "Ranger SOA 126 Altru Building",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 8028288,
       "loopStart": 1104,
       "loopEnd": 3821035
@@ -13130,7 +13130,7 @@
     {
       "id": "Ranger SOA 127 Mission",
       "name": "Ranger SOA 127 Mission",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 7013376,
       "loopStart": 1113,
       "loopEnd": 3294322
@@ -13138,7 +13138,7 @@
     {
       "id": "Ranger SOA 128 Ranger Union",
       "name": "Ranger SOA 128 Ranger Union",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 5029632,
       "loopStart": 1110,
       "loopEnd": 2316825
@@ -13146,7 +13146,7 @@
     {
       "id": "Ranger SOA 129 Boyleland",
       "name": "Ranger SOA 129 Boyleland",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 4454464,
       "loopStart": 1131,
       "loopEnd": 2016046
@@ -13154,7 +13154,7 @@
     {
       "id": "Ranger SOA 130 Cargo Ship (Oil Field Hideout)",
       "name": "Ranger SOA 130 Cargo Ship (Oil Field Hideout)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 7983296,
       "loopStart": 50538,
       "loopEnd": 3755431
@@ -13162,7 +13162,7 @@
     {
       "id": "Ranger SOA 131 Battle! (Team Dim Sun Admin)",
       "name": "Ranger SOA 131 Battle! (Team Dim Sun Admin)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 3264768,
       "loopStart": 216332,
       "loopEnd": 1643907
@@ -13170,7 +13170,7 @@
     {
       "id": "Ranger SOA 132 Go-Rock Trio Rehearsal",
       "name": "Ranger SOA 132 Go-Rock Trio Rehearsal",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 2249920,
       "loopStart": 74129,
       "loopEnd": 949685
@@ -13178,7 +13178,7 @@
     {
       "id": "Ranger SOA 133 Empoleon Ride (Ice Lake)",
       "name": "Ranger SOA 133 Empoleon Ride (Ice Lake)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 10497024,
       "loopStart": 1114,
       "loopEnd": 5028973
@@ -13186,7 +13186,7 @@
     {
       "id": "Ranger SOA 134 Almia Castle (Hippowdon Temple)",
       "name": "Ranger SOA 134 Almia Castle (Hippowdon Temple)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 7057152,
       "loopStart": 42436,
       "loopEnd": 3350092
@@ -13194,7 +13194,7 @@
     {
       "id": "Ranger SOA 135 Battle! (Sinis Trio)",
       "name": "Ranger SOA 135 Battle! (Sinis Trio)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 4585920,
       "loopStart": 66035,
       "loopEnd": 2117635
@@ -13202,7 +13202,7 @@
     {
       "id": "Ranger SOA 136 Haruba Village",
       "name": "Ranger SOA 136 Haruba Village",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 7189632,
       "loopStart": 1110,
       "loopEnd": 3388423
@@ -13210,7 +13210,7 @@
     {
       "id": "Ranger SOA 137 Altru Building (Takeover)",
       "name": "Ranger SOA 137 Altru Building (Takeover)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 7322112,
       "loopStart": 1124,
       "loopEnd": 3456961
@@ -13218,7 +13218,7 @@
     {
       "id": "Ranger SOA 138 Altru Tower (Countdown)",
       "name": "Ranger SOA 138 Altru Tower (Countdown)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 7454592,
       "loopStart": 1112,
       "loopEnd": 3529948
@@ -13226,7 +13226,7 @@
     {
       "id": "Ranger SOA 139 Blake Hall - The Shadow Crystal",
       "name": "Ranger SOA 139 Blake Hall - The Shadow Crystal",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 3793472,
       "loopStart": 4049,
       "loopEnd": 1765212
@@ -13234,7 +13234,7 @@
     {
       "id": "Ranger SOA 140 Yellow Gem",
       "name": "Ranger SOA 140 Yellow Gem",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 6087168,
       "loopStart": 1420414,
       "loopEnd": 2828797
@@ -13242,7 +13242,7 @@
     {
       "id": "Ranger SOA 141 Blue Gem",
       "name": "Ranger SOA 141 Blue Gem",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 972288,
       "loopStart": 130870,
       "loopEnd": 279727
@@ -13250,7 +13250,7 @@
     {
       "id": "Ranger SOA 142 Red Gem",
       "name": "Ranger SOA 142 Red Gem",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 839808,
       "loopStart": 116217,
       "loopEnd": 231982
@@ -13258,7 +13258,7 @@
     {
       "id": "Ranger SOA 143 Shadow Crystal",
       "name": "Ranger SOA 143 Shadow Crystal",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 1323712,
       "loopStart": 159024,
       "loopEnd": 821518
@@ -13266,7 +13266,7 @@
     {
       "id": "Ranger SOA 144 The Three Gems and The Shadow Crystal",
       "name": "Ranger SOA 144 The Three Gems and The Shadow Crystal",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 6087168,
       "loopStart": 1211106,
       "loopEnd": 3994556
@@ -13274,7 +13274,7 @@
     {
       "id": "Ranger SOA 145 A New Almia",
       "name": "Ranger SOA 145 A New Almia",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 6925824,
       "loopStart": 1026515,
       "loopEnd": 4202239
@@ -13282,7 +13282,7 @@
     {
       "id": "Ranger SOA 146 Ending Theme",
       "name": "Ranger SOA 146 Ending Theme",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 5514624,
       "loopStart": -1,
       "loopEnd": 5514624
@@ -13290,7 +13290,7 @@
     {
       "id": "Ranger SOA 147 Go-Rock Quads Concert",
       "name": "Ranger SOA 147 Go-Rock Quads Concert",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 9748224,
       "loopStart": 2006554,
       "loopEnd": 6637127
@@ -13298,7 +13298,7 @@
     {
       "id": "Ranger SOA 148 Capture Arena (Outside)",
       "name": "Ranger SOA 148 Capture Arena (Outside)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 6440832,
       "loopStart": 1116,
       "loopEnd": 3000027
@@ -13306,7 +13306,7 @@
     {
       "id": "Ranger SOA 149 Capture Arena (Inside)",
       "name": "Ranger SOA 149 Capture Arena (Inside)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 2691008,
       "loopStart": 69709,
       "loopEnd": 1161958
@@ -13314,7 +13314,7 @@
     {
       "id": "Ranger SOA 150 Result",
       "name": "Ranger SOA 150 Result",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 972288,
       "loopStart": 283296,
       "loopEnd": 565477
@@ -13322,7 +13322,7 @@
     {
       "id": "Ranger SOA 151 Browser Complete!",
       "name": "Ranger SOA 151 Browser Complete!",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 11026944,
       "loopStart": 6350748,
       "loopEnd": 8468024
@@ -13330,7 +13330,7 @@
     {
       "id": "Ranger SOA 152 Manaphy Egg",
       "name": "Ranger SOA 152 Manaphy Egg",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 3220992,
       "loopStart": 158163,
       "loopEnd": 1412515
@@ -13338,7 +13338,7 @@
     {
       "id": "Ranger SOA 153 Battle! (Gem Guardian)",
       "name": "Ranger SOA 153 Battle! (Gem Guardian)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 9746880,
       "loopStart": 1113,
       "loopEnd": 4673013
@@ -13346,7 +13346,7 @@
     {
       "id": "Ranger SOA 154 Character (Unused)",
       "name": "Ranger SOA 154 Character (Unused)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 1016064,
       "loopStart": 284169,
       "loopEnd": 576023
@@ -13354,7 +13354,7 @@
     {
       "id": "Ranger SOA 155 Battle! (Darkrai - Regigigas)",
       "name": "Ranger SOA 155 Battle! (Darkrai - Regigigas)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 10320768,
       "loopStart": 381454,
       "loopEnd": 5111513
@@ -13362,7 +13362,7 @@
     {
       "id": "Ranger SOA 156 The Incredible Machine Dark Level",
       "name": "Ranger SOA 156 The Incredible Machine Dark Level",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 1016064,
       "loopStart": 81062,
       "loopEnd": 259965
@@ -13370,7 +13370,7 @@
     {
       "id": "Ranger SOA 157 Game Over",
       "name": "Ranger SOA 157 Game Over",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 2028864,
       "loopStart": 202126,
       "loopEnd": 1005481
@@ -13378,7 +13378,7 @@
     {
       "id": "Ranger SOA 158 Title (Alternative)",
       "name": "Ranger SOA 158 Title (Alternative)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 1853568,
       "loopStart": 55767,
       "loopEnd": 761804
@@ -13386,7 +13386,7 @@
     {
       "id": "Ranger SOA 201 Pokemon Caught!",
       "name": "Ranger SOA 201 Pokemon Caught!",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 133632,
       "loopStart": -1,
       "loopEnd": 133632
@@ -13394,7 +13394,7 @@
     {
       "id": "Ranger SOA 202 Save",
       "name": "Ranger SOA 202 Save",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 839808,
       "loopStart": 269488,
       "loopEnd": 439736
@@ -13402,7 +13402,7 @@
     {
       "id": "Ranger SOA 203 Jingle",
       "name": "Ranger SOA 203 Jingle",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 178560,
       "loopStart": -1,
       "loopEnd": 178560
@@ -13410,7 +13410,7 @@
     {
       "id": "Ranger SOA 204 Styler Level Up",
       "name": "Ranger SOA 204 Styler Level Up",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 178560,
       "loopStart": -1,
       "loopEnd": 178560
@@ -13418,7 +13418,7 @@
     {
       "id": "Ranger SOA 205 Encounter",
       "name": "Ranger SOA 205 Encounter",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 178560,
       "loopStart": -1,
       "loopEnd": 178560
@@ -13426,7 +13426,7 @@
     {
       "id": "Ranger SOA 206 Go-Rock Squad Guitar",
       "name": "Ranger SOA 206 Go-Rock Squad Guitar",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 178560,
       "loopStart": -1,
       "loopEnd": 178560
@@ -13434,7 +13434,7 @@
     {
       "id": "Ranger SOA 207 Go-Rock Squad Trumpet",
       "name": "Ranger SOA 207 Go-Rock Squad Trumpet",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 266112,
       "loopStart": -1,
       "loopEnd": 266112
@@ -13442,7 +13442,7 @@
     {
       "id": "Ranger SOA 208 Go-Rock Squad Violin",
       "name": "Ranger SOA 208 Go-Rock Squad Violin",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 178560,
       "loopStart": -1,
       "loopEnd": 178560
@@ -13450,7 +13450,7 @@
     {
       "id": "Ranger SOA 209 Go-Rock Squad Djembe",
       "name": "Ranger SOA 209 Go-Rock Squad Djembe",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 133632,
       "loopStart": -1,
       "loopEnd": 133632
@@ -13458,7 +13458,7 @@
     {
       "id": "Ranger SOA 210 Change Pokémon",
       "name": "Ranger SOA 210 Change Pokémon",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 178560,
       "loopStart": -1,
       "loopEnd": 178560
@@ -13466,7 +13466,7 @@
     {
       "id": "Ranger SOA 211 Mission Start",
       "name": "Ranger SOA 211 Mission Start",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 222336,
       "loopStart": -1,
       "loopEnd": 222336
@@ -13474,7 +13474,7 @@
     {
       "id": "Ranger SOA 212 Mission Complete",
       "name": "Ranger SOA 212 Mission Complete",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 266112,
       "loopStart": -1,
       "loopEnd": 266112
@@ -13482,7 +13482,7 @@
     {
       "id": "Ranger SOA 213 Puzzle Solved",
       "name": "Ranger SOA 213 Puzzle Solved",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 133632,
       "loopStart": -1,
       "loopEnd": 133632
@@ -13490,7 +13490,7 @@
     {
       "id": "Ranger SOA 214 Mission Assigned",
       "name": "Ranger SOA 214 Mission Assigned",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 120768,
       "loopStart": -1,
       "loopEnd": 120768
@@ -13498,7 +13498,7 @@
     {
       "id": "Ranger SOA 215 Get Item",
       "name": "Ranger SOA 215 Get Item",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 73792,
       "loopStart": -1,
       "loopEnd": 73792
@@ -13506,7 +13506,7 @@
     {
       "id": "Ranger SOA 216 Fanfare - Level Up",
       "name": "Ranger SOA 216 Fanfare - Level Up",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 178560,
       "loopStart": -1,
       "loopEnd": 178560
@@ -13514,7 +13514,7 @@
     {
       "id": "Ranger SOA 217 Fanfare - Browser Fanfare 1",
       "name": "Ranger SOA 217 Fanfare - Browser Fanfare 1",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 354816,
       "loopStart": -1,
       "loopEnd": 354816
@@ -13522,7 +13522,7 @@
     {
       "id": "Ranger SOA 218 Fanfare - Browser Fanfare 2",
       "name": "Ranger SOA 218 Fanfare - Browser Fanfare 2",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 398592,
       "loopStart": -1,
       "loopEnd": 398592
@@ -13530,7 +13530,7 @@
     {
       "id": "Ranger SOA 219 Fanfare 2",
       "name": "Ranger SOA 219 Fanfare 2",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 278336,
       "loopStart": -1,
       "loopEnd": 278336
@@ -13538,7 +13538,7 @@
     {
       "id": "Ranger SOA 220 Highscore",
       "name": "Ranger SOA 220 Highscore",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 137152,
       "loopStart": -1,
       "loopEnd": 137152
@@ -13546,7 +13546,7 @@
     {
       "id": "Ranger SOA 221 Title (Short)",
       "name": "Ranger SOA 221 Title (Short)",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 487296,
       "loopStart": -1,
       "loopEnd": 487296
@@ -13554,7 +13554,7 @@
     {
       "id": "Ranger SOA 222 Get Stone",
       "name": "Ranger SOA 222 Get Stone",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 223296,
       "loopStart": -1,
       "loopEnd": 223296
@@ -13562,7 +13562,7 @@
     {
       "id": "Ranger SOA 223 Bell",
       "name": "Ranger SOA 223 Bell",
-      "category": "Ranger SOA",
+      "category": "Ranger-SOA",
       "frameLength": 398592,
       "loopStart": 1112,
       "loopEnd": 177318

@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -45,7 +47,7 @@ public record ApexTrack(
             .stream()
             .map(JSONValue::toObject)
             .map(ApexTrack::new)
-            .collect(Collectors.toMap(ApexTrack::id, info -> info));
+            .collect(Collectors.toMap(ApexTrack::id, track -> track));
 
     public ApexTrack(JSONObject data) {
         this(
@@ -77,7 +79,9 @@ public record ApexTrack(
     public URL getURL() throws MalformedURLException {
         return URI.create(Resources.getProperty("additionalRes")
             .toString()
-            .formatted(category, id, "ogg")
-            .replace(" ", "%20")).toURL();
+            .formatted(
+                category,
+                URLEncoder.encode(id, StandardCharsets.UTF_8).replace("+", "%20"),
+                "ogg")).toURL();
     }
 }
