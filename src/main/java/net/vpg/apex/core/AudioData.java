@@ -50,7 +50,7 @@ public class AudioData {
         format = new AudioFormat(
             AudioFormat.Encoding.PCM_SIGNED,
             sourceFormat.getSampleRate(),
-            16,
+            16, // Note: only 16-bit audio is supported
             sourceFormat.getChannels(),
             sourceFormat.getChannels() * 2,
             sourceFormat.getSampleRate(), // Note: Keep Sample Rate = Frame Rate
@@ -84,10 +84,6 @@ public class AudioData {
         Apex.EXECUTOR.execute(() -> Util.run(this::cache));
     }
 
-    public void stopCaching() {
-        caching = false;
-    }
-
     public byte[] readData(int frames) {
         int frameSize = format.getFrameSize();
         if (readPos + frames <= cachedPos) {
@@ -104,7 +100,7 @@ public class AudioData {
         int frameSize = stream.getFormat().getFrameSize();
         int off = 0;
         int read;
-        while (caching && (read = stream.read(data, off, data.length)) != -1) {
+        while (caching && (read = stream.read(data, off, data.length - off)) != -1) {
             off += read;
             cachedPos = off / frameSize;
         }
