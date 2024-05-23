@@ -160,12 +160,12 @@ public class ApexWindow extends JFrame {
                 Although you can't download tracks right now, you can play them online!
                 Have Fun!
                 """),
-            Box.createVerticalStrut(20),
+            Box.createVerticalStrut(10),
             Util.apply(createTextArea("Credits"),
                 textArea -> textArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14))
             ),
             Box.createVerticalStrut(5),
-            createTextArea("V Play Games#9783 - The Author and Maintainer of this project"),
+            createTextArea("V Play Games - The Author and Maintainer of this project"),
             Box.createVerticalStrut(3),
             createTextArea("Trilarion (GitHub) - For Providing OGG File Support"),
             Box.createVerticalStrut(3),

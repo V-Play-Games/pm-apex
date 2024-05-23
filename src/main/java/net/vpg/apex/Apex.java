@@ -133,12 +133,14 @@ public class Apex {
             playlistPlaying = playlistShown;
         else
             updatePlaylistShown(playlistPlaying);
+        window.seekBar.setEnabled(false);
         window.trackName.setText("Loading...");
         player.stop();
         index = playlistClick || !shuffle ? i : (int) (Math.random() * playlistPlaying.size());
         ApexTrack track = playlistPlaying.get(index);
         updateScrollBar(index);
         Util.run(() -> player.play(track));
+        window.seekBar.setEnabled(true);
         window.trackName.setText(STR."Now Playing: \{track.name()} (\{index + 1}/\{playlistPlaying.size()})");
     }
 
