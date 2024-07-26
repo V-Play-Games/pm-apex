@@ -29,7 +29,6 @@ public class ApexPlayer {
     private int loopEnd;
     private int loopCount;
     private boolean playing;
-    private boolean stopped = true;
 
     public void play(ApexTrack track) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         playing = false;
@@ -39,10 +38,13 @@ public class ApexPlayer {
         data.startCaching();
         if (format != data.getFormat()) {
             format = data.getFormat();
-            if (sourceDataLine != null)
+            if (sourceDataLine != null) {
                 sourceDataLine.close();
-            sourceDataLine = AudioSystem.getSourceDataLine(format);
-            sourceDataLine.open();
+                sourceDataLine.open(format);
+            } else {
+                sourceDataLine = AudioSystem.getSourceDataLine(format);
+                sourceDataLine.open();
+            }
         }
         loopStart = track.loopStart();
         loopEnd = track.loopEnd();
@@ -53,7 +55,6 @@ public class ApexPlayer {
     public void togglePlayPause() {
         playing = !playing;
         if (playing) {
-            stopped = false;
             sourceDataLine.start();
             Apex.EXECUTOR.execute(this::playAudio);
         } else {
@@ -61,22 +62,8 @@ public class ApexPlayer {
         }
     }
 
-    public void stop() {
-        if (stopped)
-            return;
-        playing = false;
-        stopped = true;
-        data.setReadPos(0);
-        sourceDataLine.flush();
-        sourceDataLine.stop();
-    }
-
     public boolean isPlaying() {
         return playing;
-    }
-
-    public boolean isStopped() {
-        return stopped;
     }
 
     public int getLoopCount() {

@@ -40,7 +40,6 @@ public class ApexWindow extends JFrame {
     public final JButton previous;
     public final JButton shuffleButton;
     public final JButton playPause;
-    public final JButton stop;
     public final JButton search;
     public final JList<String> trackList;
     public final JScrollPane trackListPane;
@@ -73,7 +72,6 @@ public class ApexWindow extends JFrame {
         next = createButton("Next Track", "Go to the next track", NEXT, false);
         previous = createButton("Previous Track", "Go to the previous track", PREVIOUS, false);
         shuffleButton = createButton("Shuffle OFF", "Shuffle the playlist", SHUFFLE, true);
-        stop = createButton("Stop", "Stop the track", STOP, false);
         playPause = createButton("Play", "Play the track", PLAY_PAUSE, false);
         search = createButton("Search", "Search a track", SEARCH, true);
 
@@ -128,7 +126,7 @@ public class ApexWindow extends JFrame {
         createBox(this, "South",
             createPanel(searchTextArea, search),
             Box.createVerticalStrut(5),
-            createPanel(shuffleButton, previous, stop, playPause, next)
+            createPanel(shuffleButton, previous, playPause, next)
         );
         setTitle("PM APEX");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
