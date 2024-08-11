@@ -30,9 +30,8 @@ import java.util.Arrays;
 
 public class AudioData {
     private final int frameLength;
-    private AudioFormat format;
+    private final AudioInputStream stream;
     private byte[] data;
-    private AudioInputStream stream;
     private int readPos;
     private int cachedPos;
     private boolean caching;
@@ -45,20 +44,10 @@ public class AudioData {
         this(AudioSystem.getAudioInputStream(url), frameLength);
     }
 
-    public AudioData(AudioInputStream sourceStream, int frameLength) {
-        AudioFormat sourceFormat = sourceStream.getFormat();
-        format = new AudioFormat(
-            AudioFormat.Encoding.PCM_SIGNED,
-            sourceFormat.getSampleRate(),
-            16, // Note: only 16-bit audio is supported
-            sourceFormat.getChannels(),
-            sourceFormat.getChannels() * 2,
-            sourceFormat.getSampleRate(), // Note: Keep Sample Rate = Frame Rate
-            sourceFormat.isBigEndian()
-        );
-        stream = AudioSystem.getAudioInputStream(format, sourceStream);
-        data = new byte[frameLength * format.getFrameSize()];
+    public AudioData(AudioInputStream stream, int frameLength) {
+        this.stream = stream;
         this.frameLength = frameLength;
+        data = new byte[frameLength * getFormat().getFrameSize()];
     }
 
     public int getFrameLength() {
@@ -66,7 +55,7 @@ public class AudioData {
     }
 
     public AudioFormat getFormat() {
-        return format;
+        return stream.getFormat();
     }
 
     public int getReadPos() {
@@ -85,11 +74,12 @@ public class AudioData {
     }
 
     public byte[] readData(int frames) {
-        int frameSize = format.getFrameSize();
+        int frameSize = getFormat().getFrameSize();
         if (readPos + frames <= cachedPos) {
             readPos += frames;
             return Arrays.copyOfRange(data, readPos * frameSize, (readPos + frames) * frameSize);
-        } else if (caching) {
+        }
+        if (caching) {
             Util.sleep(25);
             return readData(frames);
         }
@@ -97,7 +87,7 @@ public class AudioData {
     }
 
     public void cache() throws IOException {
-        int frameSize = stream.getFormat().getFrameSize();
+        int frameSize = getFormat().getFrameSize();
         int off = 0;
         int read;
         while (caching && (read = stream.read(data, off, data.length - off)) != -1) {
@@ -105,19 +95,12 @@ public class AudioData {
             cachedPos = off / frameSize;
         }
         caching = false;
-        if (stream != null) {
-            stream.close();
-            stream = null;
-        }
+        stream.close();
     }
 
     public void close() throws IOException {
         caching = false;
         data = null;
-        format = null;
-        if (stream != null) {
-            stream.close();
-            stream = null;
-        }
+        stream.close();
     }
 }
