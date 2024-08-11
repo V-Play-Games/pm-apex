@@ -23,7 +23,7 @@ import java.io.IOException;
 
 public class ApexPlayer {
     private SourceDataLine sourceDataLine;
-    private AudioFormat format;
+    private int frameRate;
     private volatile AudioData data;
     private int loopStart;
     private int loopEnd;
@@ -36,8 +36,9 @@ public class ApexPlayer {
             data.close();
         data = track.getData();
         data.startCaching();
-        if (format != data.getFormat()) {
-            format = data.getFormat();
+        AudioFormat format = data.getFormat();
+        if (frameRate != format.getFrameRate()) {
+            frameRate = (int) format.getFrameRate();
             if (sourceDataLine != null) {
                 sourceDataLine.close();
                 sourceDataLine.open(format);
@@ -75,21 +76,21 @@ public class ApexPlayer {
     }
 
     public int getLength() {
-        return (int) (data.getFrameLength() / format.getFrameRate());
+        return data.getFrameLength() / frameRate;
     }
 
     public int getPosition() {
-        return (int) (data.getReadPos() / format.getFrameRate());
+        return data.getReadPos() / frameRate;
     }
 
     public void setPosition(int seconds) {
-        data.setReadPos((int) (seconds * format.getFrameRate()));
+        data.setReadPos(seconds * frameRate);
     }
 
     private void playAudio() {
         while (playing) {
             int limit = loopCount == 0 ? data.getFrameLength() : loopEnd;
-            int len = Math.min(limit - data.getReadPos(), (int) format.getFrameRate() / 20);
+            int len = Math.min(limit - data.getReadPos(), frameRate / 20);
             byte[] b = data.readData(len);
             sourceDataLine.write(b, 0, b.length);
             if (data.getReadPos() == loopEnd && loopCount != 0) {

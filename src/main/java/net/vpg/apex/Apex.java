@@ -52,8 +52,7 @@ public class Apex {
             .collect(Collectors.groupingBy(ApexTrack::category))
             .entrySet()
             .stream()
-            .map(e -> new ApexPlaylist(e.getKey(), e.getValue()))
-            .collect(Collectors.toMap(ApexPlaylist::getCategory, x -> x));
+            .collect(Collectors.toMap(Map.Entry::getKey, e -> new ApexPlaylist(e.getKey(), e.getValue())));
         //noinspection resource
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             if (player.isPlaying()) {
