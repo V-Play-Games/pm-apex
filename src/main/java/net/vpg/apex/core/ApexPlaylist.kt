@@ -1,34 +1,15 @@
-package net.vpg.apex.core;
+package net.vpg.apex.core
 
-import javax.swing.*;
-import java.util.List;
+import javax.swing.DefaultListModel
 
-public class ApexPlaylist {
-    public static final ApexPlaylist EMPTY = new ApexPlaylist("", List.of());
-    private final String category;
-    private final List<ApexTrack> tracks;
-    private final DefaultListModel<String> model;
-
-    public ApexPlaylist(String category, List<ApexTrack> tracks) {
-        this.category = category;
-        this.tracks = tracks;
-        model = new DefaultListModel<>();
-        model.addAll(tracks.stream().map(ApexTrack::name).toList());
+class ApexPlaylist(val category: String, private val tracks: List<ApexTrack>) {
+    companion object {
+        val EMPTY = ApexPlaylist("", emptyList<ApexTrack>())
     }
-
-    public String getCategory() {
-        return category;
+    val model = DefaultListModel<String>().apply {
+        addAll(tracks.map { it.name })
     }
-
-    public ApexTrack get(int index) {
-        return tracks.get(index);
-    }
-
-    public int size() {
-        return tracks.size();
-    }
-
-    public DefaultListModel<String> getModel() {
-        return model;
-    }
+    val size
+        get() = tracks.size
+    operator fun get(index: Int) = tracks[index]
 }

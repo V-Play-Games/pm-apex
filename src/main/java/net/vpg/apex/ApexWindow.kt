@@ -13,213 +13,201 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package net.vpg.apex
 
-package net.vpg.apex;
+import net.vpg.apex.core.ApexTrack
+import net.vpg.apex.core.Resources
+import java.awt.*
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import javax.imageio.ImageIO
+import javax.swing.*
+import javax.swing.border.EmptyBorder
 
-import net.vpg.apex.core.Resources;
-import net.vpg.apex.core.ApexTrack;
+class ApexWindow(private val apex: Apex) : JFrame() {
+    val trackName: JTextArea
+    val searchTextArea: JTextArea
+    val categories: JComboBox<String>
+    val next: JButton
+    val previous: JButton
+    val shuffleButton: JButton
+    val playPause: JButton
+    val search: JButton
+    val trackList: JList<String>
+    val trackListPane: JScrollPane
+    val progress: JTextArea
+    val seekBar: JSlider
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.List;
-import java.util.stream.Collectors;
+    init {
+        trackName = createTextArea("Double-click on a track to get started!")
+        trackName.setToolTipText("Track Name")
 
-import static net.vpg.apex.Apex.Action.*;
-
-public class ApexWindow extends JFrame {
-    public final JTextArea trackName;
-    public final JTextArea searchTextArea;
-    public final JComboBox<String> categories;
-    public final JButton next;
-    public final JButton previous;
-    public final JButton shuffleButton;
-    public final JButton playPause;
-    public final JButton search;
-    public final JList<String> trackList;
-    public final JScrollPane trackListPane;
-    public final JTextArea progress;
-    public final JSlider seekBar;
-    private final Apex apex;
-
-    public ApexWindow(Apex apex) {
-        this.apex = apex;
-
-        trackName = createTextArea("Double-click on a track to get started!");
-        trackName.setToolTipText("Track Name");
-
-        searchTextArea = Util.apply(new JTextArea(1, 10),
-            search -> search.addKeyListener(new KeyAdapter() {
-                public void keyTyped(KeyEvent e) {
-                    if (e.getKeyChar() == '\n')
-                        apex.takeAction(SEARCH);
+        searchTextArea = JTextArea(1, 10).apply {
+            addKeyListener(object : KeyAdapter() {
+                override fun keyTyped(e: KeyEvent) {
+                    if (e.getKeyChar() == '\n') apex.takeAction(Apex.Action.SEARCH)
                 }
-            }),
-            search -> search.setAlignmentX(0),
-            search -> search.setBorder(new EmptyBorder(5, 5, 0, 5)),
-            search -> search.setEditable(true),
-            search -> search.setLineWrap(false),
-            search -> search.setFont(new JLabel().getFont()),
-            search -> search.setFocusable(true),
-            search -> search.setRows(0)
-        );
+            })
+            alignmentX = 0f
+            border = EmptyBorder(5, 5, 0, 5)
+            isEditable = true
+            lineWrap = false
+            font = JLabel().getFont()
+            isFocusable = true
+            rows = 0
+        }
 
-        next = createButton("Next Track", "Go to the next track", NEXT, false);
-        previous = createButton("Previous Track", "Go to the previous track", PREVIOUS, false);
-        shuffleButton = createButton("Shuffle OFF", "Shuffle the playlist", SHUFFLE, true);
-        playPause = createButton("Play", "Play the track", PLAY_PAUSE, false);
-        search = createButton("Search", "Search a track", SEARCH, true);
+        next = createButton("Next Track", "Go to the next track", Apex.Action.NEXT, false)
+        previous = createButton("Previous Track", "Go to the previous track", Apex.Action.PREVIOUS, false)
+        shuffleButton = createButton("Shuffle OFF", "Shuffle the playlist", Apex.Action.SHUFFLE, true)
+        playPause = createButton("Play", "Play the track", Apex.Action.PLAY_PAUSE, false)
+        search = createButton("Search", "Search a track", Apex.Action.SEARCH, true)
 
-        List<String> categoriesList = ApexTrack.entries.values()
-            .stream()
-            .map(ApexTrack::category)
+        val categoriesList = ApexTrack.entries.values
+            .map { it.category }
             .distinct()
             .sorted()
-            .collect(Collectors.toList());
-        categoriesList.addFirst("-- Select a category --");
-        categories = new JComboBox<>(categoriesList.toArray(String[]::new));
-        categories.addItemListener(_ -> apex.takeAction(UPDATE_CATEGORY));
+            .toMutableList()
+        categoriesList.addFirst("-- Select a category --")
+        categories = JComboBox(categoriesList.toTypedArray())
+        categories.addItemListener { apex.takeAction(Apex.Action.UPDATE_CATEGORY) }
 
-        trackList = new JList<>();
-        trackList.setVisibleRowCount(7);
-        trackList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                    apex.takeAction(CLICK_ON_PLAYLIST);
+        trackList = JList<String>().apply {
+            visibleRowCount = 7
+            addMouseListener(object : MouseAdapter() {
+                override fun mouseClicked(e: MouseEvent) {
+                    if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                        apex.takeAction(Apex.Action.CLICK_ON_PLAYLIST)
+                    }
                 }
-            }
-        });
-        trackList.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == '\n') {
-                    apex.takeAction(CLICK_ON_PLAYLIST);
+            })
+            addKeyListener(object : KeyAdapter() {
+                override fun keyTyped(e: KeyEvent) {
+                    if (e.getKeyChar() == '\n') {
+                        apex.takeAction(Apex.Action.CLICK_ON_PLAYLIST)
+                    }
                 }
-            }
-        });
-        trackListPane = new JScrollPane(trackList);
+            })
+        }
+        trackListPane = JScrollPane(trackList)
 
-        seekBar = new JSlider(SwingConstants.HORIZONTAL, 0, 10000, 0);
-        seekBar.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                apex.takeAction(PROGRESS_SEEK);
-            }
-        });
-        seekBar.setEnabled(false);
-        progress = createTextArea("--:--/--:--");
+        seekBar = JSlider(SwingConstants.HORIZONTAL, 0, 10000, 0).apply {
+            addMouseListener(object : MouseAdapter() {
+                override fun mouseReleased(e: MouseEvent?) {
+                    apex.takeAction(Apex.Action.PROGRESS_SEEK)
+                }
+            })
+            isEnabled = false
+        }
+        progress = createTextArea("--:--/--:--")
 
-        createMainFrame();
+        createMainFrame()
     }
 
-    private void createMainFrame() {
-        add(Util.apply(new JTabbedPane(),
-            pane -> pane.add(createPlayerPanel()),
-            pane -> pane.add(createCreditsPanel()))
-        );
-        createBox(this, "South",
+    private fun createMainFrame() {
+        title = ("PM APEX")
+        defaultCloseOperation = (EXIT_ON_CLOSE)
+        isResizable = false
+        preferredSize = Dimension(500, 350)
+        iconImage = ImageIO.read(Resources["icon.png"])
+        setLocationRelativeTo(null)
+        add(JTabbedPane().apply {
+            add(createPlayerPanel())
+            add(createCreditsPanel())
+        })
+        createBox(
+            this, "South",
             createPanel(searchTextArea, search),
             Box.createVerticalStrut(5),
             createPanel(shuffleButton, previous, playPause, next)
-        );
-        setTitle("PM APEX");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setPreferredSize(new Dimension(500, 350));
-        setIconImage(Resources.get("icon.png", ImageIO::read));
-        pack();
+        )
+        pack()
     }
 
-    private JPanel createPlayerPanel() {
-        return Util.apply(createPanel("Player",
-                categories,
-                Box.createVerticalStrut(5),
-                trackListPane,
-                Box.createVerticalStrut(10)),
-            panel -> createBox(panel, "Center", trackName),
-            panel -> createBox(panel, "West", progress),
-            panel -> createBox(panel, "South", seekBar));
+    private fun createPlayerPanel(): JPanel {
+        return createPanel(
+            "Player",
+            categories,
+            Box.createVerticalStrut(5),
+            trackListPane,
+            Box.createVerticalStrut(10)
+        ).apply {
+            createBox(this, "Center", trackName)
+            createBox(this, "West", progress)
+            createBox(this, "South", seekBar)
+        }
     }
 
-    private JPanel createCreditsPanel() {
-        return createPanel("Credits and Info",
+    private fun createCreditsPanel(): JPanel {
+        return createPanel(
+            "Credits and Info",
             createTextArea("Welcome to Pokemon Masters Audio Player EX, PM APEX in short."),
             Box.createVerticalStrut(10),
-            createTextArea("""
+            createTextArea(
+                """
                 This is an application made for playing audio tracks from Pokemon Masters.
                 It also has looping support, so go loop your favourite battle theme for as long as you want!
                 Although you can't download tracks right now, you can play them online!
                 Have Fun!
-                """),
-            Box.createVerticalStrut(10),
-            Util.apply(createTextArea("Credits"),
-                textArea -> textArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14))
+                
+                """.trimIndent()
             ),
+            Box.createVerticalStrut(10),
+            createTextArea("Credits").apply {
+                setFont(Font(Font.SANS_SERIF, Font.BOLD, 14))
+            },
             Box.createVerticalStrut(5),
             createTextArea("V Play Games - The Developer of this project"),
             Box.createVerticalStrut(3),
             createTextArea("Made with Java, Built with Maven 3")
-        );
+        )
     }
 
-    private JPanel createPanel(String name, Component... components) {
-        return Util.apply(new JPanel(),
-            panel -> panel.setName(name),
-            panel -> panel.setBorder(new EmptyBorder(15, 15, 0, 15)),
-            panel -> panel.setLayout(new BorderLayout()),
-            panel -> createBox(panel, "North", components)
-        );
+    private fun createPanel(name: String, vararg components: Component): JPanel {
+        return JPanel().apply {
+            border = EmptyBorder(15, 15, 0, 15)
+            layout = BorderLayout()
+            this.name = name
+            createBox(this, "North", *components)
+        }
     }
 
-    private JPanel createPanel(Component... components) {
-        return Util.apply(new JPanel(),
-            panel -> panel.setLayout(new FlowLayout(FlowLayout.CENTER)),
-            panel -> {
-                for (Component component : components)
-                    panel.add(component);
-            }
-        );
+    private fun createPanel(vararg components: Component): JPanel {
+        return JPanel().apply {
+            layout = FlowLayout(FlowLayout.CENTER)
+            components.forEach(::add)
+        }
     }
 
-    private JButton createButton(String name, String toolTip, int action, boolean enabled) {
-        JButton button = new JButton(name);
-        button.setToolTipText(toolTip);
-        button.addActionListener(_ -> apex.takeAction(action));
-        button.setEnabled(enabled);
-        return button;
+    private fun createButton(name: String, toolTip: String, action: Int, enabled: Boolean) = JButton(name).apply {
+        toolTipText = toolTip
+        isEnabled = enabled
+        addActionListener { apex.takeAction(action) }
     }
 
-    private void createBox(Container container, String constraints, Component... components) {
-        Box box = Box.createVerticalBox();
-        container.add(box, constraints);
-        for (Component component : components)
-            box.add(component);
+    private fun createBox(container: Container, constraints: String, vararg components: Component) {
+        val box = Box.createVerticalBox()
+        container.add(box, constraints)
+        components.forEach(box::add)
     }
 
-    public JTextArea createTextArea(String text) {
-        JTextArea textArea = new JTextArea() {
-            public void paintComponent(Graphics graphics) {
-                setBackground(getParent().getBackground());
-                super.paintComponent(graphics);
-            }
-        };
-        textArea.setText(text);
-        textArea.setAlignmentX(0);
-        textArea.setBorder(new EmptyBorder(0, 0, 0, 0));
-        textArea.setEditable(false);
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        textArea.setFont(new JLabel().getFont());
-        textArea.setFocusable(false);
-        textArea.setRows(0);
-        textArea.invalidate();
-        return textArea;
+    fun createTextArea(text: String) = object : JTextArea() {
+        public override fun paintComponent(graphics: Graphics) {
+            background = getParent().getBackground()
+            super.paintComponent(graphics)
+        }
+    }.apply {
+        this.text = text
+        alignmentX = 0f
+        border = EmptyBorder(0, 0, 0, 0)
+        isEditable = false
+        lineWrap = true
+        wrapStyleWord = true
+        font = JLabel().getFont()
+        isFocusable = false
+        rows = 0
+        invalidate()
     }
 }

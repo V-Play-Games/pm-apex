@@ -13,67 +13,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package net.vpg.apex.core
 
-package net.vpg.apex.core;
+import java.io.File
+import java.io.FileOutputStream
+import java.net.URI
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
+object Downloader {
+    const val STARTED = 1
+    const val IN_PROGRESS = 2
+    const val DONE = 3
 
-public class Downloader {
-    public static final int STARTED = 1;
-    public static final int IN_PROGRESS = 2;
-    public static final int DONE = 3;
+    fun download(
+        url: String,
+        filename: String = url.substring(url.lastIndexOf('/') + 1),
+        listener: EventListener = EventListener { println(it) }
+    ) = download(url, Resources.create(filename), listener)
 
-    public static File download(String url) throws IOException {
-        return download(url, url.substring(url.lastIndexOf('/') + 1), null);
-    }
-
-    public static File download(String url, EventListener listener) throws IOException {
-        return download(url, url.substring(url.lastIndexOf('/') + 1), listener);
-    }
-
-    public static File download(String url, String filename, EventListener listener) throws IOException {
-        return download(url, Resources.create(filename), listener);
-    }
-
-    public static File download(String url, File file, EventListener listener) throws IOException {
-        listener = listener != null ? listener : System.out::println;
-        long startingTime = System.nanoTime();
-        int bytesRead = 0;
-        int len;
-        try (InputStream input = URI.create(url).toURL().openStream();
-             FileOutputStream output = new FileOutputStream(file)) {
-            byte[] buffer = new byte[4096];
-            while ((len = input.read(buffer)) >= 0) {
-                bytesRead += len;
-                output.write(buffer, 0, len);
-                long timeTaken = System.nanoTime() - startingTime;
-                long speed = bytesRead * 100L / timeTaken;
-                listener.progress(new Event(file, startingTime, timeTaken, len, bytesRead, speed, bytesRead == len ? STARTED : IN_PROGRESS));
+    fun download(url: String, file: File, listener: EventListener = EventListener { println(it) }): File {
+        val startingTime = System.nanoTime()
+        var bytesRead = 0
+        var len: Int
+        URI.create(url).toURL().openStream().use { input ->
+            FileOutputStream(file).use { output ->
+                val buffer = ByteArray(4096)
+                while ((input.read(buffer).also { len = it }) >= 0) {
+                    bytesRead += len
+                    output.write(buffer, 0, len)
+                    val timeTaken = System.nanoTime() - startingTime
+                    listener.progress(
+                        Event(
+                            file,
+                            startingTime,
+                            timeTaken,
+                            len,
+                            bytesRead.toLong(),
+                            bytesRead * 100.0 / timeTaken,
+                            if (bytesRead == len) STARTED else IN_PROGRESS
+                        )
+                    )
+                }
             }
         }
-        long timeTaken = System.nanoTime() - startingTime;
-        long speed = bytesRead * 100L / timeTaken;
-        listener.progress(new Event(file, startingTime, timeTaken, len, bytesRead, speed, DONE));
-        return file;
+        val timeTaken = System.nanoTime() - startingTime
+        val speed = bytesRead * 100L / timeTaken
+        listener.progress(Event(file, startingTime, timeTaken, len, bytesRead.toLong(), speed.toDouble(), DONE))
+        return file
     }
 
-    @FunctionalInterface
-    public interface EventListener {
-        void progress(Event event);
+    fun interface EventListener {
+        fun progress(event: Event)
     }
 
-    public record Event(
-        File file,
-        long startingTime,
-        long timeTaken,
-        int bytesRead,
-        long totalBytesRead,
-        double speed,
-        int type
-    ) {
-    }
+    @JvmRecord
+    data class Event(
+        val file: File,
+        val startingTime: Long,
+        val timeTaken: Long,
+        val bytesRead: Int,
+        val totalBytesRead: Long,
+        val speed: Double,
+        val type: Int
+    )
 }

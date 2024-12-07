@@ -13,90 +13,75 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package net.vpg.apex.core
 
-package net.vpg.apex.core;
+import net.vpg.apex.Apex
+import javax.sound.sampled.AudioSystem
+import javax.sound.sampled.Clip
+import javax.sound.sampled.SourceDataLine
+import kotlin.math.min
 
-import net.vpg.apex.Apex;
+class ApexPlayer {
+    private var sourceDataLine: SourceDataLine? = null
+    private var frameRate = 0
+    @Volatile
+    private var data: AudioData? = null
+    private var loopStart = 0
+    private var loopEnd = 0
+    var loopCount = 0
+    var isPlaying = false
+        private set
 
-import javax.sound.sampled.*;
-import java.io.IOException;
-
-public class ApexPlayer {
-    private SourceDataLine sourceDataLine;
-    private int frameRate;
-    private volatile AudioData data;
-    private int loopStart;
-    private int loopEnd;
-    private int loopCount;
-    private boolean playing;
-
-    public void play(ApexTrack track) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        playing = false;
-        if (data != null)
-            data.close();
-        data = track.getData();
-        data.startCaching();
-        AudioFormat format = data.getFormat();
-        if (frameRate != format.getFrameRate()) {
-            frameRate = (int) format.getFrameRate();
+    fun play(track: ApexTrack) {
+        isPlaying = false
+        if (data != null) data!!.close()
+        data = track.data
+        data!!.startCaching()
+        val format = data!!.format
+        if (frameRate.toFloat() != format.frameRate) {
+            frameRate = format.frameRate.toInt()
             if (sourceDataLine != null) {
-                sourceDataLine.close();
-                sourceDataLine.open(format);
+                sourceDataLine!!.close()
+                sourceDataLine!!.open(format)
             } else {
-                sourceDataLine = AudioSystem.getSourceDataLine(format);
-                sourceDataLine.open();
+                sourceDataLine = AudioSystem.getSourceDataLine(format)
+                sourceDataLine!!.open()
             }
         }
-        loopStart = track.loopStart();
-        loopEnd = track.loopEnd();
-        loopCount = Clip.LOOP_CONTINUOUSLY;
-        togglePlayPause();
+        loopStart = track.loopStart
+        loopEnd = track.loopEnd
+        loopCount = Clip.LOOP_CONTINUOUSLY
+        togglePlayPause()
     }
 
-    public void togglePlayPause() {
-        playing = !playing;
-        if (playing) {
-            sourceDataLine.start();
-            Apex.EXECUTOR.execute(this::playAudio);
+    fun togglePlayPause() {
+        isPlaying = !isPlaying
+        if (isPlaying) {
+            sourceDataLine!!.start()
+            Apex.EXECUTOR.execute { playAudio() }
         } else {
-            sourceDataLine.stop();
+            sourceDataLine!!.stop()
         }
     }
 
-    public boolean isPlaying() {
-        return playing;
-    }
+    val length
+        get() = data!!.frameLength / frameRate
 
-    public int getLoopCount() {
-        return loopCount;
-    }
+    var position
+        get() = data!!.readPos / frameRate
+        set(seconds) {
+            data!!.readPos = (seconds * frameRate)
+        }
 
-    public void setLoopCount(int count) {
-        loopCount = count;
-    }
-
-    public int getLength() {
-        return data.getFrameLength() / frameRate;
-    }
-
-    public int getPosition() {
-        return data.getReadPos() / frameRate;
-    }
-
-    public void setPosition(int seconds) {
-        data.setReadPos(seconds * frameRate);
-    }
-
-    private void playAudio() {
-        while (playing) {
-            int limit = loopCount == 0 ? data.getFrameLength() : loopEnd;
-            int len = Math.min(limit - data.getReadPos(), frameRate / 20);
-            byte[] b = data.readData(len);
-            sourceDataLine.write(b, 0, b.length);
-            if (data.getReadPos() == loopEnd && loopCount != 0) {
-                data.setReadPos(loopStart);
-                if (loopCount != Clip.LOOP_CONTINUOUSLY)
-                    loopCount--;
+    private fun playAudio() {
+        while (isPlaying) {
+            val limit = if (loopCount == 0) data!!.frameLength else loopEnd
+            val len = min(limit - data!!.readPos, frameRate / 20)
+            val b = data!!.readData(len)
+            sourceDataLine!!.write(b, 0, b.size)
+            if (data!!.readPos == loopEnd && loopCount != 0) {
+                data!!.readPos = loopStart
+                if (loopCount != Clip.LOOP_CONTINUOUSLY) loopCount--
             }
         }
     }

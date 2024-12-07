@@ -13,165 +13,147 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package net.vpg.apex
 
-package net.vpg.apex;
+import net.vpg.apex.core.ApexPlayer
+import net.vpg.apex.core.ApexPlaylist
+import net.vpg.apex.core.ApexTrack
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import javax.swing.UIManager
+import kotlin.math.min
 
-import net.vpg.apex.core.ApexPlayer;
-import net.vpg.apex.core.ApexPlaylist;
-import net.vpg.apex.core.ApexTrack;
+object Apex {
+    val EXECUTOR = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 1).factory())
+    private val player: ApexPlayer
+    private val window: ApexWindow
+    private val playlists: Map<String, ApexPlaylist>
+    private var playlistPlaying = ApexPlaylist.EMPTY
+    private var playlistShown = ApexPlaylist.EMPTY
+    private var index = -1
+    private var shuffle = false
 
-import javax.swing.*;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import static net.vpg.apex.Apex.Action.*;
-
-public class Apex {
-    public static final Executor EXECUTOR
-        = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 1).factory());
-    private final ApexPlayer player;
-    private final ApexWindow window;
-    private final Map<String, ApexPlaylist> playlists;
-    private ApexPlaylist playlistPlaying;
-    private ApexPlaylist playlistShown;
-    private int index = -1;
-    private boolean shuffle;
-
-    public Apex() {
-        Util.run(() -> UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()));
-        player = new ApexPlayer();
-        window = new ApexWindow(this);
+    init {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
+        player = ApexPlayer()
+        window = ApexWindow(this)
         playlists = ApexTrack.entries
-            .values()
-            .stream()
-            .sorted(Comparator.comparing(ApexTrack::id))
-            .collect(Collectors.groupingBy(ApexTrack::category))
-            .entrySet()
-            .stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, e -> new ApexPlaylist(e.getKey(), e.getValue())));
-        //noinspection resource
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
-            if (player.isPlaying()) {
-                int len = player.getLength();
-                if (window.seekBar.getValueIsAdjusting()) {
-                    int seek = player.getLength() * window.seekBar.getValue() / 10000;
-                    window.progress.setText(String.format("%02d:%02d / %02d:%02d",
-                        seek / 60, seek % 60, len / 60, len % 60));
+            .values
+            .sortedBy { it.id }
+            .groupBy { it.category }
+            .entries
+            .associate { Pair(it.key, ApexPlaylist(it.key, it.value)) }
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(Runnable {
+            if (player.isPlaying) {
+                val len = player.length
+                if (window.seekBar.valueIsAdjusting) {
+                    val seek = player.length * window.seekBar.value / 10000
+                    window.progress.text = "%02d:%02d / %02d:%02d".format(seek / 60, seek % 60, len / 60, len % 60)
                 } else {
-                    int pos = player.getPosition();
-                    window.seekBar.setValue(pos * 10000 / len);
-                    window.progress.setText(String.format("%02d:%02d / %02d:%02d",
-                        pos / 60, pos % 60, len / 60, len % 60));
+                    val pos = player.position
+                    window.seekBar.value = pos * 10000 / len
+                    window.progress.text = "%02d:%02d / %02d:%02d".format(pos / 60, pos % 60, len / 60, len % 60)
                 }
             }
-        }, 50, 50, TimeUnit.MILLISECONDS);
+        }, 50, 50, TimeUnit.MILLISECONDS)
     }
 
-    public void main() {
-        window.setVisible(true);
+    @JvmStatic
+    fun main(args: Array<String>) {
+        window.isVisible = true
     }
 
-    public void takeAction(int action) {
-        EXECUTOR.execute(() -> takeAction0(action));
-    }
+    fun takeAction(action: Int) = EXECUTOR.execute {
+        when (action) {
+            Action.NEXT -> updateTrack(index + 1, false)
+            Action.PREVIOUS -> updateTrack(index - 1, false)
+            Action.SHUFFLE -> window.shuffleButton.text = "Shuffle ${if (!shuffle) " ON " else " OFF "}".also {
+                shuffle = !shuffle
+            }
 
-    private void takeAction0(int action) {
-        switch (action) {
-            case NEXT -> updateTrack(index + 1, false);
-            case PREVIOUS -> updateTrack(index - 1, false);
-            case SHUFFLE -> window.shuffleButton.setText("Shuffle " + ((shuffle = !shuffle) ? "ON" : "OFF"));
-            case PLAY_PAUSE -> player.togglePlayPause();
-            case SEARCH -> search(playlistShown == playlistPlaying ? index + 1 : 0, playlistShown.size());
-            case CLICK_ON_PLAYLIST -> updateTrack(window.trackList.getSelectedIndex(), true);
-            case UPDATE_CATEGORY -> updatePlaylistShown(playlists.getOrDefault(
-                window.categories.getSelectedItem().toString(),
-                ApexPlaylist.EMPTY
-            ));
-            case PROGRESS_SEEK -> updateProgress();
+            Action.PLAY_PAUSE -> player.togglePlayPause()
+            Action.SEARCH -> search(if (playlistShown === playlistPlaying) index + 1 else 0, playlistShown.size)
+            Action.CLICK_ON_PLAYLIST -> updateTrack(window.trackList.selectedIndex, true)
+            Action.UPDATE_CATEGORY -> updatePlaylistShown(
+                playlists[window.categories.selectedItem?.toString()] ?: ApexPlaylist.EMPTY
+            )
+
+            Action.PROGRESS_SEEK -> updateProgress()
         }
-        updateButtons();
+        updateButtons()
     }
 
-    private void search(int start, int end) {
-        String searchText = window.searchTextArea.getText().toLowerCase().replace("\n", "");
-        for (int i = start; i < end; i++) {
-            if (playlistShown.get(i).id().toLowerCase().contains(searchText)) {
-                updateScrollBar(i);
-                window.searchTextArea.setText("");
-                return;
+    private fun search(start: Int, end: Int) {
+        val searchText = window.searchTextArea.text.lowercase().replace("\n", "")
+        for (i in start until end) {
+            if (playlistShown[i].id.lowercase().contains(searchText)) {
+                updateScrollBar(i)
+                window.searchTextArea.text = ""
+                return
             }
         }
         if (start != 0) {
-            search(0, start);
+            search(0, start)
         }
     }
 
-    private void updateProgress() {
-        if (window.seekBar.isEnabled()) {
-            player.setPosition(player.getLength() * window.seekBar.getValue() / 10000);
+    private fun updateProgress() {
+        if (window.seekBar.isEnabled) {
+            player.position = player.length * window.seekBar.value / 10000
         }
     }
 
-    private void updatePlaylistShown(ApexPlaylist playlist) {
-        if (playlistShown == playlist)
-            return;
-        playlistShown = playlist;
-        window.trackList.setModel(playlistShown.getModel());
-        window.categories.setSelectedItem(playlistShown.getCategory());
+    private fun updatePlaylistShown(playlist: ApexPlaylist) {
+        if (playlistShown === playlist) return
+        playlistShown = playlist
+        window.trackList.model = playlistShown.model
+        window.categories.selectedItem = playlistShown.category
     }
 
-    private void updateTrack(int i, boolean playlistClick) {
-        if (i < 0)
-            return;
-        if (playlistClick)
-            playlistPlaying = playlistShown;
-        else
-            updatePlaylistShown(playlistPlaying);
-        window.seekBar.setEnabled(false);
-        window.trackName.setText("Loading...");
-        index = playlistClick || !shuffle ? i : (int) (Math.random() * playlistPlaying.size());
-        ApexTrack track = playlistPlaying.get(index);
-        updateScrollBar(index);
-        Util.run(() -> player.play(track));
-        window.seekBar.setEnabled(true);
-        window.trackName.setText("Now Playing: %s (%d/%d)".formatted(track.name(), index + 1, playlistPlaying.size()));
+    private fun updateTrack(i: Int, playlistClick: Boolean) {
+        if (i < 0) return
+        if (playlistClick) playlistPlaying = playlistShown
+        else updatePlaylistShown(playlistPlaying)
+        window.seekBar.isEnabled = false
+        window.trackName.text = "Loading..."
+        index = if (playlistClick || !shuffle) i else (Math.random() * playlistPlaying.size).toInt()
+        val track = playlistPlaying[index]
+        updateScrollBar(index)
+        player.play(track)
+        window.seekBar.isEnabled = true
+        window.trackName.text = "Now Playing: %s (%d/%d)".format(track.name, index + 1, playlistPlaying.size)
     }
 
-    private void updateButtons() {
-        if (index == -1)
-            return;
-        window.next.setEnabled(shuffle || index != playlistPlaying.size() - 1);
-        window.previous.setEnabled(shuffle || index != 0);
-        window.seekBar.setEnabled(true);
-        window.playPause.setEnabled(true);
-        window.playPause.setText(player.isPlaying() ? "Pause" : "Play");
+    private fun updateButtons() {
+        if (index == -1) return
+        window.next.isEnabled = shuffle || index != playlistPlaying.size - 1
+        window.previous.isEnabled = shuffle || index != 0
+        window.seekBar.isEnabled = true
+        window.playPause.isEnabled = true
+        window.playPause.text = if (player.isPlaying) "Pause" else "Play"
     }
 
-    private void updateScrollBar(int i) {
-        window.trackList.setSelectedIndex(i);
-        var scrollBar = window.trackListPane.getVerticalScrollBar();
-        int rowHeight = scrollBar.getMaximum() / playlistShown.size();
-        int firstVisibleIndex = scrollBar.getValue() / rowHeight;
-        int visibleAmount = scrollBar.getVisibleAmount() / rowHeight;
+    private fun updateScrollBar(i: Int) {
+        window.trackList.selectedIndex = i
+        val scrollBar = window.trackListPane.verticalScrollBar
+        val rowHeight = scrollBar.maximum / playlistShown.size
+        val firstVisibleIndex = scrollBar.value / rowHeight
+        val visibleAmount = scrollBar.visibleAmount / rowHeight
         if (i < firstVisibleIndex) {
-            scrollBar.setValue(i * rowHeight);
+            scrollBar.value = i * rowHeight
         } else if (i > firstVisibleIndex + visibleAmount - 1) {
-            scrollBar.setValue(Math.min(i - visibleAmount + 1, playlistShown.size() - visibleAmount + 1) * rowHeight);
+            scrollBar.value = min(i - visibleAmount + 1, playlistShown.size - visibleAmount + 1) * rowHeight
         }
     }
 
-    public static class Action {
-        public static final int NEXT = 1;
-        public static final int PREVIOUS = 2;
-        public static final int SHUFFLE = 3;
-        public static final int PLAY_PAUSE = 5;
-        public static final int SEARCH = 6;
-        public static final int CLICK_ON_PLAYLIST = 7;
-        public static final int UPDATE_CATEGORY = 8;
-        public static final int PROGRESS_SEEK = 9;
+    object Action {
+        const val NEXT = 1
+        const val PREVIOUS = 2
+        const val SHUFFLE = 3
+        const val PLAY_PAUSE = 5
+        const val SEARCH = 6
+        const val CLICK_ON_PLAYLIST = 7
+        const val UPDATE_CATEGORY = 8
+        const val PROGRESS_SEEK = 9
     }
 }

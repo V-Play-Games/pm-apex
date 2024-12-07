@@ -13,94 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package net.vpg.apex.core
 
-package net.vpg.apex.core;
+import net.vpg.apex.Apex
+import java.io.File
+import java.net.URL
+import javax.sound.sampled.AudioInputStream
+import javax.sound.sampled.AudioSystem
 
-import net.vpg.apex.Apex;
-import net.vpg.apex.Util;
+class AudioData(private val stream: AudioInputStream, val frameLength: Int) {
+    private val data = ByteArray(frameLength * format.frameSize)
+    var readPos = 0
+    private var cachedPos = 0
+    private var caching = false
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
+    constructor(file: File, frameLength: Int) : this(AudioSystem.getAudioInputStream(file), frameLength)
 
-public class AudioData {
-    private final int frameLength;
-    private final AudioInputStream stream;
-    private byte[] data;
-    private int readPos;
-    private int cachedPos;
-    private boolean caching;
+    constructor(url: URL, frameLength: Int) : this(AudioSystem.getAudioInputStream(url), frameLength)
 
-    public AudioData(File file, int frameLength) throws UnsupportedAudioFileException, IOException {
-        this(AudioSystem.getAudioInputStream(file), frameLength);
+    val format
+        get() = stream.format
+
+    fun startCaching() {
+        if (caching) return
+        caching = true
+        Apex.EXECUTOR.execute { cache() }
     }
 
-    public AudioData(URL url, int frameLength) throws UnsupportedAudioFileException, IOException {
-        this(AudioSystem.getAudioInputStream(url), frameLength);
-    }
-
-    public AudioData(AudioInputStream stream, int frameLength) {
-        this.stream = stream;
-        this.frameLength = frameLength;
-        data = new byte[frameLength * getFormat().getFrameSize()];
-    }
-
-    public int getFrameLength() {
-        return frameLength;
-    }
-
-    public AudioFormat getFormat() {
-        return stream.getFormat();
-    }
-
-    public int getReadPos() {
-        return readPos;
-    }
-
-    public void setReadPos(int readPos) {
-        this.readPos = readPos;
-    }
-
-    public void startCaching() {
-        if (caching || stream == null)
-            return;
-        caching = true;
-        Apex.EXECUTOR.execute(() -> Util.run(this::cache));
-    }
-
-    public byte[] readData(int frames) {
-        int frameSize = getFormat().getFrameSize();
+    fun readData(frames: Int): ByteArray {
         if (readPos + frames <= cachedPos) {
-            readPos += frames;
-            return Arrays.copyOfRange(data, readPos * frameSize, (readPos + frames) * frameSize);
+            readPos += frames
+            return data.copyOfRange(readPos * format.frameSize, (readPos + frames) * format.frameSize)
         }
         if (caching) {
-            Util.sleep(25);
-            return readData(frames);
+            Thread.sleep(25)
+            return readData(frames)
         }
-        throw new IllegalStateException();
+        throw IllegalStateException()
     }
 
-    public void cache() throws IOException {
-        int frameSize = getFormat().getFrameSize();
-        int off = 0;
-        int read;
-        while (caching && (read = stream.read(data, off, data.length - off)) != -1) {
-            off += read;
-            cachedPos = off / frameSize;
+    fun cache() {
+        var off = 0
+        while (caching && (stream.read(data, off, data.size - off).also { off += it }) != -1) {
+            cachedPos = off / format.frameSize
         }
-        caching = false;
-        stream.close();
+        close()
     }
 
-    public void close() throws IOException {
-        caching = false;
-        data = null;
-        stream.close();
+    fun close() {
+        caching = false
+        stream.close()
     }
 }

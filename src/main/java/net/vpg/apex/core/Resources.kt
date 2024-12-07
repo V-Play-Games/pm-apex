@@ -13,96 +13,68 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package net.vpg.apex.core
 
-package net.vpg.apex.core;
+import net.vpg.apex.Apex
+import net.vpg.apex.Util
+import net.vpg.vjson.value.JSONObject
+import net.vpg.vjson.value.JSONValue
+import org.slf4j.LoggerFactory
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.nio.file.Paths
 
-import net.vpg.apex.Apex;
-import net.vpg.apex.Util;
-import net.vpg.vjson.value.JSONObject;
-import net.vpg.vjson.value.JSONValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+object Resources {
+    // init basic JSON info
+    private val logger = LoggerFactory.getLogger(Resources::class.java)
+    private val properties = JSONObject.parse(Apex::class.java.getResource("info.json"))
+    private val dataDir: File
+    private val resources: MutableMap<String, File>
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-public class Resources {
-    private static final Logger logger = LoggerFactory.getLogger(Resources.class);
-    private static final Resources instance = new Resources();
-    private final JSONObject properties;
-    private final File dataDir;
-    private final Map<String, File> resources;
-
-    private Resources() {
-        // init basic json info
-        properties = Util.compute(Apex.class.getResource("info.json"), JSONObject::parse);
-
+    init {
         // init directories
-        String os = System.getProperty("os.name");
-        String home = System.getProperty("user.home");
-        Path dataPath;
-        if (os.contains("Mac"))
-            dataPath = Paths.get(home, "Library", "Application Support");
+        val os = System.getProperty("os.name")
+        val home = System.getProperty("user.home")
+        val dataPath = if (os.contains("Mac"))
+            Paths.get(home, "Library", "Application Support")
         else if (os.contains("Windows"))
-            dataPath = getPathFromEnv("LOCALAPPDATA", false, home, "AppData", "Local");
+            getPathFromEnv("LOCALAPPDATA", false, home, "AppData", "Local")
         else // Linux/Unix
-            dataPath = getPathFromEnv("XDG_DATA_HOME", true, home, ".local", "share");
-        dataDir = dataPath.resolve(properties.getString("appName")).toFile();
-        //noinspection ResultOfMethodCallIgnored
-        dataDir.mkdirs();
+            getPathFromEnv("XDG_DATA_HOME", true, home, ".local", "share")
+        dataDir = dataPath.resolve(properties.getString("appName")).toFile()
+        dataDir.mkdirs()
         properties.getArray("required")
             .stream()
-            .map(JSONValue::toString)
-            .forEach(this::shiftFile);
-        resources = Util.collectFilesOf(dataDir)
-            .stream()
-            .collect(Collectors.toMap(File::getName, file -> file));
+            .map<String?> { obj: JSONValue? -> obj.toString() }
+            .forEach { resource: String? -> this.shiftFile(resource!!) }
+        resources = Util.collectFilesOf(dataDir).associate { Pair(it.getName(), it) }.toMutableMap()
     }
 
-    public static File get(String filename) {
-        return instance.resources.get(filename);
-    }
-
-    public static <T> T get(String filename, Util.FunctionWithAChanceOfException<File, T> func) {
-        return Util.compute(get(filename), func);
-    }
-
-    public static JSONValue getProperty(String prop) {
-        return instance.properties.get(prop);
-    }
-
-    public static File create(String filename) {
-        File file = new File(instance.dataDir, filename);
-        instance.resources.put(filename, file);
-        return file;
-    }
-
-    private Path getPathFromEnv(String envVar, boolean mustBeAbsolute, String first, String... more) {
-        String envDir = System.getenv(envVar);
-        if (envDir != null && !envDir.isEmpty()) {
-            Path dir = Paths.get(envDir);
-            if (!mustBeAbsolute || dir.isAbsolute()) {
-                return dir;
+    private fun getPathFromEnv(envVar: String, mustBeAbsolute: Boolean, first: String, vararg more: String) =
+        System.getenv(envVar)
+            .takeIf { it.isNotEmpty() }
+            ?.let { Paths.get(it) }
+            ?.takeIf { !mustBeAbsolute || it.isAbsolute }
+            ?: Paths.get(first, *more).also {
+                logger.warn("{} not defined in environment, falling back on \"{}\"", envVar, it)
             }
+
+    private fun shiftFile(resource: String) {
+        try {
+            Apex::class.java.getResourceAsStream(resource).use { input ->
+                FileOutputStream(File(dataDir, resource)).use { output ->
+                    input!!.transferTo(output)
+                }
+            }
+        } catch (e: IOException) {
+            logger.error("Unable to copy {} to the resource directory", resource, e)
         }
-        Path defaultPath = Paths.get(first, more);
-        logger.warn("{} not defined in environment, falling back on \"{}\"", envVar, defaultPath);
-        return defaultPath;
     }
 
-    private void shiftFile(String resource) {
-        try (InputStream input = Apex.class.getResourceAsStream(resource);
-             FileOutputStream output = new FileOutputStream(new File(dataDir, resource))) {
-            //noinspection DataFlowIssue
-            input.transferTo(output);
-        } catch (IOException e) {
-            logger.error("Unable to copy {} to the resource directory", resource, e);
-        }
-    }
+    operator fun get(filename: String) = resources[filename]
+
+    fun getProperty(prop: String) = properties.get(prop)
+
+    fun create(filename: String) = File(dataDir, filename).also { resources.put(filename, it) }
 }
