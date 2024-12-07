@@ -138,7 +138,7 @@ public class Apex {
         updateScrollBar(index);
         Util.run(() -> player.play(track));
         window.seekBar.setEnabled(true);
-        window.trackName.setText(STR."Now Playing: \{track.name()} (\{index + 1}/\{playlistPlaying.size()})");
+        window.trackName.setText("Now Playing: %s (%d/%d)".formatted(track.name(), index + 1, playlistPlaying.size()));
     }
 
     private void updateButtons() {

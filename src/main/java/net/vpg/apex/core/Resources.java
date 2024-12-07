@@ -56,13 +56,13 @@ public class Resources {
         dataDir = dataPath.resolve(properties.getString("appName")).toFile();
         //noinspection ResultOfMethodCallIgnored
         dataDir.mkdirs();
-        resources = Util.collectFilesOf(dataDir)
-            .stream()
-            .collect(Collectors.toMap(File::getName, file -> file));
         properties.getArray("required")
             .stream()
             .map(JSONValue::toString)
             .forEach(this::shiftFile);
+        resources = Util.collectFilesOf(dataDir)
+            .stream()
+            .collect(Collectors.toMap(File::getName, file -> file));
     }
 
     public static File get(String filename) {
@@ -102,7 +102,7 @@ public class Resources {
             //noinspection DataFlowIssue
             input.transferTo(output);
         } catch (IOException e) {
-            logger.error(STR."Unable to copy \{resource} to the resource directory", e);
+            logger.error("Unable to copy {} to the resource directory", resource, e);
         }
     }
 }

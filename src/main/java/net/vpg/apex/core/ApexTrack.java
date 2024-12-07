@@ -16,6 +16,7 @@
 
 package net.vpg.apex.core;
 
+import net.vpg.vjson.value.JSONArray;
 import net.vpg.vjson.value.JSONObject;
 import net.vpg.vjson.value.JSONValue;
 import org.slf4j.Logger;
@@ -42,8 +43,7 @@ public record ApexTrack(
 ) {
     private static final Logger logger = LoggerFactory.getLogger(ApexTrack.class);
     public static final Map<String, ApexTrack> entries =
-        Resources.get("tracks.json", JSONObject::parse)
-            .getArray("entries")
+        Resources.get("tracks.json", JSONArray::parse)
             .stream()
             .map(JSONValue::toObject)
             .map(ApexTrack::new)
@@ -73,7 +73,7 @@ public record ApexTrack(
     }
 
     public File getFile() {
-        return Resources.get(STR."\{id}.ogg");
+        return Resources.get(id + ".ogg");
     }
 
     public URL getURL() throws MalformedURLException {

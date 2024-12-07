@@ -60,7 +60,7 @@ void init(JSONObject obj) {
         System.out.println("already read");
         return;
     }
-    File file = new File(STR."D:/Projects/Apex/\{obj.getString("category")}/\{obj.getString("id")}.ogg");
+    File file = new File("D:/Projects/Apex/" + obj.getString("category") + "/" + obj.getString("id") + ".ogg");
     if (!file.exists()) {
         System.out.println(file + " doesn't exist, skipping...");
         return;
