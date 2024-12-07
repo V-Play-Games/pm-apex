@@ -58,7 +58,7 @@ class ApexPlayer {
         isPlaying = !isPlaying
         if (isPlaying) {
             sourceDataLine!!.start()
-            Apex.EXECUTOR.execute { playAudio() }
+            Apex.execute { playAudio() }
         } else {
             sourceDataLine!!.stop()
         }

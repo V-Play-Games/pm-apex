@@ -37,7 +37,7 @@ class AudioData(private val stream: AudioInputStream, val frameLength: Int) {
     fun startCaching() {
         if (caching) return
         caching = true
-        Apex.EXECUTOR.execute { cache() }
+        Apex.execute { cache() }
     }
 
     fun readData(frames: Int): ByteArray {

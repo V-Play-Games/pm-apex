@@ -41,6 +41,7 @@ class ApexWindow(private val apex: Apex) : JFrame() {
     val seekBar: JSlider
 
     init {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
         trackName = createTextArea("Double-click on a track to get started!")
         trackName.setToolTipText("Track Name")
 

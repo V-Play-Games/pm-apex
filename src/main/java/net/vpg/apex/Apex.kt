@@ -20,29 +20,24 @@ import net.vpg.apex.core.ApexPlaylist
 import net.vpg.apex.core.ApexTrack
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import javax.swing.UIManager
 import kotlin.math.min
 
 object Apex {
-    val EXECUTOR = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 1).factory())
-    private val player: ApexPlayer
-    private val window: ApexWindow
-    private val playlists: Map<String, ApexPlaylist>
+    private val executor = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("Apex ", 1).factory())
+    private val player = ApexPlayer()
+    private val window = ApexWindow(this)
+    private val playlists = ApexTrack.entries
+        .values
+        .sortedBy { it.id }
+        .groupBy { it.category }
+        .entries
+        .associate { Pair(it.key, ApexPlaylist(it.key, it.value)) }
     private var playlistPlaying = ApexPlaylist.EMPTY
     private var playlistShown = ApexPlaylist.EMPTY
     private var index = -1
     private var shuffle = false
 
     init {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-        player = ApexPlayer()
-        window = ApexWindow(this)
-        playlists = ApexTrack.entries
-            .values
-            .sortedBy { it.id }
-            .groupBy { it.category }
-            .entries
-            .associate { Pair(it.key, ApexPlaylist(it.key, it.value)) }
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(Runnable {
             if (player.isPlaying) {
                 val len = player.length
@@ -63,7 +58,9 @@ object Apex {
         window.isVisible = true
     }
 
-    fun takeAction(action: Int) = EXECUTOR.execute {
+    fun execute(command: () -> Unit) = executor.execute(command)
+
+    fun takeAction(action: Int) = execute {
         when (action) {
             Action.NEXT -> updateTrack(index + 1, false)
             Action.PREVIOUS -> updateTrack(index - 1, false)
