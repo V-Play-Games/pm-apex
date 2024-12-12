@@ -22,10 +22,10 @@ import javax.sound.sampled.SourceDataLine
 import kotlin.math.min
 
 class ApexPlayer {
-    private var sourceDataLine: SourceDataLine? = null
+    private lateinit var sourceDataLine: SourceDataLine
     private var frameRate = 0
     @Volatile
-    private var data: AudioData? = null
+    private lateinit var data: AudioData
     private var loopStart = 0
     private var loopEnd = 0
     var loopCount = 0
@@ -34,18 +34,18 @@ class ApexPlayer {
 
     fun play(track: ApexTrack) {
         isPlaying = false
-        if (data != null) data!!.close()
+        if (::data.isInitialized) data.close()
         data = track.data
-        data!!.startCaching()
-        val format = data!!.format
+        data.startCaching()
+        val format = data.format
         if (frameRate.toFloat() != format.frameRate) {
             frameRate = format.frameRate.toInt()
-            if (sourceDataLine != null) {
-                sourceDataLine!!.close()
-                sourceDataLine!!.open(format)
+            if (::sourceDataLine.isInitialized) {
+                sourceDataLine.close()
+                sourceDataLine.open(format)
             } else {
                 sourceDataLine = AudioSystem.getSourceDataLine(format)
-                sourceDataLine!!.open()
+                sourceDataLine.open()
             }
         }
         loopStart = track.loopStart
@@ -57,30 +57,29 @@ class ApexPlayer {
     fun togglePlayPause() {
         isPlaying = !isPlaying
         if (isPlaying) {
-            sourceDataLine!!.start()
+            sourceDataLine.start()
             Apex.execute { playAudio() }
         } else {
-            sourceDataLine!!.stop()
+            sourceDataLine.stop()
         }
     }
 
     val length
-        get() = data!!.frameLength / frameRate
+        get() = data.frameLength / frameRate
 
     var position
-        get() = data!!.readPos / frameRate
+        get() = data.readPos / frameRate
         set(seconds) {
-            data!!.readPos = (seconds * frameRate)
+            data.readPos = seconds * frameRate
         }
 
     private fun playAudio() {
         while (isPlaying) {
-            val limit = if (loopCount == 0) data!!.frameLength else loopEnd
-            val len = min(limit - data!!.readPos, frameRate / 20)
-            val b = data!!.readData(len)
-            sourceDataLine!!.write(b, 0, b.size)
-            if (data!!.readPos == loopEnd && loopCount != 0) {
-                data!!.readPos = loopStart
+            val limit = if (loopCount == 0) data.frameLength else loopEnd
+            val len = min(limit - data.readPos, frameRate / 20)
+            data.readData(len).also { sourceDataLine.write(it, 0, it.size) }
+            if (data.readPos == loopEnd && loopCount != 0) {
+                data.readPos = loopStart
                 if (loopCount != Clip.LOOP_CONTINUOUSLY) loopCount--
             }
         }

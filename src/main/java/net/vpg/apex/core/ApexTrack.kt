@@ -69,7 +69,7 @@ data class ApexTrack(
         val entries = JSONArray.parse(Resources["tracks.json"])
             .toList()
             .map { it.toObject() }
-            .map { ApexTrack(it!!) }
+            .map { ApexTrack(it) }
             .associate { Pair(it.id, it) }
     }
 }

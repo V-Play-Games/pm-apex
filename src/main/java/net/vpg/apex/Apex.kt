@@ -38,17 +38,18 @@ object Apex {
     private var shuffle = false
 
     init {
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(Runnable {
-            if (player.isPlaying) {
-                val len = player.length
-                if (window.seekBar.valueIsAdjusting) {
-                    val seek = player.length * window.seekBar.value / 10000
-                    window.progress.text = "%02d:%02d / %02d:%02d".format(seek / 60, seek % 60, len / 60, len % 60)
-                } else {
-                    val pos = player.position
-                    window.seekBar.value = pos * 10000 / len
-                    window.progress.text = "%02d:%02d / %02d:%02d".format(pos / 60, pos % 60, len / 60, len % 60)
-                }
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
+            if (!player.isPlaying) {
+                return@scheduleAtFixedRate
+            }
+            val len = player.length
+            if (window.seekBar.valueIsAdjusting) {
+                val seek = player.length * window.seekBar.value / 10000
+                window.progress.text = "%02d:%02d / %02d:%02d".format(seek / 60, seek % 60, len / 60, len % 60)
+            } else {
+                val pos = player.position
+                window.seekBar.value = pos * 10000 / len
+                window.progress.text = "%02d:%02d / %02d:%02d".format(pos / 60, pos % 60, len / 60, len % 60)
             }
         }, 50, 50, TimeUnit.MILLISECONDS)
     }

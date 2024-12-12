@@ -18,10 +18,10 @@ package net.vpg.apex
 import java.io.File
 
 object Util {
-    fun collectFilesOf(base: File): List<File> = ArrayList<File>().apply {
-        for (f in base.listFiles()!!) {
+    fun File.deepListFiles(): List<File> = ArrayList<File>().apply {
+        for (f in listFiles()!!) {
             if (f.isDirectory())
-                addAll(collectFilesOf(f))
+                addAll(f.deepListFiles())
             else
                 add(f)
         }

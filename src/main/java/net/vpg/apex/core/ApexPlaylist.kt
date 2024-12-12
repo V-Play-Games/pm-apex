@@ -9,7 +9,6 @@ class ApexPlaylist(val category: String, private val tracks: List<ApexTrack>) {
     val model = DefaultListModel<String>().apply {
         addAll(tracks.map { it.name })
     }
-    val size
-        get() = tracks.size
+    val size get() = tracks.size
     operator fun get(index: Int) = tracks[index]
 }

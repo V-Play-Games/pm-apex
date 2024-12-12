@@ -16,12 +16,10 @@
 package net.vpg.apex.core
 
 import net.vpg.apex.Apex
-import net.vpg.apex.Util
+import net.vpg.apex.Util.deepListFiles
 import net.vpg.vjson.value.JSONObject
-import net.vpg.vjson.value.JSONValue
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.file.Paths
 
@@ -43,12 +41,12 @@ object Resources {
         else // Linux/Unix
             getPathFromEnv("XDG_DATA_HOME", true, home, ".local", "share")
         dataDir = dataPath.resolve(properties.getString("appName")).toFile()
-        dataDir.mkdirs()
+            .also { it.mkdirs() }
         properties.getArray("required")
-            .stream()
-            .map<String?> { obj: JSONValue? -> obj.toString() }
-            .forEach { resource: String? -> this.shiftFile(resource!!) }
-        resources = Util.collectFilesOf(dataDir).associate { Pair(it.getName(), it) }.toMutableMap()
+            .toList()
+            .map { it.toString() }
+            .forEach { this.shiftFile(it) }
+        resources = dataDir.deepListFiles().associate { Pair(it.getName(), it) }.toMutableMap()
     }
 
     private fun getPathFromEnv(envVar: String, mustBeAbsolute: Boolean, first: String, vararg more: String) =
@@ -63,7 +61,7 @@ object Resources {
     private fun shiftFile(resource: String) {
         try {
             Apex::class.java.getResourceAsStream(resource).use { input ->
-                FileOutputStream(File(dataDir, resource)).use { output ->
+                File(dataDir, resource).outputStream().use { output ->
                     input!!.transferTo(output)
                 }
             }

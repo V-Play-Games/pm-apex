@@ -1,4 +1,4 @@
-import net.vpg.apex.Util
+import net.vpg.apex.Util.deepListFiles
 import net.vpg.apex.core.Resources
 import net.vpg.vjson.value.JSONArray
 import net.vpg.vjson.value.JSONObject
@@ -6,7 +6,7 @@ import java.io.File
 import javax.sound.sampled.AudioSystem
 
 fun main() {
-    val array = Util.collectFilesOf(File("D:/Projects/Apex"))
+    val array = File("D:/Projects/Apex").deepListFiles()
         .filter { it.getName().endsWith(".ogg") }
         .map {
             JSONObject()

@@ -116,7 +116,7 @@
     </dependency>
     <dependency>
       <groupId>com.github.v-play-games</groupId>
-      <artifactId>vogg</artifactId>
+      <artifactId>Vogg</artifactId>
       <version>1.0.0</version>
     </dependency>
     <dependency>

@@ -27,7 +27,7 @@ import javax.swing.*
 import javax.swing.border.EmptyBorder
 
 class ApexWindow(private val apex: Apex) : JFrame() {
-    val trackName: JTextArea
+    val trackName: JLabel
     val searchTextArea: JTextArea
     val categories: JComboBox<String>
     val next: JButton
@@ -37,12 +37,12 @@ class ApexWindow(private val apex: Apex) : JFrame() {
     val search: JButton
     val trackList: JList<String>
     val trackListPane: JScrollPane
-    val progress: JTextArea
+    val progress: JLabel
     val seekBar: JSlider
 
     init {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-        trackName = createTextArea("Double-click on a track to get started!")
+        trackName = JLabel("Double-click on a track to get started!")
         trackName.setToolTipText("Track Name")
 
         searchTextArea = JTextArea(1, 10).apply {
@@ -102,7 +102,7 @@ class ApexWindow(private val apex: Apex) : JFrame() {
             })
             isEnabled = false
         }
-        progress = createTextArea("--:--/--:--")
+        progress = JLabel("--:--/--:--")
 
         createMainFrame()
     }
@@ -119,7 +119,7 @@ class ApexWindow(private val apex: Apex) : JFrame() {
             add(createCreditsPanel())
         })
         createBox(
-            this, "South",
+            "South",
             createPanel(searchTextArea, search),
             Box.createVerticalStrut(5),
             createPanel(shuffleButton, previous, playPause, next)
@@ -127,59 +127,51 @@ class ApexWindow(private val apex: Apex) : JFrame() {
         pack()
     }
 
-    private fun createPlayerPanel(): JPanel {
-        return createPanel(
-            "Player",
-            categories,
-            Box.createVerticalStrut(5),
-            trackListPane,
-            Box.createVerticalStrut(10)
-        ).apply {
-            createBox(this, "Center", trackName)
-            createBox(this, "West", progress)
-            createBox(this, "South", seekBar)
-        }
+    private fun createPlayerPanel() = createPanel(
+        "Player",
+        categories,
+        Box.createVerticalStrut(5),
+        trackListPane,
+        Box.createVerticalStrut(10)
+    ).apply {
+        createBox("Center", trackName)
+        createBox("West", progress)
+        createBox("South", seekBar)
     }
 
-    private fun createCreditsPanel(): JPanel {
-        return createPanel(
-            "Credits and Info",
-            createTextArea("Welcome to Pokemon Masters Audio Player EX, PM APEX in short."),
-            Box.createVerticalStrut(10),
-            createTextArea(
-                """
-                This is an application made for playing audio tracks from Pokemon Masters.
-                It also has looping support, so go loop your favourite battle theme for as long as you want!
-                Although you can't download tracks right now, you can play them online!
-                Have Fun!
-                
-                """.trimIndent()
-            ),
-            Box.createVerticalStrut(10),
-            createTextArea("Credits").apply {
-                setFont(Font(Font.SANS_SERIF, Font.BOLD, 14))
-            },
-            Box.createVerticalStrut(5),
-            createTextArea("V Play Games - The Developer of this project"),
-            Box.createVerticalStrut(3),
-            createTextArea("Made with Java, Built with Maven 3")
-        )
+    private fun createCreditsPanel() = createPanel(
+        "Credits and Info",
+        JLabel("Welcome to Pokemon Masters Audio Player EX, PM APEX in short."),
+        Box.createVerticalStrut(10),
+        JLabel(
+            """
+                    This is an application made for playing audio tracks from Pokemon Masters.
+                    It also has looping support, so go loop your favourite battle theme for as long as you want!
+                    Although you can't download tracks right now, you can play them online!
+                    Have Fun!
+                    
+                    """.trimIndent()
+        ),
+        Box.createVerticalStrut(10),
+        JLabel("Credits").apply {
+            setFont(Font(Font.SANS_SERIF, Font.BOLD, 14))
+        },
+        Box.createVerticalStrut(5),
+        JLabel("V Play Games - The Developer of this project"),
+        Box.createVerticalStrut(3),
+        JLabel("Made with Java, Built with Maven 3")
+    )
+
+    private fun createPanel(name: String, vararg components: Component) = JPanel().apply {
+        border = EmptyBorder(15, 15, 0, 15)
+        layout = BorderLayout()
+        this.name = name
+        createBox("North", *components)
     }
 
-    private fun createPanel(name: String, vararg components: Component): JPanel {
-        return JPanel().apply {
-            border = EmptyBorder(15, 15, 0, 15)
-            layout = BorderLayout()
-            this.name = name
-            createBox(this, "North", *components)
-        }
-    }
-
-    private fun createPanel(vararg components: Component): JPanel {
-        return JPanel().apply {
-            layout = FlowLayout(FlowLayout.CENTER)
-            components.forEach(::add)
-        }
+    private fun createPanel(vararg components: Component) = JPanel().apply {
+        layout = FlowLayout(FlowLayout.CENTER)
+        components.forEach(::add)
     }
 
     private fun createButton(name: String, toolTip: String, action: Int, enabled: Boolean) = JButton(name).apply {
@@ -188,27 +180,8 @@ class ApexWindow(private val apex: Apex) : JFrame() {
         addActionListener { apex.takeAction(action) }
     }
 
-    private fun createBox(container: Container, constraints: String, vararg components: Component) {
-        val box = Box.createVerticalBox()
-        container.add(box, constraints)
-        components.forEach(box::add)
-    }
-
-    fun createTextArea(text: String) = object : JTextArea() {
-        public override fun paintComponent(graphics: Graphics) {
-            background = getParent().getBackground()
-            super.paintComponent(graphics)
-        }
-    }.apply {
-        this.text = text
-        alignmentX = 0f
-        border = EmptyBorder(0, 0, 0, 0)
-        isEditable = false
-        lineWrap = true
-        wrapStyleWord = true
-        font = JLabel().getFont()
-        isFocusable = false
-        rows = 0
-        invalidate()
+    private fun Container.createBox(constraints: String, vararg components: Component) = Box.createVerticalBox().apply {
+        this@createBox.add(this, constraints)
+        components.forEach(this::add)
     }
 }
