@@ -15,7 +15,7 @@
  */
 package net.vpg.apex.core
 
-import net.vpg.vjson.value.JSONArray
+import net.vpg.vjson.parser.JSONParser.toJSON
 import net.vpg.vjson.value.JSONObject
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -66,10 +66,11 @@ data class ApexTrack(
 
     companion object {
         private val logger = LoggerFactory.getLogger(ApexTrack::class.java)
-        val entries = JSONArray.parse(Resources["tracks.json"])
-            .toList()
+        val entries = Resources["tracks.json"]!!
+            .toJSON()
+            .toArray()
             .map { it.toObject() }
             .map { ApexTrack(it) }
-            .associate { Pair(it.id, it) }
+            .associateBy { it.id }
     }
 }

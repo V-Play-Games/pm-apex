@@ -4,6 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <properties>
+    <java.version>23</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <kotlin.version>2.1.0</kotlin.version>
   </properties>
@@ -68,7 +69,7 @@
           </execution>
         </executions>
         <configuration>
-          <jvmTarget>1.8</jvmTarget>
+          <jvmTarget>${java.version}</jvmTarget>
         </configuration>
       </plugin>
       <plugin>
@@ -100,7 +101,7 @@
           </execution>
         </executions>
         <configuration>
-          <release>23</release>
+          <release>${java.version}</release>
           <compilerArgs>
             <arg>--enable-preview</arg>
           </compilerArgs>
@@ -112,7 +113,7 @@
     <dependency>
       <groupId>com.github.v-play-games</groupId>
       <artifactId>vjson</artifactId>
-      <version>1.0.0</version>
+      <version>2.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.github.v-play-games</groupId>

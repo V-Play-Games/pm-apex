@@ -18,7 +18,7 @@ package net.vpg.apex
 import java.io.File
 
 object Util {
-    fun File.deepListFiles(): List<File> = ArrayList<File>().apply {
+    fun File.deepListFiles(): List<File> = mutableListOf<File>().apply {
         for (f in listFiles()!!) {
             if (f.isDirectory())
                 addAll(f.deepListFiles())

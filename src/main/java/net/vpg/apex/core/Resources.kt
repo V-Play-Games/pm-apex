@@ -17,7 +17,7 @@ package net.vpg.apex.core
 
 import net.vpg.apex.Apex
 import net.vpg.apex.Util.deepListFiles
-import net.vpg.vjson.value.JSONObject
+import net.vpg.vjson.parser.JSONParser.toJSON
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.IOException
@@ -26,7 +26,7 @@ import java.nio.file.Paths
 object Resources {
     // init basic JSON info
     private val logger = LoggerFactory.getLogger(Resources::class.java)
-    private val properties = JSONObject.parse(Apex::class.java.getResource("info.json"))
+    private val properties = Apex::class.java.getResource("info.json")!!.toJSON().toObject()
     private val dataDir: File
     private val resources: MutableMap<String, File>
 
@@ -46,7 +46,7 @@ object Resources {
             .toList()
             .map { it.toString() }
             .forEach { this.shiftFile(it) }
-        resources = dataDir.deepListFiles().associate { Pair(it.getName(), it) }.toMutableMap()
+        resources = dataDir.deepListFiles().associateBy { it.getName() }.toMutableMap()
     }
 
     private fun getPathFromEnv(envVar: String, mustBeAbsolute: Boolean, first: String, vararg more: String) =
@@ -72,7 +72,7 @@ object Resources {
 
     operator fun get(filename: String) = resources[filename]
 
-    fun getProperty(prop: String) = properties.get(prop)
+    fun getProperty(prop: String) = properties[prop]
 
     fun create(filename: String) = File(dataDir, filename).also { resources.put(filename, it) }
 }
